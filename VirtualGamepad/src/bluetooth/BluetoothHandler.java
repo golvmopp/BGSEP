@@ -3,6 +3,8 @@ package bluetooth;
 import java.util.HashMap;
 
 import bgsep.virtualgamepad.MainActivity;
+import bgsep.virtualgamepad.R;
+import android.R.layout;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,38 +13,49 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.nsd.NsdManager.RegistrationListener;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class BluetoothHandler {
 	
 	private HashMap<String, String> deviceMap;
 	private Activity activity;
+	private static final String TAG = "Gamepad";
+	private TextView text;
 	
 	public BluetoothHandler(Activity activity) {
+		text = (TextView)activity.findViewById(R.id.log);
 		deviceMap = new HashMap<String, String>();
 		this.activity = activity;
 		BluetoothAdapter ba = android.bluetooth.BluetoothAdapter.getDefaultAdapter();
 		if (ba == null) {
-			System.out.println("No bluetooth adapter detected!");
+			log("No bluetooth adapter detected!");
+			return;
 		} else {
-			System.out.println("Bluetooth adapter \"" + ba.getName() + "\" detected");
+			log("Bluetooth adapter \"" + ba.getName() + "\" detected");
 		}
 		if (ba.isEnabled()) {
-			System.out.println("Bluetooth device is enabled");
+			log("Bluetooth device is enabled");
 		} else {
-			System.out.println("Bluetooth device is disabled");
-			System.out.println("Enabling bluetooth device..");
-			System.out.println(ba.enable() ? "Success" : "Failed");
+			log("Bluetooth device is disabled");
+			log("Enabling bluetooth device..");
+			log(ba.enable() ? "Success" : "Failed");
 		}
-		System.out.println("Startig discovery...");
+		log("Starting discovery...");
 		if (ba.startDiscovery()) {
-			System.out.println("Discovering...");
+			log("Discovering...");
 			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 			activity.registerReceiver(mReciever, filter);
 		} else {
-			System.out.println("Discovering did not start?");
+			log("Discovering did not start?");
 		}
-		System.out.println("Discovery done");
+		log("Discovery done");
 		
+	}
+	
+	private void log(String text) {
+		this.text.setText(this.text.getText() + "\n" + text);
 	}
 	
 	private final BroadcastReceiver mReciever = new BroadcastReceiver() {
