@@ -32,6 +32,7 @@ public class Joystick extends Observable {
 		prevPosX = prevPosY = currPosX = currPosY = 0;
 		startPosX 	= stick.getX();
 		startPosY 	= stick.getY();
+
 		boundary.setOnTouchListener(new JoystickTouchEvent());
 		
 		this.stick		= stick;
@@ -82,9 +83,10 @@ public class Joystick extends Observable {
 		}
 		
 		private void moveJoystick(float XPos, float YPos) {
+
 			currPosX = boundary.getLeft() + XPos - stick.getWidth()/2;
 			currPosY = boundary.getTop() + YPos - stick.getHeight()/2;
-			
+		
 			//Update previous position
 			prevPosX = XPos;
 			prevPosY = YPos;
