@@ -26,8 +26,7 @@ public class Joystick {
 	 * @param boundary an ImageView
 	 * @param stick an ImageView
 	 */
-	public Joystick(ImageView boundary, ImageView stick)
-	{
+	public Joystick(ImageView boundary, ImageView stick) {
 		prevPosX		= 0;
 		prevPosY 		= 0;
 		startPointX 	= stick.getX();
@@ -40,8 +39,7 @@ public class Joystick {
 		enabled = true;
 	}
 	
-	private class JoystickTouchEvent implements OnTouchListener
-	{
+	private class JoystickTouchEvent implements OnTouchListener {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -80,8 +78,7 @@ public class Joystick {
 			return false;
 		}
 		
-		private void moveJoystick(float XPos, float YPos)
-		{
+		private void moveJoystick(float XPos, float YPos) {
 			stick.setX(boundary.getLeft() + XPos - stick.getWidth()/2);
 			stick.setY(boundary.getTop() + YPos - stick.getHeight()/2);
 		
@@ -92,13 +89,11 @@ public class Joystick {
 		
 	}
 	
-	public boolean getEnabled()
-	{
+	public boolean getEnabled() {
 		return enabled;
 	}
 	
-	public void setEnabled(boolean enabled)
-	{
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 	
