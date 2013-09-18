@@ -25,6 +25,7 @@ public class Button extends Observable {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
+			//Notify observers
 			setChanged();
 			notifyObservers(buttonIdentifier);
 			return true;
