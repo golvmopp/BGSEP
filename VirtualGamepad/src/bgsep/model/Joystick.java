@@ -76,6 +76,10 @@ public class Joystick extends Observable {
 					currPosY = startPosY;
 					setChanged();
 					notifyObservers();
+					break;
+					
+				default:
+					break;
 				}
 				return true;
 			}			
