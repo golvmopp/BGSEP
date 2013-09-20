@@ -31,6 +31,7 @@
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
         <activity
             android:name="bgsep.virtualgamepad.MainActivity"
+            android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +42,7 @@
         
         <activity
             android:name="bgsep.virtualgamepad.NesActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
