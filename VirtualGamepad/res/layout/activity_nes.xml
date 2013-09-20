@@ -5,7 +5,7 @@
     android:gravity="start" >
 
   <ImageView
-      android:id="@+id/imageView1"
+      android:id="@+id/imageNESbackground"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
@@ -13,30 +13,23 @@
       android:src="@drawable/nes_background_small" />
 
   <ImageView
-      android:id="@+id/imageView3"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:layout_marginBottom="132dp"
-      android:layout_marginRight="41dp"
-      android:layout_toLeftOf="@+id/imageView2"
-      android:adjustViewBounds="true"
-      android:maxHeight="150dp"
-      android:maxWidth="80dp"
-      android:scaleType="fitCenter"
-      android:src="@drawable/b_button" />
-
-  <ImageView
-      android:id="@+id/imageView2"
+      android:id="@+id/imageAbutton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:layout_alignParentRight="true"
-      android:layout_marginRight="32dp"
-      android:adjustViewBounds="true"
-      android:maxHeight="150dp"
-      android:maxWidth="80dp"
-      android:scaleType="centerCrop"
+      android:layout_marginBottom="10dp"
+      android:layout_marginRight="37dp"
       android:src="@drawable/a_button" />
+  
+  <ImageView
+      android:id="@+id/imageBbutton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_toLeftOf="@id/imageAbutton"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="10dp"
+      android:layout_marginRight="10dp"
+      android:src="@drawable/b_button" />
 
 </RelativeLayout>
