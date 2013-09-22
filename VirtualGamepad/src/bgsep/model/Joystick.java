@@ -16,11 +16,6 @@ import android.widget.ImageView;
  */
 public abstract class Joystick extends Observable {
 
-	
-	/* ** Identifiers ** */
-	public static final int JOYSTICK_LEFT = 0;
-	public static final int JOYSTICK_RIGHT = 1;
-
 	private float 		prevPosX, prevPosY;
 	private float 		startPosX, startPosY;
 	private boolean 	enabled;
