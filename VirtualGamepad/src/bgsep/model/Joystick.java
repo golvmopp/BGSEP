@@ -8,35 +8,38 @@ import android.widget.ImageView;
 
 
 /**
- * Handles joystick movements.
- * @author patrik
+ * A superclass that handles joystick movements.
+ * You should implement a subclass that overrides
+ * onStickMovement()
+ * @author Patrik
  *
  */
-public class Joystick extends Observable {
+public abstract class Joystick extends Observable {
 
-	//private ImageView boundary;
-	//private ImageView stick;
-	private float 	prevPosX, prevPosY;
-	private float 	currPosX, currPosY;
-	private float 	startPosX;
-	private float 	startPosY;
-	private boolean enabled;
-	ImageView 		boundary, stick;
+	
+	/* ** Identifiers ** */
+	public static final int JOYSTICK_LEFT = 0;
+	public static final int JOYSTICK_RIGHT = 1;
+
+	private float 		prevPosX, prevPosY;
+	private float 		startPosX, startPosY;
+	private boolean 	enabled;
+	private ImageView 	boundary, stick;
 	
 	/**
-	 * Takes a positioned boundary ImageView and stick ImageView. Enabled by default.
-	 * @param boundary a Corners
-	 * @param stick a Corners
+	 * Takes a positioned boundary ImageView and a positioned
+	 * stick ImageView. Enabled by default.
+	 * @param boundary an ImageView
 	 */
 	public Joystick(ImageView boundary, ImageView stick) {
-		prevPosX = prevPosY = currPosX = currPosY = 0;
-		startPosX 	= stick.getX();
-		startPosY 	= stick.getY();
+		prevPosX = prevPosY = 0;
+		startPosX 	= boundary.getWidth()/2;
+		startPosY 	= boundary.getHeight()/2;
 
 		boundary.setOnTouchListener(new JoystickTouchEvent());
 		
-		this.stick		= stick;
 		this.boundary 	= boundary;
+		this.stick = stick;
 		
 		enabled = true;
 	}
@@ -70,12 +73,9 @@ public class Joystick extends Observable {
 					break;
 				
 				case MotionEvent.ACTION_UP:
-					//stick.setX(startPointX);
-					//stick.setY(startPointY);
-					currPosX = startPosX;
-					currPosY = startPosY;
-					setChanged();
-					notifyObservers();
+					prevPosX = startPosX;
+					prevPosY = startPosY;
+					onStickMovement();
 					break;
 					
 				default:
@@ -87,26 +87,31 @@ public class Joystick extends Observable {
 		}
 		
 		private void moveJoystick(float XPos, float YPos) {
-
-			currPosX = boundary.getLeft() + XPos - stick.getWidth()/2;
-			currPosY = boundary.getTop() + YPos - stick.getHeight()/2;
-		
 			//Update previous position
 			prevPosX = XPos;
 			prevPosY = YPos;
 			
-			setChanged();
-			notifyObservers();
+			onStickMovement();
 		}
 		
 	}
 	
+	/**
+	 * Returns the X position of the stick where origo is the middle point in the
+	 * boundary
+	 * @return the X position of the stick
+	 */
 	public float getX() {
-		return currPosX;
+		return (prevPosX - startPosX) / (boundary.getWidth()/2);
 	}
 	
+	/**
+	 * Returns the Y position of the stick where origo is the middle point in the
+	 * boundary
+	 * @return the Y position of the stick
+	 */
 	public float getY() {
-		return currPosY;
+		return (prevPosY - startPosY) / (boundary.getHeight()/2) * -1;
 	}
 	
 	public boolean getEnabled() {
@@ -116,9 +121,17 @@ public class Joystick extends Observable {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	public ImageView getBoundary() {
+		return boundary;
+	}
 
 	public ImageView getStick() {
 		return stick;
 	}
-	
+
+	/**
+	 * Method to be overriden by subclasses when the user moves the stick
+	 */
+	abstract public void onStickMovement();
 }
