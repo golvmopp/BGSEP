@@ -46,80 +46,71 @@ public class JoystickHandler extends Joystick {
 	 */
 	@Override
 	public void onStickMovement() {
-		boolean updateServer;
 		ByteBuffer keyCodeBB = ByteBuffer.allocate(32);
 		
+		// Update views
+		setChanged();
+		notifyObservers();
 		
-		// Check to see if an update to server is necessary
-		// according to the specified sensitivity
-		if((getX() >= 0.5 && prevPosX >= 0.5) || 
-				(getX() <= -0.5 && prevPosX <= -0.5) ||
-				((getX() < 0.5 && getX() > -0.5) && 
-						(prevPosX < 0.5 && prevPosX > -0.5)))
-			updateServer = false;
-		else
-			updateServer = true;
 		if(leftRightEnabled) {
 			
-			// Determine if the joystick indicates left or right
-			if(getX() < 0) // Indicate left
-				leftRightIndication = LEFT_INDICATION;
-			else if(getX() > 0) // Indicate right
-				leftRightIndication = RIGHT_INDICATION;
+			// Check to see if an update to server is necessary
+			// according to the specified sensitivity
+			if((getX() >= 0.5 && prevPosX >= 0.5) || 
+					(getX() <= -0.5 && prevPosX <= -0.5) ||
+					((getX() < 0.5 && getX() > -0.5) && 
+							(prevPosX < 0.5 && prevPosX > -0.5)))
+				prevPosX = getX();
+			else { // Update necessary
 			
-			keyCodeBB.putInt(leftRightKeyCode[leftRightIndication]);
+				// Determine if the joystick indicates left or right
+				if(getX() < 0) // Indicate left
+					leftRightIndication = LEFT_INDICATION;
+				else if(getX() > 0) // Indicate right
+					leftRightIndication = RIGHT_INDICATION;
 			
-			// Set first bit to 1 to indicate a keyPress, else its 0 by default
-			// and indicates a keyRelease
-			if(getX() >= 0.5 || getX() <= -0.5)
-				keyCodeBB.array()[0] = 1;
+				keyCodeBB.putInt(leftRightKeyCode[leftRightIndication]);
 			
-			prevPosX = getX();
+				// Set first bit to 1 to indicate a keyPress, else its 0 by default
+				// and indicates a keyRelease
+				if(getX() >= 0.5 || getX() <= -0.5)
+					keyCodeBB.array()[0] = 1;
 			
-			// If !updateServer, only update the Views
-			if(!updateServer) {
-				setChanged();
-				notifyObservers();
-			}
-			else {
+				prevPosX = getX();
+			
+				// Update the server
 				setChanged();
 				notifyObservers(keyCodeBB);
 			}
 		}
 		
-		// Check to see if an update to server is necessary
-		// according to the specified sensitivity
-		if((getY() >= 0.5 && prevPosY >= 0.5) || 
-				(getY() <= -0.5 && prevPosY <= -0.5) ||
-				((getY() < 0.5 && getY() > -0.5) && 
-						(prevPosY < 0.5 && prevPosY > -0.5)))
-			updateServer = false;
-		else
-			updateServer = true;
-		
 		if(upDownEnabled) {
 			
-			// Determine if the joystick indicates up or down
-			if(getY() < 0) // Indicate down
-				upDownIndication = DOWN_INDICATION;
-			else if(getY() > 0) // Indicate up
-				upDownIndication = UP_INDICATION;
+			// Check to see if an update to server is necessary
+			// according to the specified sensitivity
+			if((getY() >= 0.5 && prevPosY >= 0.5) || 
+					(getY() <= -0.5 && prevPosY <= -0.5) ||
+					((getY() < 0.5 && getY() > -0.5) && 
+							(prevPosY < 0.5 && prevPosY > -0.5)))
+				prevPosY = getY();
+			else { // Update necessary
+				
+				// Determine if the joystick indicates up or down
+				if(getY() < 0) // Indicate down
+					upDownIndication = DOWN_INDICATION;
+				else if(getY() > 0) // Indicate up
+					upDownIndication = UP_INDICATION;
 			
-			keyCodeBB.putInt(upDownKeyCode[upDownIndication]);
+				keyCodeBB.putInt(upDownKeyCode[upDownIndication]);
 			
-			// Set first bit to 1 to indicate a keyPress, else its 0 by default
-			// and indicates a keyRelease
-			if(getY() >= 0.5 || getY() <= -0.5)
-				keyCodeBB.array()[0] = 1;
+				// Set first bit to 1 to indicate a keyPress, else its 0 by default
+				// and indicates a keyRelease
+				if(getY() >= 0.5 || getY() <= -0.5)
+					keyCodeBB.array()[0] = 1;
 			
-			prevPosY = getY();
+				prevPosY = getY();
 			
-			// If !updateServer, only update the Views
-			if(!updateServer) {
-				setChanged();
-				notifyObservers();
-			}
-			else {
+				// Update the server
 				setChanged();
 				notifyObservers(keyCodeBB);
 			}
