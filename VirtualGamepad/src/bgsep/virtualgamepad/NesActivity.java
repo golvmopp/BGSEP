@@ -3,22 +3,20 @@ package bgsep.virtualgamepad;
 import java.util.Observable;
 import java.util.Observer;
 
-import bgsep.model.Button;
-import bgsep.virtualgamepad.R.drawable;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
+import bgsep.model.Button;
 
 public class NesActivity extends Activity implements Observer {
 
-	private ImageView 	imageAbutton, imageBbutton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_nes);
 		
+		ImageView 		imageAbutton, imageBbutton;
 		imageAbutton = (ImageView)findViewById(R.id.imageAbutton);
 		imageBbutton = (ImageView)findViewById(R.id.imageBbutton);
 		new Button(imageAbutton, R.drawable.a_button, R.drawable.a_button_pressed,
