@@ -1,8 +1,8 @@
 package bgsep.virtualgamepad;
 
-import bluetooth.BluetoothHandler;
-import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
@@ -10,9 +10,12 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_nes);
 		BluetoothHandler bh = new BluetoothHandler(this);
-	
+		Intent i = new Intent(this, NesActivity.class);
+		startActivity(i);
+		finish();
+		
 	}
 
 	@Override

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="start" >
+    
+  <ImageView
+      android:id="@+id/imageNESbackground"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:src="@drawable/nes_background_small" />
+
+  <ImageView
+      android:id="@+id/imageAbutton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginBottom="67dp"
+      android:layout_marginRight="37dp"
+      android:src="@drawable/a_button" />
+
+  <ImageView
+      android:id="@+id/imageBbutton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="67dp"
+      android:layout_marginRight="18dp"
+      android:layout_toLeftOf="@+id/imageAbutton"
+      android:src="@drawable/b_button" />
+
+  <ImageView
+      android:id="@+id/imageView1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentBottom="true"
+      android:layout_centerVertical="true"
+      android:layout_marginBottom="163dp"
+      android:layout_marginLeft="152dp"
+      android:src="@drawable/right_arrow" />
+
+  <ImageView
+      android:id="@+id/imageView2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignBottom="@+id/imageView1"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_marginBottom="163dp"
+      android:layout_marginLeft="31dp"
+      android:src="@drawable/left_arrow" />
+
+  <ImageView
+      android:id="@+id/imageView3"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/imageView1"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentLeft="true"
+      android:layout_marginTop="103dp"
+      android:layout_marginLeft="89dp"
+      android:layout_toRightOf="@+id/imageView2"
+      android:src="@drawable/up_arrow" />
+
+  <ImageView
+      android:id="@+id/imageView4"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/imageAbutton"
+      android:layout_alignLeft="@+id/imageView3"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_marginBottom="108dp"
+      android:layout_marginLeft="89dp"
+      android:src="@drawable/down_arrow" />
+
+  <ImageView
+      android:id="@+id/imageView5"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/imageView3"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentLeft="true"
+      android:layout_marginTop="171dp"
+      android:layout_marginLeft="242dp" 
+      android:src="@drawable/button_select" />
+
+  <ImageView
+      android:id="@+id/imageView6"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/imageView3"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentLeft="true"
+      android:layout_marginTop="171dp"
+      android:layout_marginLeft="298dp"
+      android:src="@drawable/button_start" />
+
+  <ImageView
+      android:id="@+id/imageView7"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignBottom="@+id/imageView1"
+      android:layout_alignLeft="@+id/imageView3"
+      android:layout_marginLeft="6dp"
+      android:src="@drawable/joystick_button" />
+
+</RelativeLayout>
