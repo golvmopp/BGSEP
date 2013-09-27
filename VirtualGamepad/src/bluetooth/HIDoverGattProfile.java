@@ -9,10 +9,19 @@ import android.bluetooth.BluetoothGattServer;
 import android.bluetooth.BluetoothGattService;
 import android.util.Log;
 
+/**
+ * 
+ * @author Isak & Linus
+ * @see <a href="https://developer.bluetooth.org/TechnologyOverview/Pages/HOGP.aspx">HID over GATT Profile</a> and <a href="https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.hid_over_gatt.xml">HID over GATT specification</a>
+ * <p>This class implements the HID over GATT Profile (HOGP).</p>
+ * 
+ *
+ */
 @TargetApi(18)
 public class HIDoverGattProfile {
 
 	private static final String SIG_HID = "1812";
+	//private static final String SIG_HID = "1124";
 	private static final String SIG_DEVICE_INFORMATION = "180A";
 	private static final String SIG_BATTERY = "180F";
 	private static final String SIG_CHARA_BATTERY_LEVEL = "2A19";
@@ -23,7 +32,7 @@ public class HIDoverGattProfile {
 	private static final String SIG_DESC_PRESENTATION_FORMAT = "2904";
 	private static final String SIG_DESC_CLIENT_INFORMATION_CONFIGURATION = "2902";
 
-	private static final String SIG_UNIT_PERCENTAGE = "27AD"; // this is hard coded directly in two bytes
+	private static final String SIG_UNIT_PERCENTAGE = "27AD"; // this is not used as it is hard coded directly in two bytes
 	private static final String SIG_MANUFACTURER_NAME = "2A29";
 
 	public static final String SHORT_UUID_BASE = "00001000800000805F9B34FB"; // used to make 128 bit UUID from 16 bit SIG
@@ -80,9 +89,11 @@ public class HIDoverGattProfile {
 			(byte) 0xc0, // END_COLLECTION
 			(byte) 0xc0 // END_COLLECTION
 	};
-	private static final String TAG = "Gamepad";
+	
+	private static final String TAG = "Gamepad"; //used for filtering the debug printout
 
 	public HIDoverGattProfile() {
+		//These services are mandatory for the HID over GATT Profile
 		createBatteryService();
 		createDeviceInfoService();
 		createHIDService();
@@ -93,10 +104,9 @@ public class HIDoverGattProfile {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		if (!server.addService(batteryService)) { // if HIDService is added before BatteryService something terrible happens...
+		if (!server.addService(batteryService)) {
 			fail = true;
 			Log.d(TAG, "fail adding BatteryService");
 		} else {
@@ -105,7 +115,6 @@ public class HIDoverGattProfile {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		if (!server.addService(HIDService)) {
@@ -117,7 +126,6 @@ public class HIDoverGattProfile {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (!server.addService(deviceInfoService)) {
@@ -225,7 +233,7 @@ public class HIDoverGattProfile {
 		Log.d(TAG, "CONVERTING " + uuid);
 		String formattedUuid = uuid.substring(0, 8) + "-" + uuid.substring(8, 12) + "-" + uuid.substring(12, 16) + "-" + uuid.substring(16, 20) + "-" + uuid.substring(20);
 		Log.d(TAG, "TO " + formattedUuid);
-		return UUID.fromString(formattedUuid); // wingardium leviosa! 10 points to Gryffindor!
+		return UUID.fromString(formattedUuid);
 	}
 	
 	private String getUUIDString(String uuidValue, boolean shortUUID) {

@@ -31,15 +31,6 @@ public class BluetoothHandler {
 	private BluetoothAdapter adapter;
 
 	
-	public static String HID_UUID = "00001124-0000-1000-8000-00805f9b34fb";
-	
-	
-	public static final String HID_SERVICE_UUID = "1812";
-	public static final String DEVICE_INFORMATION_SERVICE_UUID = "180A";
-	public static final String BATTERY_SERVICE_UUID = "180F";
-		
-
-	
 	public BluetoothHandler(Activity activity) {
 		
 		this.activity = activity;
