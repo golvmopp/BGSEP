@@ -13,7 +13,7 @@ public class LeDeviceScanActivity extends ListActivity {
 	private Handler mHandler;
 	private LeScanCallback callback;
 	private static final long SCAN_PERIOD = 10000;
-	private static final String FOUND_TAG = "FOUND DEVICE";
+	private static final String TAG = "gamepad";
 	
 	public LeDeviceScanActivity(){
 		mHandler = new Handler();
@@ -27,7 +27,7 @@ public class LeDeviceScanActivity extends ListActivity {
 					
 					@Override
 					public void run() {
-						Log.d(FOUND_TAG, "FOUND A DEVICE: " + device.getName() + " ["+ device.getAddress() + "]");
+						Log.d(TAG, "FOUND A DEVICE: " + device.getName() + " ["+ device.getAddress() + "]");
 					}
 				});
 			}
@@ -42,6 +42,7 @@ public class LeDeviceScanActivity extends ListActivity {
 			@Override
 			public void run() {
 				adapter.stopLeScan(callback);
+				Log.d(TAG,"STOP LESCAN");
 			}
 		}, SCAN_PERIOD);
 		
