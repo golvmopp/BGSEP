@@ -41,6 +41,7 @@ public class BluetoothHandler {
 
 		if(!activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
 			Log.d(TAG, "FAIL");
+			return;
 		}else{
 			Log.d(TAG, "WIN");
 		}
