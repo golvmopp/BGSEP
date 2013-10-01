@@ -12,7 +12,9 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_nes);
-		BluetoothHandler bh = new BluetoothHandler(this);
+		BluetoothHandler bh = null;
+		if(android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
+			bh = new BluetoothHandler(this);
 		Intent i = new Intent(this, NesActivity.class);
 		startActivity(i);
 		finish();
