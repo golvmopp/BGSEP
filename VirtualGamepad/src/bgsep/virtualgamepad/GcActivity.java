@@ -41,6 +41,8 @@ public class GcActivity extends Activity implements Observer {
 			
 			Client networkClient = new Client();
 			gcJoystick.addObserver(networkClient);
+			
+			isInitialized = true;
 		}
 	}
 
