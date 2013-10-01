@@ -43,11 +43,11 @@
         <activity
             android:name="bgsep.virtualgamepad.NesActivity"
             android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="bgsep.virtualgamepad.GcActivity"
+            android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden" >
         </activity>
         
     </application>

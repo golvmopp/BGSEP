@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
 		BluetoothHandler bh = null;
 		if(android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
 			bh = new BluetoothHandler(this);
-		Intent i = new Intent(this, NesActivity.class);
+		Intent i = new Intent(this, GcActivity.class);
 		startActivity(i);
 		finish();
 		
