@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import bgsep.model.JoystickHandler;
 import bgsep.model.KeyCode;
+import bgsep.wifi.Client;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -37,6 +38,9 @@ public class GcActivity extends Activity implements Observer {
 			gcJoystick.setLeftRightKeyCode(KeyCode.VK_LEFT, KeyCode.VK_RIGHT);
 			gcJoystick.setUpDownKeyCode(KeyCode.VK_UP, KeyCode.VK_DOWN);
 			gcJoystick.addObserver(this);
+			
+			Client networkClient = new Client();
+			gcJoystick.addObserver(networkClient);
 		}
 	}
 
