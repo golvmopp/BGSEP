@@ -5,8 +5,6 @@ import junit.framework.TestCase;
 public class TestButton extends TestCase {
 
 	public final void testButtonImageViewIntIntIntObserver() {
-		assertEquals(expected, actual);
-		asser
 		fail("Not yet implemented"); // TODO
 	}
 
