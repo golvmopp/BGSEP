@@ -46,14 +46,13 @@ public class JoystickHandler extends Joystick {
 	 */
 	@Override
 	public void onStickMovement() {
-		ByteBuffer keyCodeBB = ByteBuffer.allocate(32);
 		
 		// Update views
 		setChanged();
 		notifyObservers();
 		
 		if(leftRightEnabled) {
-			
+			ByteBuffer keyCodeBB = ByteBuffer.allocate(32);
 			// Check to see if an update to server is necessary
 			// according to the specified sensitivity
 			if((getX() >= 0.5 && prevPosX >= 0.5) || 
@@ -85,7 +84,7 @@ public class JoystickHandler extends Joystick {
 		}
 		
 		if(upDownEnabled) {
-			
+			ByteBuffer keyCodeBB = ByteBuffer.allocate(32);
 			// Check to see if an update to server is necessary
 			// according to the specified sensitivity
 			if((getY() >= 0.5 && prevPosY >= 0.5) || 
