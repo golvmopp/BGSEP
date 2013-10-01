@@ -28,7 +28,7 @@
       android:layout_alignParentBottom="true"
       android:layout_marginBottom="67dp"
       android:layout_marginRight="18dp"
-      android:layout_toLeftOf="@+id/imageAbutton"
+      android:layout_toLeftOf="@id/imageAbutton"
       android:src="@drawable/b_button" />
 
   <ImageView
@@ -40,37 +40,40 @@
       android:layout_centerVertical="true"
       android:layout_marginBottom="163dp"
       android:layout_marginLeft="152dp"
-      android:src="@drawable/right_arrow" />
+      android:src="@drawable/right_arrow_2" />
+  
+
 
   <ImageView
       android:id="@+id/imageView2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/imageView1"
-      android:layout_alignParentBottom="true"
+      android:layout_alignBottom="@id/imageView1"
+	  android:layout_alignParentBottom="true"
       android:layout_alignParentLeft="true"
       android:layout_marginBottom="163dp"
       android:layout_marginLeft="31dp"
       android:src="@drawable/left_arrow" />
 
+  
   <ImageView
       android:id="@+id/imageView3"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_above="@+id/imageView1"
+      android:layout_above="@id/imageView1"
       android:layout_alignParentTop="true"
       android:layout_alignParentLeft="true"
       android:layout_marginTop="103dp"
       android:layout_marginLeft="89dp"
-      android:layout_toRightOf="@+id/imageView2"
+      android:layout_toRightOf="@id/imageView2"
       android:src="@drawable/up_arrow" />
 
   <ImageView
       android:id="@+id/imageView4"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_above="@+id/imageAbutton"
-      android:layout_alignLeft="@+id/imageView3"
+      android:layout_above="@id/imageAbutton"
+      android:layout_alignLeft="@id/imageView3"
       android:layout_alignParentBottom="true"
       android:layout_alignParentLeft="true"
       android:layout_marginBottom="108dp"
@@ -81,7 +84,7 @@
       android:id="@+id/imageView5"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/imageView3"
+      android:layout_below="@id/imageView3"
       android:layout_alignParentTop="true"
       android:layout_alignParentLeft="true"
       android:layout_marginTop="171dp"
@@ -92,7 +95,7 @@
       android:id="@+id/imageView6"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/imageView3"
+      android:layout_below="@id/imageView3"
       android:layout_alignParentTop="true"
       android:layout_alignParentLeft="true"
       android:layout_marginTop="171dp"
@@ -103,8 +106,8 @@
       android:id="@+id/imageView7"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/imageView1"
-      android:layout_alignLeft="@+id/imageView3"
+      android:layout_alignBottom="@id/imageView1"
+      android:layout_alignLeft="@id/imageView3"
       android:layout_marginLeft="6dp"
       android:src="@drawable/joystick_button" />
 
