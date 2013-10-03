@@ -26,9 +26,13 @@ public class BluetoothServer {
 			if (device != null) {
 
 				if (LocalDevice.isPowerOn()) {
+					System.out.println();
+					System.out.println("------------------------------------");
 					System.out.println("Device:");
 					System.out.println("\t" + device.getFriendlyName());
 					System.out.println("\t" + device.getBluetoothAddress());
+					System.out.println("------------------------------------");
+					System.out.println();
 
 					try {
 						System.out.println("Opening up server connection...");
