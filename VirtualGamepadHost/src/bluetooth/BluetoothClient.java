@@ -41,11 +41,11 @@ public class BluetoothClient extends Thread {
 
 	private void interpretByteArray(byte[] byteArray, int length) {
 		int id = byteArray[0];
-		
+		System.out.println("BYTEARRAY WITH ID: " + id);
 		
 		for (int i = 0; i < length; i++) {
 			byte b = byteArray[i];
-			System.out.println("Byte collected: " + (int)b);
+			System.out.println("\t" + (int)b);
 		}
 	}
 
