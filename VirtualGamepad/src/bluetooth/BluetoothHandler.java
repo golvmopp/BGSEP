@@ -1,7 +1,5 @@
 package bluetooth;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.UUID;
 
 import lib.Protocol;
@@ -23,6 +21,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.ParcelUuid;
 import android.util.Log;
+
 	
 public class BluetoothHandler extends Thread {
 	
@@ -92,7 +91,6 @@ public class BluetoothHandler extends Thread {
 		} else {
 			Log.d(TAG,"Bluetooth adapter \"" + adapter.getName() + "\" detected");
 		}
-		
 		if (adapter.isEnabled()) {
 			Log.d(TAG,"Bluetooth device is enabled");
 		} else {
@@ -117,6 +115,8 @@ public class BluetoothHandler extends Thread {
             return false;
         }
 
+
+
         final BluetoothDevice device = adapter.getRemoteDevice(address);
         
         if (device == null) {
@@ -138,6 +138,7 @@ public class BluetoothHandler extends Thread {
      //   Log.d(TAG, "Trying to create a new connection.");
 //        mBluetoothDeviceAddress = address;
         //mConnectionState = STATE_CONNECTING;
+        return true;
     }
 	
 	@Override
