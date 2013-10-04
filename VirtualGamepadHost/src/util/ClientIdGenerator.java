@@ -1,9 +1,35 @@
 package util;
 
+import java.util.HashMap;
+
+
 public class ClientIdGenerator {
-	private static int currentId = 0;
+	private HashMap<Integer, Boolean> ids;
+	private static ClientIdGenerator instance;
 	
-	public static int getGeneratedId(){
-		return currentId++;
+	private ClientIdGenerator(){
+		ids = new HashMap<Integer, Boolean>();
+		ids.put(1, false);
+		ids.put(2, false);
+		ids.put(3, false);
+		ids.put(4, false);
+		ids.put(5, false);
+	}
+	
+	public static ClientIdGenerator getInstance(){
+		if(instance == null){
+			instance = new ClientIdGenerator();
+		}
+		return instance;
+	}
+	
+	public int getGeneratedId() {
+		int generatedId = -1;
+		for(int id : ids.keySet()){
+			if(!ids.get(id)){
+				generatedId = id;
+			}
+		}
+		return generatedId;
 	}
 }

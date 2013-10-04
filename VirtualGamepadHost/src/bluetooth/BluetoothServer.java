@@ -65,6 +65,10 @@ public class BluetoothServer {
 	public static void addClient(BluetoothClient client) {
 		clients.add(client);
 	}
+	
+	public static void removeClient(BluetoothClient client){
+		clients.remove(client);
+	}
 
 	public static HashSet<BluetoothClient> getClients() {
 		return clients;

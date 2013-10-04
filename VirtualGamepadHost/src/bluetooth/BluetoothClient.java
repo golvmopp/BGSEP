@@ -1,35 +1,97 @@
 package bluetooth;
 
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import lib.Protocol;
 import util.ClientIdGenerator;
 
 public class BluetoothClient extends Thread {
-	private DataInputStream dis;
 	private int clientId;
-	private String name = "";
+	private String clientName = "";
 
-	public BluetoothClient(DataInputStream dis) {
+	private Robot robot;
+	private DataInputStream dis;
+	private boolean running;
+	private long lastPoll;
+
+	public BluetoothClient(DataInputStream dis) throws Exception {
 		this.dis = dis;
-		setClientId(ClientIdGenerator.getGeneratedId());
+		setClientId(ClientIdGenerator.getInstance().getGeneratedId());
+		if(getClientId() == -1){
+			throw new Exception("Server is full!");
+		}
+		lastPoll = System.currentTimeMillis(); 
+		robot = new Robot();
 
 	}
 
 	@Override
 	public void run() {
 		super.run();
+		running = true;
+		ArrayList<Byte> data = new ArrayList<Byte>();
+		boolean escape = false;
+		boolean arrayStopped = true;
 
-		while (!interrupted()) {
+		while (!interrupted() && running) {
 
 			try {
 				byte[] byteArray = new byte[1000];
 
 				int len = dis.read(byteArray);
-				interpretByteArray(byteArray, len);
+				for (int i = 0; i < len; i++) {
+					byte b = byteArray[i];
 
+					if (arrayStopped) {
+						if (b == Protocol.START) {
+							if (escape) {
+								escape = false;
+								data.add(b);
+							} else {
+								arrayStopped = false;
+							}
+						}
+					} else {
+
+						if (!(b == Protocol.STOP || b == Protocol.ESCAPE)) {
+							data.add(b);
+							if (escape) {
+								escape = false;
+							}
+						} else if (b == Protocol.ESCAPE) {
+							if (escape) {
+								data.add(b);
+								escape = false;
+							} else {
+								escape = true;
+							}
+						} else if (b == Protocol.STOP) {
+							if (escape) {
+								escape = false;
+								data.add(b);
+							} else {
+								try {
+									interpretByteArray(data);
+								} catch (IndexOutOfBoundsException e) {
+									System.out.println("WRONG BYTE ARRAY: " + e.getMessage());
+								}
+								data = new ArrayList<Byte>();
+								arrayStopped = true;
+							}
+						}
+					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+
+			if (System.currentTimeMillis() - lastPoll >= lib.Constants.CLIENT_TIMEOUT) {
+				System.out.println("Client with ID " + getClientId() + " timed out!");
+				disconnect();
 			}
 
 			try {
@@ -40,48 +102,56 @@ public class BluetoothClient extends Thread {
 		}
 	}
 
-	private void interpretByteArray(byte[] byteArray, int length) {
-		int id = byteArray[0];
-		String recieved = "";
-		for (int i = 0; i < length; i++) {
-			byte b = byteArray[i];
-			recieved += byteArray[i];
-		}
-		System.out.println("recieved " + recieved);
-		
+	private void disconnect() {
+		BluetoothServer.removeClient(this);
+		running = false;
+	}
+
+	private void interpretByteArray(ArrayList<Byte> data) throws IndexOutOfBoundsException {
+		int id = data.get(0);
+
 		switch (id) {
+
 		case Protocol.MESSAGE_TYPE_BUTTON:
-			System.out.println("button" + byteArray[1] + (byteArray[1] == 0x01 ? " pressed " : " released"));
+			System.out.println("button" + data.get(1) + (data.get(2) == 0x01 ? " pressed " : " released"));
 			break;
+
 		case Protocol.MESSAGE_TYPE_JOYSTICK:
-			float position;
-			int bits = 0;
-			bits += (int) (byteArray[2] << 24);
-			bits += (int) (byteArray[3] << 16);
-			bits += (int) (byteArray[4] << 8);
-			bits += (int) (byteArray[5]);
-			position = Float.intBitsToFloat(bits);
-			System.out.println("axis " + byteArray[1] + " moved to position " + position);
+			byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
+			float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
+
+			System.out.println("axis " + data.get(1) + " moved to position " + position);
 			break;
+
 		case Protocol.MESSAGE_TYPE_CLOSE:
-			byte[] causeBytes = new byte[length - 1];
-			System.arraycopy(byteArray, 1, causeBytes, 0, length - 1);
-			String cause = new String(causeBytes);
-			System.out.println("client closes connection: " + cause);
+
+			byte[] stringBytes = new byte[data.size() - 1];
+			for (int i = 1; i < data.size(); i++) {
+				stringBytes[i - 1] = data.get(i);
+			}
+
+			String message = new String(stringBytes);
+
+			System.out.println("Client closes connection: " + message);
+			disconnect();
+
 			break;
 		case Protocol.MESSAGE_TYPE_NAME:
-			byte[] nameBytes = new byte[length - 1];
-			System.arraycopy(byteArray, 1, nameBytes, 0, length - 1);
-			String name = new String (nameBytes);
-			System.out.println("new name: " + name);
-			this.name = name;
+			byte[] stringBytes2 = new byte[data.size() - 1];
+			for (int i = 1; i < data.size(); i++) {
+				stringBytes2[i - 1] = data.get(i);
+			}
+
+			String name = new String(stringBytes2);
+			System.out.println("Client name: " + name);
+			setClientName(name);
+
 			break;
 		case Protocol.MESSAGE_TYPE_POLL:
-			System.out.println("poll");
+			lastPoll = System.currentTimeMillis();
 			break;
 		}
-		
-		
+
 	}
 
 	public int getClientId() {
@@ -91,4 +161,13 @@ public class BluetoothClient extends Thread {
 	public void setClientId(int id) {
 		this.clientId = id;
 	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+
 }
