@@ -1,6 +1,5 @@
 package bluetooth;
 
-import java.awt.AWTException;
 import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
