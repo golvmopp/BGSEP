@@ -1,5 +1,7 @@
 package bluetooth;
 
+import host.KeyMap;
+
 import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -20,10 +22,10 @@ public class BluetoothClient extends Thread {
 	public BluetoothClient(DataInputStream dis) throws Exception {
 		this.dis = dis;
 		setClientId(ClientIdGenerator.getInstance().getGeneratedId());
-		if(getClientId() == -1){
+		if (getClientId() == -1) {
 			throw new Exception("Server is full!");
 		}
-		lastPoll = System.currentTimeMillis(); 
+		lastPoll = System.currentTimeMillis();
 		robot = new Robot();
 
 	}
@@ -112,14 +114,27 @@ public class BluetoothClient extends Thread {
 		switch (id) {
 
 		case Protocol.MESSAGE_TYPE_BUTTON:
-			System.out.println("button" + data.get(1) + (data.get(2) == 0x01 ? " pressed " : " released"));
-			break;
+			try {
+				if (data.get(2) == 0x01) {
+					// System.out.println("Pressing key " +
+					// KeyMap.getKeyCode(clientId, data.get(1)));
+					robot.keyPress(KeyMap.getKeyCode(clientId, data.get(1)));
+				} else {
+					// System.out.println("Releasing key " +
+					// KeyMap.getKeyCode(clientId, data.get(1)));
+					robot.keyRelease(KeyMap.getKeyCode(clientId, data.get(2)));
+				}
+				break;
+			} catch (IllegalArgumentException e) {
+				System.out.println("Failed getting key code: " + e.getMessage());
+			}
 
 		case Protocol.MESSAGE_TYPE_JOYSTICK:
 			byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
 			float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
 
-			System.out.println("axis " + data.get(1) + " moved to position " + position);
+			// System.out.println("axis " + data.get(1) + " moved to position "
+			// + position);
 			break;
 
 		case Protocol.MESSAGE_TYPE_CLOSE:

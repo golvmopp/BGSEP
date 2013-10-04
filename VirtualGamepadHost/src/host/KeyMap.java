@@ -1,7 +1,6 @@
 package host;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public final class KeyMap {
 	private static ArrayList<Integer> keyCodes;

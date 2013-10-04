@@ -8,11 +8,11 @@ public class ClientIdGenerator {
 
 	private ClientIdGenerator() {
 		ids = new HashMap<Integer, Boolean>();
+		ids.put(0, false);
 		ids.put(1, false);
 		ids.put(2, false);
 		ids.put(3, false);
 		ids.put(4, false);
-		ids.put(5, false);
 	}
 
 	public static ClientIdGenerator getInstance() {
