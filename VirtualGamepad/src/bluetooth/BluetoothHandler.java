@@ -34,6 +34,7 @@ public class BluetoothHandler extends Thread {
 	private OutputStream outputStream;
 	private UUID ExpectedUUID;
 	private SenderImpl si;
+	private boolean stopped;
 	
 	public BluetoothHandler(Activity activity) {
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
@@ -41,7 +42,8 @@ public class BluetoothHandler extends Thread {
 		si = new SenderImpl(this);
 		initBluetoothAdapter();
 		connectToBondedDevice();
-		startSendingTestData();
+		stopped = false;
+		//startSendingTestData();
 	}
 	
 	private void startSendingTestData() {
@@ -104,7 +106,8 @@ public class BluetoothHandler extends Thread {
 		try {
 			outputStream.write(data);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.d(TAG, "Unable to send data. The server seems to be down, stopping communication..");
+			stopped = true;
 		}
 	}
 
@@ -139,14 +142,12 @@ public class BluetoothHandler extends Thread {
 	
 	@Override
 	public void run() {
-		while (!interrupted()) {
+		while (!interrupted() && !stopped) {
 			si.poll();
-			pressAllButtons();
 			Log.d(TAG, "poll");
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -158,10 +159,10 @@ public class BluetoothHandler extends Thread {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Log.d(TAG, "Unable to send data. The server seems to be down. Stopping bluetooth communication..");
+				stopped = true;
 			}
 			si.send((byte) i, false);
 		}
 	}
-	
 }
