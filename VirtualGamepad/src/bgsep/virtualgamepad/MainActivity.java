@@ -1,11 +1,15 @@
 package bgsep.virtualgamepad;
 
+<<<<<<< HEAD
 import java.util.Observable;
 import java.util.Observer;
 
+=======
+import bluetooth.BluetoothHandler;
+import android.os.Bundle;
+>>>>>>> 041ea92f5362b772cdb92d9da0702574847f0646
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -18,6 +22,7 @@ public class MainActivity extends Activity implements Observer {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+<<<<<<< HEAD
 		
 		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
@@ -34,6 +39,13 @@ public class MainActivity extends Activity implements Observer {
 		if(android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
 			bh = new BluetoothHandler(this);*/
 		
+=======
+		BluetoothHandler bh = new BluetoothHandler(this);
+		bh.start();
+		Intent i = new Intent(this, GcActivity.class);
+		startActivity(i);
+		finish();
+>>>>>>> 041ea92f5362b772cdb92d9da0702574847f0646
 	}
 
 	@Override

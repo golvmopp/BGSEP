@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.ParcelUuid;
 import android.util.Log;
-
 	
 public class BluetoothHandler extends Thread {
 	
@@ -40,6 +39,7 @@ public class BluetoothHandler extends Thread {
 	public BluetoothHandler(Activity activity) {
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
 		this.activity = activity;
+<<<<<<< HEAD
 		si = new SenderImpl(this);
 		initBluetoothAdapter();
 		connectToBondedDevice();
@@ -52,6 +52,18 @@ public class BluetoothHandler extends Thread {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+=======
+
+		manager = (BluetoothManager)activity.getSystemService(Context.BLUETOOTH_SERVICE);
+
+		adapter = manager.getAdapter();
+
+		if(!activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
+			Log.d(TAG, "FAIL");
+			return;
+		}else{
+			Log.d(TAG, "WIN");
+>>>>>>> f22139406dbeebc5572d5574fd0cbc6befea2cb8
 		}
 		Log.d(TAG, "Sending data..");
 		si.send((byte) 0x03, true);
@@ -93,6 +105,7 @@ public class BluetoothHandler extends Thread {
 		} else {
 			Log.d(TAG,"Bluetooth adapter \"" + adapter.getName() + "\" detected");
 		}
+		
 		if (adapter.isEnabled()) {
 			Log.d(TAG,"Bluetooth device is enabled");
 		} else {
@@ -116,8 +129,6 @@ public class BluetoothHandler extends Thread {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
         }
-
-
 
         final BluetoothDevice device = adapter.getRemoteDevice(address);
         
