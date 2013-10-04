@@ -22,7 +22,7 @@ public final class KeyMap {
 		}
 	}
 	
-	public int getKeyCode(int clientID, int buttonID) {
+	public static int getKeyCode(int clientID, int buttonID) {
 		int index = clientID * KEYS_PER_CLIENT + buttonID;
 		if (index < keyCodes.size()) {
 			return keyCodes.get(clientID * KEYS_PER_CLIENT + buttonID);
