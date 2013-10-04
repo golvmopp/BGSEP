@@ -6,6 +6,9 @@ import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import lib.Protocol;
 import util.ClientIdGenerator;
@@ -18,6 +21,7 @@ public class BluetoothClient extends Thread {
 	private DataInputStream dis;
 	private boolean running;
 	private long lastPoll;
+	private HashMap<Integer, Boolean> joyStick;
 
 	public BluetoothClient(DataInputStream dis) throws Exception {
 		this.dis = dis;
@@ -27,6 +31,7 @@ public class BluetoothClient extends Thread {
 		}
 		lastPoll = System.currentTimeMillis();
 		robot = new Robot();
+		joyStick = new HashMap<Integer, Boolean>();
 
 	}
 
@@ -110,19 +115,19 @@ public class BluetoothClient extends Thread {
 
 	private void interpretByteArray(ArrayList<Byte> data) throws IndexOutOfBoundsException {
 		int id = data.get(0);
-
+		//System.out.println("ID " + id);
 		switch (id) {
 
 		case Protocol.MESSAGE_TYPE_BUTTON:
 			try {
 				if (data.get(2) == 0x01) {
-					// System.out.println("Pressing key " +
-					// KeyMap.getKeyCode(clientId, data.get(1)));
+					System.out.println("Pressing key " +
+					KeyMap.getKeyCode(clientId, data.get(1)));
 					robot.keyPress(KeyMap.getKeyCode(clientId, data.get(1)));
 				} else {
-					// System.out.println("Releasing key " +
-					// KeyMap.getKeyCode(clientId, data.get(1)));
-					robot.keyRelease(KeyMap.getKeyCode(clientId, data.get(2)));
+					System.out.println("Releasing key " +
+					KeyMap.getKeyCode(clientId, data.get(1)));
+					robot.keyRelease(KeyMap.getKeyCode(clientId, data.get(1)));
 				}
 				break;
 			} catch (IllegalArgumentException e) {
@@ -132,7 +137,9 @@ public class BluetoothClient extends Thread {
 		case Protocol.MESSAGE_TYPE_JOYSTICK:
 			byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
 			float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
-
+			
+			int joyStickId = data.get(1);
+			this.joyStick.put(joyStickId, false);
 			// System.out.println("axis " + data.get(1) + " moved to position "
 			// + position);
 			break;

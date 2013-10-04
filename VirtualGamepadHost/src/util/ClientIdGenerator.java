@@ -28,6 +28,7 @@ public class ClientIdGenerator {
 			if (!ids.get(id)) {
 				generatedId = id;
 				ids.put(id, true);
+				break;
 			}
 		}
 		return generatedId;
