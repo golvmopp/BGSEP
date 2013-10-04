@@ -3,6 +3,7 @@ package bgsep.virtualgamepad;
 import bluetooth.BluetoothHandler;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
