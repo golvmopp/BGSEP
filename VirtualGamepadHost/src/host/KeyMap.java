@@ -14,7 +14,7 @@ public final class KeyMap {
 
 	static {
 		keyCodes = new ArrayList<Integer>();
-		for (int i = 124; i <= 249; i++) {
+		for (int i = 65; i <= 249; i++) {
 			if (i != MY_COMPUTER && i != MY_CALCULATOR && i != NUM_LOCK && i != SCROLL_LOCK) { 
 				keyCodes.add(i);
 			}
