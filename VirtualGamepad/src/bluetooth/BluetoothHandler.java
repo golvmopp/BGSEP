@@ -141,6 +141,7 @@ public class BluetoothHandler extends Thread {
 	public void run() {
 		while (!interrupted()) {
 			si.poll();
+			pressAllButtons();
 			Log.d(TAG, "poll");
 			try {
 				Thread.sleep(2000);
@@ -148,6 +149,18 @@ public class BluetoothHandler extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private void pressAllButtons() {
+		for (int i = 0; i < 20; i++) {
+			si.send((byte) i, true);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			si.send((byte) i, false);
 		}
 	}
 	
