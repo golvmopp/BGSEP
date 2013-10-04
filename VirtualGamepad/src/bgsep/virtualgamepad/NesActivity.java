@@ -17,11 +17,11 @@ public class NesActivity extends Activity implements Observer {
 		setContentView(R.layout.activity_nes);
 		
 		ImageView 		imageAbutton, imageBbutton;
-		imageAbutton = (ImageView)findViewById(R.id.imageAbutton);
-		imageBbutton = (ImageView)findViewById(R.id.imageBbutton);
-		new Button(imageAbutton, R.drawable.a_button, R.drawable.a_button_pressed,
+		imageAbutton = (ImageView)findViewById(R.id.nes_a_button);
+		imageBbutton = (ImageView)findViewById(R.id.nes_b_button);
+		new Button(imageAbutton, R.drawable.nes_a_button, R.drawable.nes_a_button_pressed,
 				45, this);
-		new Button(imageBbutton, R.drawable.b_button, R.drawable.b_button_pressed,
+		new Button(imageBbutton, R.drawable.nes_b_button, R.drawable.nes_b_button_pressed,
 				46, this);
 		
 	}
