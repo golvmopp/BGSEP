@@ -43,9 +43,8 @@ public class MainActivity extends Activity implements Observer {
 		SenderImpl si = new SenderImpl(bh);
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
-		Intent i = new Intent(this, GcActivity.class);
-		startActivity(i);
-		//finish();
+		//Intent i = new Intent(this, GcActivity.class);
+		//startActivity(i);
 
 	}
 
@@ -53,12 +52,27 @@ public class MainActivity extends Activity implements Observer {
 	public void update(Observable o, Object obj) {
 		if(o instanceof Button) {
 			Button button = (Button)o;
-			
+			Intent i;
 			if(button.isPressed())
 				button.getButtonView().setImageResource(button.getPressedDrawableID());
 			
 			else {
-				
+				switch(button.getButtonID()) {
+				case 45:
+					i = new Intent(this, NesActivity.class);
+					startActivity(i);
+					break;
+				case 46:
+					i = new Intent(this, GcActivity.class);
+					startActivity(i);
+					break;
+				case 47:
+					/*i = new Intent(this, NesActivity.class);
+					startActivity(i);*/
+					break;
+				default:
+					break;
+				}
 				button.getButtonView().setImageResource(button.getUnPressedDrawableID());
 			}
 				
@@ -81,19 +95,16 @@ public class MainActivity extends Activity implements Observer {
 	        case R.id.action_nes:
 	        	i = new Intent(this, NesActivity.class);
 	    		startActivity(i);
-	            finish();
 	            return true;
 	            
 	        case R.id.action_gc:
 	        	i = new Intent(this, GcActivity.class);
 	    		startActivity(i);
-	            finish();
 	            return true;
 	        
 	        case R.id.action_ps:
 	        	i = new Intent(this, PsActivity.class);
 	    		startActivity(i);
-	            finish();
 	            return true;
 	            
 	        default:
