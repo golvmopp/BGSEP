@@ -39,7 +39,7 @@ public class Protocol {
     public static final byte MESSAGE_TYPE_NAME = 0X03;
     public static final byte MESSAGE_TYPE_POLL = 0X04;
 
-    public static final String SERVER_UUID = "27012f0c68af4fbf8dbe6bbaf7aa432a";
+    public static final String SERVER_UUID = "27012f0c-68af-4fbf-8dbe-6bbaf7aa432a";
 
 	
     
