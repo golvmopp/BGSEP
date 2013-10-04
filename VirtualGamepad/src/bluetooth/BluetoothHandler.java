@@ -69,12 +69,14 @@ public class BluetoothHandler extends Thread {
 			Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
 			for(BluetoothDevice d : adapter.getBondedDevices()){
 				Log.d(TAG, "\t" + d.getName());
-				for (ParcelUuid uuid : d.getUuids()) {
+				serverFound = true;
+				/*for (ParcelUuid uuid : d.getUuids()) {
+					Log.d(TAG, "UUID:" + uuid.toString());
 					if (uuid.toString().equals(ExpectedUUID.toString())) {
 						serverFound = true;
 						Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
 					}
-				}
+				}*/
 				if (serverFound) {
 					Log.d(TAG, "Connecting to server..");	
 					connect(d.getAddress());

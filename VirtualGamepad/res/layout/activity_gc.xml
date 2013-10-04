@@ -37,7 +37,7 @@
 
     </RelativeLayout>
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/gc_start_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -48,7 +48,7 @@
             android:src="@drawable/gc_start_button" />
         
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/gc_a_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -59,7 +59,7 @@
         android:src="@drawable/gc_a_button" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/gc_b_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
   		android:layout_alignParentRight="true"
@@ -69,7 +69,7 @@
         android:src="@drawable/gc_b_button" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/gc_x_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -80,7 +80,7 @@
         android:src="@drawable/gc_x_button" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/gc_y_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"

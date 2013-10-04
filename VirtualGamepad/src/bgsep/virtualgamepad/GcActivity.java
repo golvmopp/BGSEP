@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.Observable;
 import java.util.Observer;
 
+import bgsep.communication.Communication;
+import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
 import bgsep.model.KeyCode;
 import bgsep.wifi.Client;
@@ -15,6 +17,7 @@ public class GcActivity extends Activity implements Observer {
 
 	private boolean isInitialized;
 	private JoystickHandler gcJoystick;
+	private Button	aButton, bButton, xButton, yButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +38,30 @@ public class GcActivity extends Activity implements Observer {
 			ImageView stick 	= (ImageView)findViewById(R.id.gc_joystick);
 			
 			gcJoystick = new JoystickHandler(boundary, stick);
-			gcJoystick.setLeftRightKeyCode(KeyCode.VK_LEFT, KeyCode.VK_RIGHT);
-			gcJoystick.setUpDownKeyCode(KeyCode.VK_UP, KeyCode.VK_DOWN);
 			gcJoystick.addObserver(this);
 			
-			Client networkClient = new Client();
-			gcJoystick.addObserver(networkClient);
+			///////
+			ImageView aImageView = (ImageView)findViewById(R.id.gc_a_button);
+			ImageView bImageView = (ImageView)findViewById(R.id.gc_b_button);
+			ImageView xImageView = (ImageView)findViewById(R.id.gc_x_button);
+			ImageView yImageView = (ImageView)findViewById(R.id.gc_y_button);
+			
+			aButton = new Button(aImageView, R.drawable.gc_a_button, R.drawable.gc_a_button_pressed, 
+					0, this);
+			bButton = new Button(bImageView, R.drawable.gc_b_button, R.drawable.gc_b_button_pressed, 
+					1, this);
+			xButton = new Button(xImageView, R.drawable.gc_x_button, R.drawable.gc_x_button_pressed, 
+					2, this);
+			yButton = new Button(yImageView, R.drawable.gc_y_button, R.drawable.gc_y_button_pressed, 
+					3, this);
+			
+			Communication comm = Communication.getInstance();
+			
+			aButton.addObserver(comm);
+			bButton.addObserver(comm);
+			xButton.addObserver(comm);
+			yButton.addObserver(comm);
+			
 			
 			isInitialized = true;
 		}
@@ -51,7 +72,7 @@ public class GcActivity extends Activity implements Observer {
 	@Override
 	public void update(Observable o, Object data) {
 		// Joystick movement handling
-		if(o instanceof JoystickHandler && !(data instanceof ByteBuffer)) {
+		if(o instanceof JoystickHandler && !(data instanceof Boolean)) {
 			JoystickHandler joystick = (JoystickHandler)o;
 			ImageView stick = joystick.getStick();
 			ImageView boundary = joystick.getBoundary();
@@ -59,5 +80,15 @@ public class GcActivity extends Activity implements Observer {
 			stick.setX((joystick.getX() * boundary.getWidth()/2) + boundary.getLeft() + boundary.getWidth()/2-stick.getWidth()/2);
 			stick.setY((joystick.getY() * boundary.getHeight()/2 * -1) + boundary.getTop() + boundary.getHeight()/2-stick.getHeight()/2);
 		}
+		else if(o instanceof Button) {
+			Button button = (Button)o;
+			
+			if(button.isPressed())
+				button.getButtonView().setImageResource(button.getPressedDrawableID());
+			else
+				button.getButtonView().setImageResource(button.getUnPressedDrawableID());
+				
+		}
+		
 	}
 }

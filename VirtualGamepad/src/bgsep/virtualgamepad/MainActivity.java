@@ -1,6 +1,8 @@
 package bgsep.virtualgamepad;
 
+import bgsep.communication.Communication;
 import bluetooth.BluetoothHandler;
+import bluetooth.SenderImpl;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -14,9 +16,12 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		BluetoothHandler bh = new BluetoothHandler(this);
 		bh.start();
+		SenderImpl si = new SenderImpl(bh);
+		Communication communication = Communication.getInstance();
+		communication.setSender(si);
 		Intent i = new Intent(this, GcActivity.class);
 		startActivity(i);
-		finish();
+		//finish();
 	}
 
 	@Override

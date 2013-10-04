@@ -10,8 +10,20 @@ import bluetooth.Sender;
 public class Communication implements Observer{
 	
 	private Sender sender;
+	private static Communication comm;
 
-	public Communication(Sender sender) {
+	private Communication() {
+		
+	}
+	
+	public static Communication getInstance() {
+		if(comm == null)
+			comm = new Communication();
+		
+		return comm;
+	}
+	
+	public void setSender(Sender sender) {
 		this.sender = sender;
 	}
 
@@ -21,6 +33,7 @@ public class Communication implements Observer{
 			Button button = (Button)o;
 			sender.send((byte)button.getButtonID(), button.isPressed());
 		}
+		
 	}
 	
 	
