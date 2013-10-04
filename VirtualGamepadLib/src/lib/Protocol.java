@@ -13,6 +13,7 @@ package lib;
      *<p>
      *All messages must use start byte 0x42 and stop byte 0x24.
      *If any of these bytes are used inside a message they are escaped with 0xAC.
+     *If an escape byte should be interpreted as a normal byte it should be escaped.
      *</p>
      *<i>Message types:</i>
      * <br>

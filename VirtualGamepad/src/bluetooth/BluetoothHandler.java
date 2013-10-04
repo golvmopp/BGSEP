@@ -48,8 +48,7 @@ public class BluetoothHandler {
 				e.printStackTrace();
 			}
 			Log.d(TAG, "Sending data..");
-			si.send((byte) 0x03, true);
-			
+			si.send((byte) 0x03, true);	
 			si.send((byte) 0x04, 0.4f);
 			si.send((byte) 0x04, -0.6f);
 			si.send((byte) 0x03, false);
