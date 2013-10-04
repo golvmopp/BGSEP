@@ -23,14 +23,20 @@
         android:name="android.permission.READ_LOGS"
     ></uses-permission>                
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="15"
         android:targetSdkVersion="18" />
+    
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+    android:targetPackage="bgsep.virtualgamepad"
+    android:label="testingtesing 123 123" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+        
+        <uses-library android:name="android.test.runner" />
         <activity
             android:name="bgsep.virtualgamepad.MainActivity"
             android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
