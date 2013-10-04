@@ -45,6 +45,10 @@ public class Protocol {
     public static final byte MESSAGE_TYPE_NAME = 0X03;
     public static final byte MESSAGE_TYPE_POLL = 0X04;
 
+    public static final byte START = 0x42;
+    public static final byte STOP = 0x24;
+    public static final byte ESCAPE = (byte) 0xAC;
+    
     public static final String SERVER_UUID = "27012f0c-68af-4fbf-8dbe-6bbaf7aa432a";
 
 	
