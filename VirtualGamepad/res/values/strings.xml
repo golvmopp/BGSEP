@@ -5,5 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="NESname">NES</string>
+    <string name="action_nes">NES</string>
+    <string name="action_gc">Gamecube</string>
+    <string name="action_ps">Playstation</string>
 
 </resources>
