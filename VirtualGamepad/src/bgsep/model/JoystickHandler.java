@@ -12,15 +12,12 @@ import android.widget.ImageView;
 
 public class JoystickHandler extends Joystick {
 
-	private boolean upDownEnabled, leftRightEnabled;
-	private int[]	upDownKeyCode, leftRightKeyCode;
-	private int		upDownIndication, leftRightIndication;
+	private int 	joystickID ;
 	private float	prevPosX, prevPosY;
+	private boolean leftRightEnabled, upDownEnabled;
+	private boolean indicateKeyPress;
 	
-	private final int 	LEFT_INDICATION 	= 0,
-						RIGHT_INDICATION 	= 1,
-						UP_INDICATION 		= 0,
-						DOWN_INDICATION 	= 1;
+	private final float 	SENSITIVITY = 0.2f;
 	
 	/**
 	 * Takes a positioned boundary ImageView and a positioned
@@ -29,14 +26,31 @@ public class JoystickHandler extends Joystick {
 	 */
 	public JoystickHandler(ImageView boundary, ImageView stick) {
 		super(boundary, stick);
-		upDownEnabled = leftRightEnabled = false;
-		upDownKeyCode = new int[2];
-		leftRightKeyCode = new int[2];
-		upDownKeyCode[0] = upDownKeyCode[1] =
-				leftRightKeyCode[0] = leftRightKeyCode [1] = 0;
-		upDownIndication = leftRightIndication = 0;
-
+		leftRightEnabled = upDownEnabled = false;
 		prevPosX = prevPosY = 0;
+		indicateKeyPress = false;
+	}
+	
+	
+
+	public void setLeftRightEnabled(boolean leftRightEnabled) {
+		this.leftRightEnabled = leftRightEnabled;
+	}
+
+
+
+	public void setUpDownEnabled(boolean upDownEnabled) {
+		this.upDownEnabled = upDownEnabled;
+	}
+
+
+
+	public int getJoystickID() {
+		return joystickID;
+	}
+
+	public void setJoystickID(int joystickID) {
+		this.joystickID = joystickID;
 	}
 
 	/**
@@ -52,79 +66,58 @@ public class JoystickHandler extends Joystick {
 		notifyObservers();
 		
 		if(leftRightEnabled) {
-			ByteBuffer keyCodeBB = ByteBuffer.allocate(32);
 			// Check to see if an update to server is necessary
 			// according to the specified sensitivity
-			if((getX() >= 0.5 && prevPosX >= 0.5) || 
-					(getX() <= -0.5 && prevPosX <= -0.5) ||
-					((getX() < 0.5 && getX() > -0.5) && 
-							(prevPosX < 0.5 && prevPosX > -0.5)))
-				prevPosX = getX();
-			else { // Update necessary
+			float currPosX = getX();
+			if((currPosX >= prevPosX + SENSITIVITY) || 
+					(currPosX <= prevPosX - SENSITIVITY)) {
+				prevPosX = currPosX;
 			
-				// Determine if the joystick indicates left or right
-				if(getX() < 0) // Indicate left
-					leftRightIndication = LEFT_INDICATION;
-				else if(getX() > 0) // Indicate right
-					leftRightIndication = RIGHT_INDICATION;
-			
-				keyCodeBB.putInt(leftRightKeyCode[leftRightIndication]);
-			
-				// Set first bit to 1 to indicate a keyPress, else its 0 by default
+				// Check to see if it should indicate a keyPress or keyRelease
 				// and indicates a keyRelease
-				if(getX() >= 0.5 || getX() <= -0.5)
-					keyCodeBB.array()[0] = 1;
-			
-				prevPosX = getX();
-			
-				// Update the server
-				setChanged();
-				notifyObservers(keyCodeBB);
+				if(indicateKeyPress && (currPosX > -SENSITIVITY && currPosX < SENSITIVITY)) {
+					indicateKeyPress = false;
+					notifyComm();
+				}
+				else {
+					indicateKeyPress = true;
+					notifyComm();							
+				}
 			}
 		}
 		
 		if(upDownEnabled) {
-			ByteBuffer keyCodeBB = ByteBuffer.allocate(32);
 			// Check to see if an update to server is necessary
 			// according to the specified sensitivity
-			if((getY() >= 0.5 && prevPosY >= 0.5) || 
-					(getY() <= -0.5 && prevPosY <= -0.5) ||
-					((getY() < 0.5 && getY() > -0.5) && 
-							(prevPosY < 0.5 && prevPosY > -0.5)))
-				prevPosY = getY();
-			else { // Update necessary
-				
-				// Determine if the joystick indicates up or down
-				if(getY() < 0) // Indicate down
-					upDownIndication = DOWN_INDICATION;
-				else if(getY() > 0) // Indicate up
-					upDownIndication = UP_INDICATION;
+			float currPosY = getY();
+			if((currPosY >= prevPosY + SENSITIVITY) || 
+					(currPosY <= prevPosY - SENSITIVITY)) {
+				prevPosY = currPosY;
 			
-				keyCodeBB.putInt(upDownKeyCode[upDownIndication]);
-			
-				// Set first bit to 1 to indicate a keyPress, else its 0 by default
+				// Check to see if it should indicate a keyPress or keyRelease
 				// and indicates a keyRelease
-				if(getY() >= 0.5 || getY() <= -0.5)
-					keyCodeBB.array()[0] = 1;
-			
-				prevPosY = getY();
-			
-				// Update the server
-				setChanged();
-				notifyObservers(keyCodeBB);
+				if(indicateKeyPress && (currPosY > -SENSITIVITY && currPosY < SENSITIVITY)) {
+					indicateKeyPress = false;
+					notifyComm();
+				}
+				else {
+					indicateKeyPress = true;
+					notifyComm();							
+				}
 			}
 		}
 	}
 	
-	public void setLeftRightKeyCode(int leftKeyCode, int rightKeyCode) {
-		leftRightKeyCode[LEFT_INDICATION] = leftKeyCode;
-		leftRightKeyCode[RIGHT_INDICATION] = rightKeyCode;
+	private void notifyComm() {
+		setChanged();
+		notifyObservers(indicateKeyPress);
+	}
+	
+	public void setLeftRightEnabled() {
 		leftRightEnabled = true;
 	}
 	
-	public void setUpDownKeyCode(int upKeyCode, int downKeyCode) {
-		upDownKeyCode[UP_INDICATION] = upKeyCode;
-		upDownKeyCode[DOWN_INDICATION] = downKeyCode;
+	public void setUpDownEnabled() {
 		upDownEnabled = true;
 	}
 
