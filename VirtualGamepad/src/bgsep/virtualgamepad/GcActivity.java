@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import bgsep.communication.Communication;
+import bgsep.communication.CommunicationNotifier;
 import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
 import bgsep.model.KeyCode;
@@ -40,8 +41,13 @@ public class GcActivity extends Activity implements Observer {
 			ImageView boundary  = (ImageView)findViewById(R.id.gc_joystickboundary);
 			ImageView stick 	= (ImageView)findViewById(R.id.gc_joystick);
 			
+			Communication comm = Communication.getInstance();
+			
 			gcJoystick = new JoystickHandler(boundary, stick);
+			gcJoystick.setLeftRightJoystickID(4, 5);
+			gcJoystick.setUpDownJoystickID(6, 7);
 			gcJoystick.addObserver(this);
+			gcJoystick.addObserver(comm);
 			
 			///////
 			ImageView aImageView = (ImageView)findViewById(R.id.gc_a_button);
@@ -58,7 +64,7 @@ public class GcActivity extends Activity implements Observer {
 			yButton = new Button(yImageView, R.drawable.gc_y_button, R.drawable.gc_y_button_pressed, 
 					3, this);
 			
-			Communication comm = Communication.getInstance();
+			
 			
 			aButton.addObserver(comm);
 			bButton.addObserver(comm);
@@ -75,7 +81,7 @@ public class GcActivity extends Activity implements Observer {
 	@Override
 	public void update(Observable o, Object data) {
 		// Joystick movement handling
-		if(o instanceof JoystickHandler && !(data instanceof Boolean)) {
+		if(o instanceof JoystickHandler && !(data instanceof CommunicationNotifier)) {
 			JoystickHandler joystick = (JoystickHandler)o;
 			ImageView stick = joystick.getStick();
 			ImageView boundary = joystick.getBoundary();
