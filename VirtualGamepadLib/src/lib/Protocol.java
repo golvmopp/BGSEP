@@ -4,10 +4,16 @@ package lib;
      * <i>Messages:</i>
      * <br>
      * <table>
-     * <tr><td>0</td><td>first byte specifies message type</td></tr>
-     * <tr><td>1</td><td>the following bytes are message type specific</td></tr>
+     * <tr><td>0</td><td>start byte (0x42)</td></tr>
+     * <tr><td>1</td><td>second byte specifies message type</td></tr>
+     * <tr><td>2..n</td><td>the following bytes are message type specific</td></tr>
+     * <tr><td>n</td><td>stop byte (0x24)</td></tr>
      *</table>
      *<br>
+     *<p>
+     *All messages must use start byte 0x42 and stop byte 0x24.
+     *If any of these bytes are used inside a message they are escaped with 0xAC.
+     *</p>
      *<i>Message types:</i>
      * <br>
      * <table>
