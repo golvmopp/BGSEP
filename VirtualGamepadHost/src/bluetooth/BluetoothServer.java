@@ -2,11 +2,14 @@ package bluetooth;
 
 import java.io.IOException;
 import java.util.HashSet;
+
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnectionNotifier;
+
+import util.ClientIdGenerator;
 
 public class BluetoothServer {
 
@@ -68,6 +71,8 @@ public class BluetoothServer {
 	
 	public static void removeClient(BluetoothClient client){
 		clients.remove(client);
+		ClientIdGenerator.getInstance().removeClient(client.getClientId());
+
 	}
 
 	public static HashSet<BluetoothClient> getClients() {
