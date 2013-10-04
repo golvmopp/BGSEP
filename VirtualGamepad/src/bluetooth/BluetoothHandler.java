@@ -21,9 +21,10 @@ import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.ParcelUuid;
 import android.util.Log;
 	
-public class BluetoothHandler {
+public class BluetoothHandler extends Thread {
 	
 	private Activity activity;
 	private static final String TAG = "Gamepad";
@@ -31,40 +32,54 @@ public class BluetoothHandler {
 	private BluetoothAdapter adapter;
 	private BluetoothSocket socket;
 	private OutputStream outputStream;
+	private UUID ExpectedUUID;
+	private SenderImpl si;
 	
 	public BluetoothHandler(Activity activity) {
+		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
 		this.activity = activity;
+		si = new SenderImpl(this);
 		initBluetoothAdapter();
 		connectToBondedDevice();
 		startSendingTestData();
 	}
 	
 	private void startSendingTestData() {
-		SenderImpl si = new SenderImpl(this);
-		while (true) {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			Log.d(TAG, "Sending data..");
-			si.send((byte) 0x03, true);	
-			si.send((byte) 0x04, 0.4f);
-			si.send((byte) 0x04, -0.6f);
-			si.send((byte) 0x03, false);
-			si.send("test");
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+		Log.d(TAG, "Sending data..");
+		si.send((byte) 0x03, true);
+		si.send((byte) 0x04, 0.4f);
+		si.send((byte) 0x04, -0.6f);
+		si.send((byte) 0x03, false);
+		si.send((byte) 0xAC, true);
+		si.send((byte) 0x42, true);
+		si.send((byte) 0x24, true);
 	}
 	
 	private void connectToBondedDevice() {
-		if (adapter.getBondedDevices() != null && adapter.getBondedDevices().size() != 0){
+		boolean serverFound = false;
+		if (adapter.getBondedDevices() != null && adapter.getBondedDevices().size() != 0) {
 			Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
 			for(BluetoothDevice d : adapter.getBondedDevices()){
 				Log.d(TAG, "\t" + d.getName());
-				Log.d(TAG, "Connecting to " + d.getName());
-				connect(d.getAddress());
+				for (ParcelUuid uuid : d.getUuids()) {
+					if (uuid.toString().equals(ExpectedUUID.toString())) {
+						serverFound = true;
+						Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
+					}
+				}
+				if (serverFound) {
+					Log.d(TAG, "Connecting to server..");	
+					connect(d.getAddress());
+					return;
+				}
 			}
 		}
+		Log.d(TAG, "no servers found!");
 	}
 	
 	private void initBluetoothAdapter() {
@@ -85,7 +100,7 @@ public class BluetoothHandler {
 		}
 	}
 	
-	public void send(byte [] data) {
+	public synchronized void send(byte[] data) {
 		try {
 			outputStream.write(data);
 		} catch (IOException e) {
@@ -107,7 +122,7 @@ public class BluetoothHandler {
         }
         
         try {
-			socket = device.createInsecureRfcommSocketToServiceRecord(java.util.UUID.fromString(Protocol.SERVER_UUID));
+			socket = device.createInsecureRfcommSocketToServiceRecord(ExpectedUUID);
 			socket.connect();
 			outputStream = socket.getOutputStream();
 		} catch (IOException e) {
@@ -121,4 +136,19 @@ public class BluetoothHandler {
 //        mBluetoothDeviceAddress = address;
         //mConnectionState = STATE_CONNECTING;
     }
+	
+	@Override
+	public void run() {
+		while (!interrupted()) {
+			si.poll();
+			Log.d(TAG, "poll");
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }

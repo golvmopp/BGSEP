@@ -1,13 +1,16 @@
 package bluetooth;
 
 import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import android.util.Log;
 import lib.Protocol;
 
 public class SenderImpl implements Sender {
 
-	BluetoothHandler bh;
+	private BluetoothHandler bh;
+	private static final String TAG = "Gamepad";
 	
 	public SenderImpl(BluetoothHandler bh) {
 		this.bh = bh;
@@ -25,12 +28,15 @@ public class SenderImpl implements Sender {
 	@Override
 	public boolean send(byte id, float value) {
 		int floatbits = Float.floatToIntBits(value);
-		byte[] data = new byte [5];
+		Log.d(TAG, "floatbits == " + Integer.toBinaryString(floatbits));
+		byte[] data = new byte[5];
 		data[0] = id;
-		data[1] = (byte) ((floatbits >> 24) & 0xFF);
-		data[2] = (byte) ((floatbits >> 16) & 0xFF);
-		data[3] = (byte) ((floatbits >> 8) & 0xFF);
-		data[4] = (byte) (floatbits & 0xFF);
+		//data[1] = (byte) ((floatbits >> 24) & 0xFF);
+		//data[2] = (byte) ((floatbits >> 16) & 0xFF);
+		//data[3] = (byte) ((floatbits >> 8) & 0xFF);
+		//data[4] = (byte) (floatbits & 0xFF);
+		byte[] floatArray = ByteBuffer.allocate(4).putFloat(value).array();
+		System.arraycopy(floatArray, 0, data, 1, 4);
 		send(data, Protocol.MESSAGE_TYPE_JOYSTICK);
 		return false;
 	}
@@ -42,21 +48,45 @@ public class SenderImpl implements Sender {
 		return false;
 	}
 	
-	private byte[] insertEscapeBytes(byte[] data) {
-		
-		for (int i = 0; i < data.length; i++) {
-			
-		}
-		return 
+	private boolean shouldBeEscaped(byte b) {
+		return b == Protocol.ESCAPE || b == Protocol.START || b == Protocol.STOP;
 	}
 	
-	private void send(byte[] data, byte type) {
-		byte[] allData = new byte[data.length + 3]; 
+	private byte[] insertEscapeBytes(byte[] data) {
+		byte[] escapingBytes = new byte[1000];
+		int offset = 0;
+		for (int i = 0; i < data.length; i++) {
+			if (shouldBeEscaped(data[i]) && i > 0 && i < data.length - 1) {
+				escapingBytes[i + offset] = Protocol.ESCAPE;
+				offset++;
+			}
+			escapingBytes[i + offset] = data[i];
+		}
+		byte[] escapedBytes = new byte[data.length + offset];
+		System.arraycopy(escapingBytes, 0, escapedBytes, 0, escapedBytes.length);
+		return escapedBytes;
+	}
+	
+	private synchronized void send(byte[] data, byte type) {
+		byte[] allData = new byte[data.length + 3];
 		allData[0] = Protocol.START;
 		allData[1] = type;
-		System.arraycopy(data, 0, allData, 1, data.length);
-		allData[length + 2] = Protocol.STOP;
-		bh.send(data);
+		System.arraycopy(data, 0, allData, 2, data.length);
+		allData[data.length + 2] = Protocol.STOP;
+		logData(allData);
+		bh.send(insertEscapeBytes(allData));
+	}
+	
+	private void logData(byte[] data) {
+		String dataString = "";
+		for (int i = 0; i < data.length; i++) {
+			dataString += ((int) data[i]) + " "; 
+		}
+		Log.d(TAG, dataString);
+	}
+	
+	public void poll() {
+		send(new byte[0], Protocol.MESSAGE_TYPE_POLL);
 	}
 
 }
