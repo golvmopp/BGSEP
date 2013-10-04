@@ -23,7 +23,7 @@
         android:name="android.permission.READ_LOGS"
     ></uses-permission>                
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="15"
         android:targetSdkVersion="18" />
 
     <application
