@@ -105,7 +105,7 @@ public class BluetoothHandler extends Thread {
 	public synchronized void send(byte[] data) {
 		try {
 			outputStream.write(data);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Log.d(TAG, "Unable to send data. The server seems to be down, stopping communication..");
 			stopped = true;
 		}
