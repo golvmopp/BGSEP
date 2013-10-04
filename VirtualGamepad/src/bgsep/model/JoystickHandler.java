@@ -1,9 +1,7 @@
 package bgsep.model;
 
-import java.nio.ByteBuffer;
-
-import bgsep.communication.CommunicationNotifier;
 import android.widget.ImageView;
+import bgsep.communication.CommunicationNotifier;
 
 /**
  * Subclass of Joystick that handles joystick movements.
