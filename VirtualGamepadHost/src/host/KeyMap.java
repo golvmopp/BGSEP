@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public final class KeyMap {
 	private static ArrayList<Integer> keyCodes;
 	
-	private static final int KEYS_PER_CLIENT = 20;
+	private static final int KEYS_PER_CLIENT = 25;
 	
 	private static final int MY_COMPUTER = 182;
 	private static final int MY_CALCULATOR = 183;
@@ -14,6 +14,12 @@ public final class KeyMap {
 
 	static {
 		keyCodes = new ArrayList<Integer>();
+		for (int i = 0; i <= 7; i++) {
+			keyCodes.add(i);
+		}
+		for (int i = 21; i <= 26; i++) {
+			keyCodes.add(i);
+		}
 		for (int i = 124; i <= 249; i++) {
 			if (i != MY_COMPUTER && i != MY_CALCULATOR && i != NUM_LOCK && i != SCROLL_LOCK) { 
 				keyCodes.add(i);
