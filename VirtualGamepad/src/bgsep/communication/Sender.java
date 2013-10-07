@@ -1,8 +1,9 @@
-package bluetooth;
+package bgsep.communication;
 
 /**
  * 
- * Includes the methods for sending data to the server
+ * Includes the methods for sending data to the server.
+ * This interface can be used for all communication implementations for example Bluetooth or wifi.
  *
  */
 public interface Sender {
