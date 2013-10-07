@@ -5,7 +5,6 @@ import java.util.Observer;
 
 import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
-import bluetooth.Sender;
 
 
 public class Communication implements Observer{

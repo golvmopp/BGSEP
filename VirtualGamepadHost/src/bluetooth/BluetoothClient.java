@@ -1,22 +1,17 @@
 package bluetooth;
 
 import host.KeyMap;
-
 import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 import lib.Protocol;
 import util.ClientIdGenerator;
 
 public class BluetoothClient extends Thread {
 	private int clientId;
 	private String clientName = "";
-
 	private Robot robot;
 	private DataInputStream dis;
 	private boolean running;
@@ -32,26 +27,21 @@ public class BluetoothClient extends Thread {
 		lastPoll = System.currentTimeMillis();
 		robot = new Robot();
 		joyStick = new HashMap<Integer, Boolean>();
-
 	}
 
 	@Override
 	public void run() {
-		super.run();
 		running = true;
 		ArrayList<Byte> data = new ArrayList<Byte>();
 		boolean escape = false;
 		boolean arrayStopped = true;
 
 		while (!interrupted() && running) {
-
 			try {
 				byte[] byteArray = new byte[1000];
-
 				int len = dis.read(byteArray);
 				for (int i = 0; i < len; i++) {
 					byte b = byteArray[i];
-
 					if (arrayStopped) {
 						if (b == Protocol.START) {
 							if (escape) {
@@ -62,7 +52,6 @@ public class BluetoothClient extends Thread {
 							}
 						}
 					} else {
-
 						if (!(b == Protocol.STOP || b == Protocol.ESCAPE)) {
 							data.add(b);
 							if (escape) {
@@ -113,66 +102,68 @@ public class BluetoothClient extends Thread {
 		running = false;
 	}
 
+	private void handleButtonEvent(ArrayList<Byte> data) {
+		try {
+			if (data.get(2) == 0x01) {
+				System.out.println("Pressing key " +
+				KeyMap.getKeyCode(clientId, data.get(1)));
+				robot.keyPress(KeyMap.getKeyCode(clientId, data.get(1)));
+			} else {
+				System.out.println("Releasing key " +
+				KeyMap.getKeyCode(clientId, data.get(1)));
+				robot.keyRelease(KeyMap.getKeyCode(clientId, data.get(1)));
+			}
+		} catch (IllegalArgumentException e) {
+			System.out.println("Failed getting key code: " + e.getMessage());
+		}
+	}
+	
+	private void handleJoystickEvent(ArrayList<Byte> data) {
+		byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
+		float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
+		int joyStickId = data.get(1);
+		this.joyStick.put(joyStickId, false);
+	}
+	
+	private void handleCloseEvent(ArrayList<Byte> data) {
+		byte[] stringBytes = new byte[data.size() - 1];
+		for (int i = 1; i < data.size(); i++) {
+			stringBytes[i - 1] = data.get(i);
+		}
+		String message = new String(stringBytes);
+		System.out.println("Client closes connection: " + message);
+		disconnect();
+	}
+	
+	private void handleNameEvent(ArrayList<Byte> data) {
+		byte[] stringBytes2 = new byte[data.size() - 1];
+		for (int i = 1; i < data.size(); i++) {
+			stringBytes2[i - 1] = data.get(i);
+		}
+		String name = new String(stringBytes2);
+		System.out.println("Client name: " + name);
+		setClientName(name);
+	}
+	
 	private void interpretByteArray(ArrayList<Byte> data) throws IndexOutOfBoundsException {
 		int id = data.get(0);
-		//System.out.println("ID " + id);
 		switch (id) {
-
 		case Protocol.MESSAGE_TYPE_BUTTON:
-			try {
-				if (data.get(2) == 0x01) {
-					System.out.println("Pressing key " +
-					KeyMap.getKeyCode(clientId, data.get(1)));
-					robot.keyPress(KeyMap.getKeyCode(clientId, data.get(1)));
-				} else {
-					System.out.println("Releasing key " +
-					KeyMap.getKeyCode(clientId, data.get(1)));
-					robot.keyRelease(KeyMap.getKeyCode(clientId, data.get(1)));
-				}
-				break;
-			} catch (IllegalArgumentException e) {
-				System.out.println("Failed getting key code: " + e.getMessage());
-			}
-
-		case Protocol.MESSAGE_TYPE_JOYSTICK:
-			byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
-			float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
-			
-			int joyStickId = data.get(1);
-			this.joyStick.put(joyStickId, false);
-			// System.out.println("axis " + data.get(1) + " moved to position "
-			// + position);
+			handleButtonEvent(data);
 			break;
-
+		case Protocol.MESSAGE_TYPE_JOYSTICK:
+			handleJoystickEvent(data);
+			break;
 		case Protocol.MESSAGE_TYPE_CLOSE:
-
-			byte[] stringBytes = new byte[data.size() - 1];
-			for (int i = 1; i < data.size(); i++) {
-				stringBytes[i - 1] = data.get(i);
-			}
-
-			String message = new String(stringBytes);
-
-			System.out.println("Client closes connection: " + message);
-			disconnect();
-
+			handleCloseEvent(data);
 			break;
 		case Protocol.MESSAGE_TYPE_NAME:
-			byte[] stringBytes2 = new byte[data.size() - 1];
-			for (int i = 1; i < data.size(); i++) {
-				stringBytes2[i - 1] = data.get(i);
-			}
-
-			String name = new String(stringBytes2);
-			System.out.println("Client name: " + name);
-			setClientName(name);
-
+			handleNameEvent(data);
 			break;
 		case Protocol.MESSAGE_TYPE_POLL:
 			lastPoll = System.currentTimeMillis();
 			break;
 		}
-
 	}
 
 	public int getClientId() {
