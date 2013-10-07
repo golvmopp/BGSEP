@@ -25,10 +25,11 @@ public class BluetoothHandler extends Thread {
 	public BluetoothHandler(Activity activity) {
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
 		this.activity = activity;
-		si = new SenderImpl(this);
-		initBluetoothAdapter();
-		connectToServer();
 		stopped = false;
+		si = new SenderImpl(this);
+		if (initBluetoothAdapter()) {
+			connectToServer();
+		}
 	}
 	
 	private void connectToServer() {
@@ -55,11 +56,12 @@ public class BluetoothHandler extends Thread {
 		Log.d(TAG, "no servers found!");
 	}
 	
-	private void initBluetoothAdapter() {
+	private boolean initBluetoothAdapter() {
 		adapter = BluetoothAdapter.getDefaultAdapter();
 		if (adapter == null) {
-			Log.d(TAG,"No bluetooth adapter detected!");
-			return;
+			Log.d(TAG,"No bluetooth adapter detected! Stopping thread!");
+			stopped = true;
+			return false;
 		} else {
 			Log.d(TAG,"Bluetooth adapter \"" + adapter.getName() + "\" detected");
 		}
@@ -70,6 +72,7 @@ public class BluetoothHandler extends Thread {
 			Log.d(TAG,"Enabling bluetooth device..");
 			Log.d(TAG,adapter.enable() ? "Success" : "Failed");
 		}
+		return true;
 	}
 	
 	public synchronized void send(byte[] data) {
