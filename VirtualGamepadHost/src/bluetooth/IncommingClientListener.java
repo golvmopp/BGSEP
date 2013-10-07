@@ -16,8 +16,6 @@ public class IncommingClientListener extends Thread {
 
 	@Override
 	public void run() {
-		super.run();
-
 		while (!interrupted()) {
 			try {
 				StreamConnection conn = server.acceptAndOpen();

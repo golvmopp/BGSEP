@@ -1,12 +1,15 @@
 package bluetooth;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-
+import bgsep.communication.Sender;
 import android.util.Log;
 import lib.Protocol;
 
+/**
+ * 
+ * This class implements Sender using bluetooth.
+ *
+ */
 public class SenderImpl implements Sender {
 
 	private BluetoothHandler bh;
@@ -52,12 +55,19 @@ public class SenderImpl implements Sender {
 		return b == Protocol.ESCAPE || b == Protocol.START || b == Protocol.STOP;
 	}
 	
+	/**
+	 * This method takes a byte array and inserts the ESCAPE byte
+	 * before all occurrences of START, STOP and ESCAPE except from
+	 * the first START and the last STOP.
+	 * @param data the unescaped array
+	 * @return the escaped aray
+	 */
 	private byte[] insertEscapeBytes(byte[] data) {
 		byte[] escapingBytes = new byte[1000];
 		int offset = 0;
 		for (int i = 0; i < data.length; i++) {
-			if (shouldBeEscaped(data[i]) && i > 0 && i < data.length - 1) {
-				escapingBytes[i + offset] = Protocol.ESCAPE;
+			if (shouldBeEscaped(data[i]) && i > 0 && i < data.length - 1) { //the first and last byte should not be escaped
+				escapingBytes[i + offset] = Protocol.ESCAPE; //prefix the byte with the ESCAPE byte
 				offset++;
 			}
 			escapingBytes[i + offset] = data[i];

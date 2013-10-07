@@ -14,7 +14,7 @@ public final class KeyMap {
 
 	static {
 		keyCodes = new ArrayList<Integer>();
-		for (int i = 0; i <= 7; i++) {
+		for (int i = 1; i <= 7; i++) {
 			keyCodes.add(i);
 		}
 		for (int i = 21; i <= 26; i++) {

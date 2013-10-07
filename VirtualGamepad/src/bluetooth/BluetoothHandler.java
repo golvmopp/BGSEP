@@ -3,33 +3,18 @@ package bluetooth;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
-
 import lib.Protocol;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattServer;
-import android.bluetooth.BluetoothGattServerCallback;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.ParcelUuid;
 import android.util.Log;
-
 	
 public class BluetoothHandler extends Thread {
 	
 	private Activity activity;
 	private static final String TAG = "Gamepad";
-	private BluetoothManager manager;
 	private BluetoothAdapter adapter;
 	private BluetoothSocket socket;
 	private OutputStream outputStream;
@@ -40,36 +25,20 @@ public class BluetoothHandler extends Thread {
 	public BluetoothHandler(Activity activity) {
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
 		this.activity = activity;
-		si = new SenderImpl(this);
-		initBluetoothAdapter();
-		connectToBondedDevice();
 		stopped = false;
-		//startSendingTestData();
-	}
-	
-	private void startSendingTestData() {
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		si = new SenderImpl(this);
+		if (initBluetoothAdapter()) {
+			connectToServer();
 		}
-		Log.d(TAG, "Sending data..");
-		si.send((byte) 0x03, true);
-		si.send((byte) 0x04, 0.4f);
-		si.send((byte) 0x04, -0.6f);
-		si.send((byte) 0x03, false);
-		si.send((byte) 0xAC, true);
-		si.send((byte) 0x42, true);
-		si.send((byte) 0x24, true);
 	}
 	
-	private void connectToBondedDevice() {
+	private void connectToServer() {
 		boolean serverFound = false;
 		if (adapter.getBondedDevices() != null && adapter.getBondedDevices().size() != 0) {
 			Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
 			for(BluetoothDevice d : adapter.getBondedDevices()){
 				Log.d(TAG, "\t" + d.getName());
-				serverFound = true;
+				serverFound = true; // this should only be done if the server program was found but it does not work yet
 				/*for (ParcelUuid uuid : d.getUuids()) {
 					Log.d(TAG, "UUID:" + uuid.toString());
 					if (uuid.toString().equals(ExpectedUUID.toString())) {
@@ -87,11 +56,12 @@ public class BluetoothHandler extends Thread {
 		Log.d(TAG, "no servers found!");
 	}
 	
-	private void initBluetoothAdapter() {
+	private boolean initBluetoothAdapter() {
 		adapter = BluetoothAdapter.getDefaultAdapter();
 		if (adapter == null) {
-			Log.d(TAG,"No bluetooth adapter detected!");
-			return;
+			Log.d(TAG,"No bluetooth adapter detected! Stopping thread!");
+			stopped = true;
+			return false;
 		} else {
 			Log.d(TAG,"Bluetooth adapter \"" + adapter.getName() + "\" detected");
 		}
@@ -102,32 +72,30 @@ public class BluetoothHandler extends Thread {
 			Log.d(TAG,"Enabling bluetooth device..");
 			Log.d(TAG,adapter.enable() ? "Success" : "Failed");
 		}
+		return true;
 	}
 	
 	public synchronized void send(byte[] data) {
 		try {
 			outputStream.write(data);
-		} catch (Exception e) {
-			Log.d(TAG, "Unable to send data. The server seems to be down, stopping communication..");
+		} catch (IOException e) {
+			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
 			stopped = true;
+		} catch (NullPointerException e) {
+			Log.d(TAG, "No connection to server, stopping communication..");
 		}
 	}
 
-	public boolean connect(final String address) {
+	private boolean connect(final String address) {
         if (adapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
         }
-
-
-
         final BluetoothDevice device = adapter.getRemoteDevice(address);
-        
         if (device == null) {
             Log.w(TAG, "Device not found.  Unable to connect.");
             return false;
         }
-        
         try {
 			socket = device.createInsecureRfcommSocketToServiceRecord(ExpectedUUID);
 			socket.connect();
@@ -136,12 +104,6 @@ public class BluetoothHandler extends Thread {
 			e.printStackTrace();
 		}
         return true;
-        // We want to directly connect to the device, so we are setting the autoConnect
-        // parameter to false.
-       // mBluetoothGatt = gattS
-     //   Log.d(TAG, "Trying to create a new connection.");
-//        mBluetoothDeviceAddress = address;
-        //mConnectionState = STATE_CONNECTING;
     }
 	
 	@Override
@@ -154,19 +116,6 @@ public class BluetoothHandler extends Thread {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
-	}
-	
-	private void pressAllButtons() {
-		for (int i = 0; i < 20; i++) {
-			si.send((byte) i, true);
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				Log.d(TAG, "Unable to send data. The server seems to be down. Stopping bluetooth communication..");
-				stopped = true;
-			}
-			si.send((byte) i, false);
 		}
 	}
 }
