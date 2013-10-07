@@ -55,6 +55,13 @@ public class SenderImpl implements Sender {
 		return b == Protocol.ESCAPE || b == Protocol.START || b == Protocol.STOP;
 	}
 	
+	/**
+	 * This method takes a byte array and inserts the ESCAPE byte
+	 * before all occurrences of START, STOP and ESCAPE except from
+	 * the first START and the last STOP.
+	 * @param data the unescaped array
+	 * @return the escaped aray
+	 */
 	private byte[] insertEscapeBytes(byte[] data) {
 		byte[] escapingBytes = new byte[1000];
 		int offset = 0;
