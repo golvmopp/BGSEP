@@ -58,7 +58,7 @@ public class SenderImpl implements Sender {
 	/**
 	 * This method takes a byte array and inserts the ESCAPE byte
 	 * before all occurrences of START, STOP and ESCAPE except from
-	 * the first START and the last STOP.
+	 * the first and last byte.
 	 * @param data the unescaped array
 	 * @return the escaped aray
 	 */

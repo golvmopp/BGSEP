@@ -6,11 +6,11 @@ import java.io.IOException;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
-public class IncommingClientListener extends Thread {
+public class IncomingClientListener extends Thread {
 
 	private StreamConnectionNotifier server;
 
-	public IncommingClientListener(StreamConnectionNotifier server) {
+	public IncomingClientListener(StreamConnectionNotifier server) {
 		this.server = server;
 	}
 
