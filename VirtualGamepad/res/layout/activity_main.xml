@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
+    android:theme="@android:style/Theme.Light.NoTitleBar"
     android:orientation="vertical" >
 
     <ImageView

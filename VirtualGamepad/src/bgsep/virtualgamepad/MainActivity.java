@@ -1,17 +1,20 @@
 package bgsep.virtualgamepad;
 
-import bgsep.communication.Communication;
 import java.util.Observable;
 import java.util.Observer;
-import bluetooth.BluetoothHandler;
-import bluetooth.SenderImpl;
-import android.os.Bundle;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
+import bgsep.communication.Communication;
 import bgsep.model.Button;
+import bluetooth.BluetoothHandler;
+import bluetooth.SenderImpl;
 //import bluetooth.BluetoothHandler;
 
 public class MainActivity extends Activity implements Observer {
@@ -33,6 +36,17 @@ public class MainActivity extends Activity implements Observer {
 		new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr,
 				47, this);
 		
+		
+		//Hides soft menu keys if present
+		if (!ViewConfiguration.get(this).hasPermanentMenuKey())
+			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);	
+		/*
+		refer to:
+		http://stackoverflow.com/questions/937313/android-basic-gesture-detection
+		for how to recognize swipe
+		*/
+
+
 		/*BluetoothHandler bh = null;
 		if(android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
 			bh = new BluetoothHandler(this);*/
