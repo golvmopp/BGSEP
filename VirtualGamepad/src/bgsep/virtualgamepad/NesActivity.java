@@ -28,17 +28,21 @@ public class NesActivity extends Activity implements Observer {
 		
 		ImageView 		imageAbutton, 	imageBbutton,
 						imageLeftArrow, imageRightArrow,
-						imageUpArrow, 	imageDownArrow;
+						imageUpArrow, 	imageDownArrow,
+						imageSelect,	imageStart;
 		
 		Button			aButton, bButton, leftArrowButton,
-						rightArrowButton, upArrowButton, downArrowButton;
+						rightArrowButton, upArrowButton, downArrowButton,
+						selectButton, startButton;;
 		
-		imageAbutton 	= (ImageView)findViewById(R.id.nes_a_button);
-		imageBbutton 	= (ImageView)findViewById(R.id.nes_b_button);
+		imageAbutton 	= (ImageView) findViewById(R.id.nes_a_button);
+		imageBbutton 	= (ImageView) findViewById(R.id.nes_b_button);
 		imageLeftArrow 	= (ImageView) findViewById(R.id.nes_left_arrow);
 		imageRightArrow = (ImageView) findViewById(R.id.nes_right_arrow);
 		imageUpArrow 	= (ImageView) findViewById(R.id.nes_up_arrow);
 		imageDownArrow 	= (ImageView) findViewById(R.id.nes_down_arrow);
+		imageSelect		= (ImageView) findViewById(R.id.nes_select_button);
+		imageStart		= (ImageView) findViewById(R.id.nes_start_button);
 		
 		aButton = new Button(imageAbutton, R.drawable.nes_a_button, R.drawable.nes_a_button_pressed,
 				0, this);
@@ -46,17 +50,17 @@ public class NesActivity extends Activity implements Observer {
 		bButton = new Button(imageBbutton, R.drawable.nes_b_button, R.drawable.nes_b_button_pressed,
 				1, this);
 		
-		leftArrowButton = new Button(imageLeftArrow, R.drawable.nes_left_arrow, R.drawable.nes_left_arrow,
-				2, this);
+		leftArrowButton = new Button(imageLeftArrow, 2);
 		
-		rightArrowButton = new Button(imageRightArrow, R.drawable.nes_right_arrow, R.drawable.nes_right_arrow,
-				3, this);
+		rightArrowButton = new Button(imageRightArrow, 3);
 		
-		upArrowButton = new Button(imageUpArrow, R.drawable.nes_up_arrow, R.drawable.nes_up_arrow,
-				4, this);
+		upArrowButton = new Button(imageUpArrow, 4);
 		
-		downArrowButton = new Button(imageDownArrow, R.drawable.nes_down_arrow, R.drawable.nes_down_arrow,
-				5, this);
+		downArrowButton = new Button(imageDownArrow, 5);
+		
+		selectButton = new Button(imageSelect, 15);
+		
+		startButton = new Button(imageStart, 16);
 		
 		Communication comm = Communication.getInstance();
 		
@@ -66,6 +70,8 @@ public class NesActivity extends Activity implements Observer {
 		rightArrowButton.addObserver(comm);
 		upArrowButton.addObserver(comm);
 		downArrowButton.addObserver(comm);
+		selectButton.addObserver(comm);
+		startButton.addObserver(comm);
 		
 		
 		

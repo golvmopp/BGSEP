@@ -25,6 +25,16 @@ public class Button extends Observable {
 		buttonID = id;
 		addObserver(o);
 	}
+	/**
+	 * If the button does not have a "pressed look". This type of button should not be observed by 
+	 * observers that changes its drawables.
+	 * @param button
+	 * @param id
+	 */
+	public Button(ImageView button,	int id) {
+		this(button, 0, 0);
+		buttonID = id;
+	}
 	
 	public Button(ImageView button, int unPressedDrawableID, int pressedDrawableID) {
 		buttonID = 0;
