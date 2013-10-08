@@ -17,7 +17,7 @@ public class Configuration {
 	private static ArrayList<Integer> keyCodes;
 	private static Configuration instance = null;
 	
-	public static Configuration getInstance() {
+	public synchronized static Configuration getInstance() {
 		if (instance == null) {
 			instance = new Configuration();
 		}
@@ -159,7 +159,13 @@ public class Configuration {
 		return number;
 	}
 	
-	public int getKeyCode(int clientID, int buttonID) {
+	/**
+	 * Gets the configured key code for a specific client and a button. 
+	 * @param clientID the client on which a button was pressed/released
+	 * @param buttonID the button which was pressed/released
+	 * @return the configured key code
+	 */
+	public synchronized int getKeyCode(int clientID, int buttonID) {
 		int index = clientID * DEFAULT_NUMBER_OF_CLIENTS + buttonID;
 		if (index < keyCodes.size()) {
 			return keyCodes.get(clientID * DEFAULT_NUMBER_OF_BUTTONS + buttonID);
