@@ -1,11 +1,14 @@
 package bluetooth;
 
+import host.Configuration;
 import host.KeyMap;
+
 import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import lib.Protocol;
 import util.ClientIdGenerator;
 
@@ -106,12 +109,12 @@ public class BluetoothClient extends Thread {
 		try {
 			if (data.get(2) == 0x01) {
 				System.out.println("Pressing key " +
-				KeyMap.getKeyCode(clientId, data.get(1)));
-				robot.keyPress(KeyMap.getKeyCode(clientId, data.get(1)));
+				Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			} else {
 				System.out.println("Releasing key " +
-				KeyMap.getKeyCode(clientId, data.get(1)));
-				robot.keyRelease(KeyMap.getKeyCode(clientId, data.get(1)));
+						Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			}
 		} catch (IllegalArgumentException e) {
 			System.out.println("Failed getting key code: " + e.getMessage());
