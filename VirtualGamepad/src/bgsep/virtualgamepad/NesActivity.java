@@ -91,7 +91,7 @@ public class NesActivity extends Activity implements Observer {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.nes, menu);
 		return true;
 	}
 	
@@ -101,7 +101,7 @@ public class NesActivity extends Activity implements Observer {
 		Intent i;
 	    switch (item.getItemId()) {
         
-	        case R.id.action_nes:
+	        case R.id.action_gc:
 	        	i = new Intent(this, NesActivity.class);
 	    		startActivity(i);
 	            finish();
