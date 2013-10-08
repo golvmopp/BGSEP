@@ -1,14 +1,11 @@
 package bluetooth;
 
 import host.Configuration;
-import host.KeyMap;
-
 import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import lib.Protocol;
 import util.ClientIdGenerator;
 

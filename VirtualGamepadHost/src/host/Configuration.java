@@ -1,8 +1,6 @@
 package host;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 
 public class Configuration {
