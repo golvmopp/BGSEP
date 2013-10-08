@@ -108,12 +108,12 @@ public class BluetoothClient extends Thread {
 	private void handleButtonEvent(ArrayList<Byte> data) {
 		try {
 			if (data.get(2) == 0x01) {
-				System.out.println("Pressing key " +
-				Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				//System.out.println("Pressing key " +
+				//Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 				robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			} else {
-				System.out.println("Releasing key " +
-						Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				//System.out.println("Releasing key " +
+				//		Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 				robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			}
 		} catch (IllegalArgumentException e) {
@@ -129,7 +129,7 @@ public class BluetoothClient extends Thread {
 			System.out.println("button " + joyStickId + " on client " + clientId + " is a joystick, creating a Joystick for it..");
 			this.joyStick.put(joyStickId, new Joystick(joyStickId, clientId));
 		}
-		System.out.println("received position " + position + " on ID " + joyStickId);
+		//System.out.println("received position " + position + " on ID " + joyStickId);
 		joyStick.get(joyStickId).setNewValue(position);
 	}
 	

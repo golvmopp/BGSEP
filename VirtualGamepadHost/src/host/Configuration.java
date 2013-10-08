@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Configuration {
 	private static final int DEFAULT_NUMBER_OF_CLIENTS = 2;
 	private int numberOfClients;
-	private static final int DEFAULT_NUMBER_OF_BUTTONS = 25;
+	private static final int DEFAULT_NUMBER_OF_BUTTONS = 15;
 	private int numberOfButtons;
 	private static final int MY_COMPUTER = 182;
 	private static final int MY_CALCULATOR = 183;
@@ -71,7 +71,7 @@ public class Configuration {
 		StringBuilder buttonKeyCodes = new StringBuilder();
 		for (int client = 0; client < DEFAULT_NUMBER_OF_CLIENTS; client++) {
 			for (int button = 0; button < DEFAULT_NUMBER_OF_BUTTONS; button++) {
-				buttonKeyCodes.append("client" + client + ":button" + button + "=" + keyCodes.get(client * DEFAULT_NUMBER_OF_CLIENTS + button) + "\n");
+				buttonKeyCodes.append("client" + client + ":button" + button + "=" + keyCodes.get(client * DEFAULT_NUMBER_OF_BUTTONS + button) + "\n");
 			}
 		}
 		this.configuration = "[General]\n" + general + "\n\n[KeyCodes]\n" + buttonKeyCodes.toString();

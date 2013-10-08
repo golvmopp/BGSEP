@@ -7,7 +7,7 @@ public class Joystick extends Thread {
 	private int joystickID;
 	private float value;
 	private boolean stopped;
-	private final static int PERIOD = 10000;
+	private final static int PERIOD = 100;
 	private Robot robot;
 	private int clientID;
 	
@@ -32,14 +32,16 @@ public class Joystick extends Thread {
 	public void run() {
 		int sleepTime;
 		int pressTime;
-		boolean skip = false;
+		boolean skip = true;
 		while (!interrupted() && !stopped) {
 			pressTime = getPressTime();
 			sleepTime = PERIOD - pressTime;
 			if (pressTime > PERIOD * 0.05) {
-				skip = true;
-				System.out.println("pressing " + joystickID + " for " + pressTime + " ms");
+				skip = false;
+				//System.out.println("pressing " + joystickID + " for " + pressTime + " ms");
 				robot.keyPress(Configuration.getInstance().getKeyCode(clientID, joystickID));
+			} else {
+				skip = true;
 			}
 			try {
 				Thread.sleep(pressTime);
@@ -48,7 +50,7 @@ public class Joystick extends Thread {
 				e.printStackTrace();
 			}
 			if (!skip) {
-				System.out.println("releasing " + joystickID + " for " + sleepTime + " ms");
+				//System.out.println("releasing " + joystickID + " for " + sleepTime + " ms");
 				robot.keyRelease(Configuration.getInstance().getKeyCode(clientID, joystickID));
 			}
 			try {
