@@ -13,7 +13,7 @@
       
 <RelativeLayout
     android:layout_width="188dp" android:layout_centerVertical="true"
-    android:layout_height="188dp" android:layout_marginLeft="dp"
+    android:layout_height="188dp" android:layout_marginLeft="17dp"
     >
       <ImageView
       android:id="@+id/nes_arrows_background"
@@ -37,7 +37,7 @@
       android:layout_height="wrap_content"
       android:layout_below="@id/nes_joystick_button"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="10dp"
+      android:layout_marginTop="17dp"
       android:src="@drawable/nes_down_arrow" />   
         
        <ImageView
@@ -46,7 +46,7 @@
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
       android:layout_above="@id/nes_joystick_button"
-      android:layout_marginBottom="10dp"
+      android:layout_marginBottom="17dp"
       android:src="@drawable/nes_up_arrow" />
         
 
@@ -57,7 +57,7 @@
       android:layout_height="wrap_content"
       android:layout_toRightOf="@id/nes_joystick_button"
       android:layout_centerVertical="true"
-      android:layout_marginLeft="10dp"
+      android:layout_marginLeft="17dp"
       android:src="@drawable/nes_right_arrow" />
   
 
@@ -67,7 +67,7 @@
       android:layout_height="wrap_content"
       android:layout_toLeftOf="@id/nes_joystick_button"
       android:layout_centerVertical="true"
-      android:layout_marginRight="10dp"
+      android:layout_marginRight="17dp"
       android:src="@drawable/nes_left_arrow" />
 
   
@@ -83,8 +83,8 @@
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:layout_alignParentRight="true"
-      android:layout_marginBottom="48dp"
-      android:layout_marginRight="33dp"
+      android:layout_marginBottom="60dp"
+      android:layout_marginRight="17dp"
       android:src="@drawable/nes_a_button" />
 
   <ImageView
@@ -93,7 +93,7 @@
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:layout_toLeftOf="@id/nes_a_button"
-      android:layout_marginBottom="48dp"
+      android:layout_marginBottom="60dp"
       android:layout_marginRight="8dp"
       android:src="@drawable/nes_b_button" />
 
@@ -105,8 +105,8 @@
       android:id="@+id/nes_select_button"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginTop="138dp"
-      android:layout_marginLeft="224dp" 
+      android:layout_marginTop="168dp"
+      android:layout_marginLeft="233dp" 
       android:src="@drawable/nes_select_button" />
 
   <ImageView
@@ -114,8 +114,8 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_toRightOf="@id/nes_select_button"
-      android:layout_marginTop="138dp"
-      android:layout_marginLeft="15dp"
+      android:layout_marginTop="168dp"
+      android:layout_marginLeft="30dp"
       android:src="@drawable/nes_start_button" />
 
 

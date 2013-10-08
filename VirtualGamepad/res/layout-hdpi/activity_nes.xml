@@ -13,7 +13,7 @@
       
 <RelativeLayout
     android:layout_width="188dp" android:layout_centerVertical="true"
-    android:layout_height="188dp" android:layout_marginLeft="dp"
+    android:layout_height="188dp" android:layout_marginLeft="5dp"
     >
       <ImageView
       android:id="@+id/nes_arrows_background"
@@ -84,7 +84,7 @@
       android:layout_alignParentBottom="true"
       android:layout_alignParentRight="true"
       android:layout_marginBottom="48dp"
-      android:layout_marginRight="33dp"
+      android:layout_marginRight="14dp"
       android:src="@drawable/nes_a_button" />
 
   <ImageView
@@ -106,7 +106,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="138dp"
-      android:layout_marginLeft="224dp" 
+      android:layout_marginLeft="206dp" 
       android:src="@drawable/nes_select_button" />
 
   <ImageView
@@ -115,7 +115,7 @@
       android:layout_height="wrap_content"
       android:layout_toRightOf="@id/nes_select_button"
       android:layout_marginTop="138dp"
-      android:layout_marginLeft="15dp"
+      android:layout_marginLeft="17dp"
       android:src="@drawable/nes_start_button" />
 
 
