@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Configuration {
-	private static final int DEFAULT_NUMBER_OF_CLIENTS = 5;
+	private static final int DEFAULT_NUMBER_OF_CLIENTS = 2;
 	private int numberOfClients;
 	private static final int DEFAULT_NUMBER_OF_BUTTONS = 25;
 	private int numberOfButtons;
@@ -35,6 +35,7 @@ public class Configuration {
 	}
 	
 	private void addDefaultKeyCodes() {
+		/*
 		for (int i = 1; i <= 7; i++) {
 			keyCodes.add(i);
 		}
@@ -45,7 +46,11 @@ public class Configuration {
 			if (i != MY_COMPUTER && i != MY_CALCULATOR && i != NUM_LOCK && i != SCROLL_LOCK) { 
 				keyCodes.add(i);
 			}
+		}*/
+		for (int i = 65; i <= 111; i++) {
+			keyCodes.add(i);
 		}
+		
 	}
 	
 	private void determineConfigFileLocation() {
