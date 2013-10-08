@@ -23,7 +23,7 @@ public class GcActivity extends Activity implements Observer {
 
 	private boolean isInitialized;
 	private JoystickHandler gcJoystick;
-	private Button	aButton, bButton, xButton, yButton;
+	private Button	aButton, bButton, xButton, yButton, startButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,7 @@ public class GcActivity extends Activity implements Observer {
 			ImageView bImageView = (ImageView)findViewById(R.id.gc_b_button);
 			ImageView xImageView = (ImageView)findViewById(R.id.gc_x_button);
 			ImageView yImageView = (ImageView)findViewById(R.id.gc_y_button);
+			ImageView imageStart = (ImageView)findViewById(R.id.gc_start_button);
 			
 			aButton = new Button(aImageView, R.drawable.gc_a_button, R.drawable.gc_a_button_pressed, 
 					0, this);
@@ -68,13 +69,16 @@ public class GcActivity extends Activity implements Observer {
 					2, this);
 			yButton = new Button(yImageView, R.drawable.gc_y_button, R.drawable.gc_y_button_pressed, 
 					3, this);
-			
+			startButton = new Button(imageStart, R.drawable.gc_start_button, R.drawable.gc_start_button_pressed,
+					16, this);
+					
 			
 			
 			aButton.addObserver(comm);
 			bButton.addObserver(comm);
 			xButton.addObserver(comm);
 			yButton.addObserver(comm);
+			startButton.addObserver(comm);
 			
 			
 			isInitialized = true;

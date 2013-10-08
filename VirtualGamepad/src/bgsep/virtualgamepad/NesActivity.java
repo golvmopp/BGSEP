@@ -73,8 +73,6 @@ public class NesActivity extends Activity implements Observer {
 		selectButton.addObserver(comm);
 		startButton.addObserver(comm);
 		
-		
-		
 	}
 
 	@Override
