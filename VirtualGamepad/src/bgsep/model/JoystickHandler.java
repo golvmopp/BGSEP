@@ -63,18 +63,12 @@ public class JoystickHandler extends Joystick {
 	}
 	
 	private int axisValueChanged(float currPos, int prevPos, int stickIDpos, int stickIDneg) {
-		
-		Log.w("CURRPOS", String.valueOf(currPos));
-		Log.w("prevPos", String.valueOf(prevPos));
-		Log.w("stickpos", String.valueOf(stickIDpos));
-		Log.w("stickneg", String.valueOf(stickIDneg));
-		
-		
+				
 		int rounding = (int)(currPos*10);
 		if((rounding % 2) != 0) {
 			rounding += currPos > rounding ? 1 : -1;
 		}
-		Log.w("ROUNDING", String.valueOf(rounding));
+		
 		if(prevPos != rounding) {
 			float value = ((float)Math.abs(rounding))/10;
 			if(rounding > 0) {
