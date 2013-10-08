@@ -98,14 +98,14 @@ public class JoystickHandler extends Joystick {
 					if(currPosY >= 0)
 						notifyComm(new CommunicationNotifier(stickUpID, currPosY));
 					else
-						notifyComm(new CommunicationNotifier(stickDownID, currPosY));
+						notifyComm(new CommunicationNotifier(stickDownID, Math.abs(currPosY)));
 				}
 				else if(!(currPosY > -SENSITIVITY && currPosY < SENSITIVITY)){
 					indicateKeyPress = true;
 					if(currPosY >= 0)
 						notifyComm(new CommunicationNotifier(stickUpID, currPosY));
 					else
-						notifyComm(new CommunicationNotifier(stickDownID, currPosY));							
+						notifyComm(new CommunicationNotifier(stickDownID, Math.abs(currPosY)));							
 				}
 			}
 		}
