@@ -55,7 +55,7 @@ public class BluetoothServer {
 			System.exit(1);
 		}
 		System.out.println("Server up and running!");
-		IncommingClientListener listener = new IncommingClientListener(server);
+		IncomingClientListener listener = new IncomingClientListener(server);
 		listener.start();
 	}
 	
