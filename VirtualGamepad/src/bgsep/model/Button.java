@@ -12,21 +12,22 @@ import android.widget.ImageView;
 
 public class Button extends Observable {
 
-	private int buttonKeyCode;
+	//private int buttonKeyCode;
+	private int buttonID;
 	private ImageView buttonView;
 	private boolean isPressed;
 	private int pressedDrawableID, unPressedDrawableID;
 	
 	
 	public Button(ImageView button, int unPressedDrawableID, int pressedDrawableID,
-			int keyCode, Observer o) {
+			int id, Observer o) {
 		this(button, unPressedDrawableID, pressedDrawableID);
-		buttonKeyCode = keyCode;
+		buttonID = id;
 		addObserver(o);
 	}
 	
 	public Button(ImageView button, int unPressedDrawableID, int pressedDrawableID) {
-		buttonKeyCode = 0;
+		buttonID = 0;
 		button.setOnTouchListener(new ButtonTouchEvent());
 		this.pressedDrawableID = pressedDrawableID;
 		this.unPressedDrawableID = unPressedDrawableID;
@@ -34,8 +35,12 @@ public class Button extends Observable {
 		buttonView = button;
 	}
 	
-	public void setButtonKeyCode(int keyCode) {
-		buttonKeyCode = keyCode;
+	public void setButtonID(int id) {
+		buttonID = id;
+	}
+	
+	public int getButtonID() {
+		return buttonID;
 	}
 	
 	
@@ -56,12 +61,12 @@ public class Button extends Observable {
 			case MotionEvent.ACTION_DOWN:
 				isPressed = true;
 				setChanged();
-				notifyObservers(convertToByteBuffer(buttonKeyCode, isPressed));
+				notifyObservers();
 				break;
 			case MotionEvent.ACTION_UP:
 				isPressed = false;
 				setChanged();
-				notifyObservers(convertToByteBuffer(buttonKeyCode, isPressed));
+				notifyObservers();
 				break;
 			default:
 				break;	
@@ -72,7 +77,7 @@ public class Button extends Observable {
 		
 	}
 	
-	private ByteBuffer convertToByteBuffer(int value, boolean press) {
+	/*private ByteBuffer convertToByteBuffer(int value, boolean press) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(32);
 		byteBuffer.putInt(value);
 		
@@ -82,7 +87,7 @@ public class Button extends Observable {
 			byteBuffer.array()[0] = 1;
 		
 		return byteBuffer;
-	}
+	}*/
 	
 	public int getPressedDrawableID() {
 		return pressedDrawableID;
