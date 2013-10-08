@@ -1,5 +1,6 @@
 package bgsep.model;
 
+import android.util.Log;
 import android.widget.ImageView;
 import bgsep.communication.CommunicationNotifier;
 
@@ -11,8 +12,8 @@ import bgsep.communication.CommunicationNotifier;
 
 public class JoystickHandler extends Joystick {
 
-	private int 	stickLeftID, stickRightID, stickUpID, stickDownID;
-	private int		prevPosX, prevPosY;
+	private int stickLeftID, stickRightID, stickUpID, stickDownID;
+	private int	prevPosX, prevPosY;
 	private boolean leftRightEnabled, upDownEnabled;
 	private boolean indicateKeyPress;
 	
@@ -53,40 +54,44 @@ public class JoystickHandler extends Joystick {
 		notifyObservers();
 		
 		if(leftRightEnabled) {
-			float currPosX = getX() * 10;
-			
-			int rounding = (int)(currPosX);
-			if((rounding % 2) != 0) {
-				rounding += currPosX > rounding ? 1 : -1;
-			}
-			if(prevPosX != rounding) {
-				prevPosX = rounding;
-				if(currPosX > 0)
-					notifyComm(new CommunicationNotifier(stickRightID, Math.abs(((float) rounding) / 10)));
-				else if(currPosX < 0)
-					notifyComm(new CommunicationNotifier(stickLeftID,  Math.abs(((float) rounding) / 10)));
-				else
-					notifyComm(new CommunicationNotifier((prevPosX > 0) ? stickRightID : stickLeftID , 0));
-			}
+			prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickLeftID);
 		}
 		
 		if(upDownEnabled) {
-			float currPosY = getY() * 10;
-			
-			int rounding = (int)(currPosY);
-			if((rounding % 2) != 0) {
-				rounding += currPosY > rounding ? 1 : -1;
-			}
-			if(prevPosY != rounding) {
-				prevPosY = rounding;
-				if(currPosY > 0)
-					notifyComm(new CommunicationNotifier(stickUpID, Math.abs(((float) rounding) / 10)));
-				else if(currPosY < 0)
-					notifyComm(new CommunicationNotifier(stickDownID,  Math.abs(((float) rounding) / 10)));
-				else
-					notifyComm(new CommunicationNotifier((prevPosY > 0) ? stickUpID : stickDownID , 0));
-			}
+			prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
 		}
+	}
+	
+	private int axisValueChanged(float currPos, int prevPos, int stickIDpos, int stickIDneg) {
+		
+		Log.w("CURRPOS", String.valueOf(currPos));
+		Log.w("prevPos", String.valueOf(prevPos));
+		Log.w("stickpos", String.valueOf(stickIDpos));
+		Log.w("stickneg", String.valueOf(stickIDneg));
+		
+		
+		int rounding = (int)(currPos*10);
+		if((rounding % 2) != 0) {
+			rounding += currPos > rounding ? 1 : -1;
+		}
+		Log.w("ROUNDING", String.valueOf(rounding));
+		if(prevPos != rounding) {
+			float value = ((float)Math.abs(rounding))/10;
+			if(rounding > 0) {
+				notifyComm(new CommunicationNotifier(stickIDpos, value));
+				notifyComm(new CommunicationNotifier(stickIDneg, 0));
+			}
+			else if(rounding < 0) {
+				notifyComm(new CommunicationNotifier(stickIDneg,  value));
+				notifyComm(new CommunicationNotifier(stickIDpos, 0));
+			}	
+			else {
+				notifyComm(new CommunicationNotifier(stickIDpos, 0));
+				notifyComm(new CommunicationNotifier(stickIDneg, 0));
+			}
+			return rounding;
+		}
+		return prevPos;
 	}
 	
 	public boolean isIndicateKeyPress() {
