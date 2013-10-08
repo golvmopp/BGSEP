@@ -32,11 +32,13 @@ public class Joystick extends Thread {
 	public void run() {
 		int sleepTime;
 		int pressTime;
+		boolean skip = false;
 		while (!interrupted() && !stopped) {
 			pressTime = getPressTime();
 			sleepTime = PERIOD - pressTime;
-			System.out.println("pressing " + joystickID + " for " + pressTime + " ms");
 			if (pressTime > PERIOD * 0.05) {
+				skip = true;
+				System.out.println("pressing " + joystickID + " for " + pressTime + " ms");
 				robot.keyPress(Configuration.getInstance().getKeyCode(clientID, joystickID));
 			}
 			try {
@@ -45,8 +47,10 @@ public class Joystick extends Thread {
 				System.out.println("unable to sleep, not tired");
 				e.printStackTrace();
 			}
-			System.out.println("releasing " + joystickID + " for " + sleepTime + " ms");
-			robot.keyRelease(Configuration.getInstance().getKeyCode(clientID, joystickID));
+			if (!skip) {
+				System.out.println("releasing " + joystickID + " for " + sleepTime + " ms");
+				robot.keyRelease(Configuration.getInstance().getKeyCode(clientID, joystickID));
+			}
 			try {
 				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
