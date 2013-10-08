@@ -89,7 +89,8 @@ public class GcActivity extends Activity implements Observer {
 
 	@Override
 	public void update(Observable o, Object data) {
-		// Joystick movement handling
+		// Joystick and Button movement handling
+		
 		if(o instanceof JoystickHandler && !(data instanceof CommunicationNotifier)) {
 			JoystickHandler joystick = (JoystickHandler)o;
 			ImageView stick = joystick.getStick();
