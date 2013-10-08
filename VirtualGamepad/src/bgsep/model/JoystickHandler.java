@@ -1,6 +1,5 @@
 package bgsep.model;
 
-import android.drm.DrmStore.RightsStatus;
 import android.widget.ImageView;
 import bgsep.communication.CommunicationNotifier;
 
@@ -16,8 +15,6 @@ public class JoystickHandler extends Joystick {
 	private int		prevPosX, prevPosY;
 	private boolean leftRightEnabled, upDownEnabled;
 	private boolean indicateKeyPress;
-	
-	private final float 	SENSITIVITY = 0.2f;
 	
 	/**
 	 * Takes a positioned boundary ImageView and a positioned
@@ -46,9 +43,7 @@ public class JoystickHandler extends Joystick {
 	}
 
 	/**
-	 * Determines Left/Right/Up/Down and sends a ByteBuffer to the observers.
-	 * The first bit in the ByteBuffer indicates whether key should be pressed
-	 * or released.
+	 * Determines Left/Right/Up/Down and notifies the observers observers.
 	 */
 	@Override
 	public void onStickMovement() {
@@ -62,7 +57,7 @@ public class JoystickHandler extends Joystick {
 			
 			int rounding = (int)(currPosX);
 			if((rounding % 2) != 0) {
-				rounding += currPosX > rounding ? 1 : -1; //wingardium leviosa
+				rounding += currPosX > rounding ? 1 : -1;
 			}
 			if(prevPosX != rounding) {
 				prevPosX = rounding;
@@ -80,7 +75,7 @@ public class JoystickHandler extends Joystick {
 			
 			int rounding = (int)(currPosY);
 			if((rounding % 2) != 0) {
-				rounding += currPosY > rounding ? 1 : -1; //wingardium leviosa
+				rounding += currPosY > rounding ? 1 : -1;
 			}
 			if(prevPosY != rounding) {
 				prevPosY = rounding;
@@ -96,11 +91,6 @@ public class JoystickHandler extends Joystick {
 	
 	public boolean isIndicateKeyPress() {
 		return indicateKeyPress;
-	}
-
-	private float round(float value) {
-		int rounded = Math.round(value*10);
-		return (float)rounded/10;
 	}
 
 
