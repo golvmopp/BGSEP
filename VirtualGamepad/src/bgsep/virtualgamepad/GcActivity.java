@@ -89,7 +89,8 @@ public class GcActivity extends Activity implements Observer {
 
 	@Override
 	public void update(Observable o, Object data) {
-		// Joystick movement handling
+		// Joystick and Button movement handling
+		
 		if(o instanceof JoystickHandler && !(data instanceof CommunicationNotifier)) {
 			JoystickHandler joystick = (JoystickHandler)o;
 			ImageView stick = joystick.getStick();
@@ -113,7 +114,7 @@ public class GcActivity extends Activity implements Observer {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.gc, menu);
 		return true;
 	}
 

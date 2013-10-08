@@ -12,11 +12,9 @@ import bgsep.communication.CommunicationNotifier;
 public class JoystickHandler extends Joystick {
 
 	private int 	stickLeftID, stickRightID, stickUpID, stickDownID;
-	private float	prevPosX, prevPosY;
+	private int		prevPosX, prevPosY;
 	private boolean leftRightEnabled, upDownEnabled;
 	private boolean indicateKeyPress;
-	
-	private final float 	SENSITIVITY = 0.2f;
 	
 	/**
 	 * Takes a positioned boundary ImageView and a positioned
@@ -45,9 +43,7 @@ public class JoystickHandler extends Joystick {
 	}
 
 	/**
-	 * Determines Left/Right/Up/Down and sends a ByteBuffer to the observers.
-	 * The first bit in the ByteBuffer indicates whether key should be pressed
-	 * or released.
+	 * Determines Left/Right/Up/Down and notifies the observers observers.
 	 */
 	@Override
 	public void onStickMovement() {
@@ -57,56 +53,38 @@ public class JoystickHandler extends Joystick {
 		notifyObservers();
 		
 		if(leftRightEnabled) {
-			// Check to see if an update to server is necessary
-			// according to the specified sensitivity
-			float currPosX = getX();
-			if((currPosX >= prevPosX + SENSITIVITY) || 
-					(currPosX <= prevPosX - SENSITIVITY)) {
-				prevPosX = currPosX;
+			float currPosX = getX() * 10;
 			
-				// Check to see if update to server is necessary since the interval between
-				// -Sensitivity < CurrPosX < Sensitivity should only update if keypressing is active
-				if(indicateKeyPress && (currPosX > -SENSITIVITY && currPosX < SENSITIVITY)) {
-					indicateKeyPress = false;
-					if(currPosX >= 0)
-						notifyComm(new CommunicationNotifier(stickRightID, currPosX));
-					else
-						notifyComm(new CommunicationNotifier(stickLeftID, currPosX));
-				}
-				else if(!(currPosX > -SENSITIVITY && currPosX < SENSITIVITY)){
-					indicateKeyPress = true;
-					if(currPosX >= 0)
-						notifyComm(new CommunicationNotifier(stickRightID, currPosX));
-					else
-						notifyComm(new CommunicationNotifier(stickLeftID, currPosX));							
-				}
+			int rounding = (int)(currPosX);
+			if((rounding % 2) != 0) {
+				rounding += currPosX > rounding ? 1 : -1;
+			}
+			if(prevPosX != rounding) {
+				prevPosX = rounding;
+				if(currPosX > 0)
+					notifyComm(new CommunicationNotifier(stickRightID, Math.abs(((float) rounding) / 10)));
+				else if(currPosX < 0)
+					notifyComm(new CommunicationNotifier(stickLeftID,  Math.abs(((float) rounding) / 10)));
+				else
+					notifyComm(new CommunicationNotifier((prevPosX > 0) ? stickRightID : stickLeftID , 0));
 			}
 		}
 		
 		if(upDownEnabled) {
-			// Check to see if an update to server is necessary
-			// according to the specified sensitivity
-			float currPosY = getY();
-			if((currPosY >= prevPosY + SENSITIVITY) || 
-					(currPosY <= prevPosY - SENSITIVITY)) {
-				prevPosY = currPosY;
+			float currPosY = getY() * 10;
 			
-				// Check to see if update to server is necessary since the interval between
-				// -Sensitivity < CurrPosY < Sensitivity should only update if keypressing is active
-				if(indicateKeyPress && (currPosY > -SENSITIVITY && currPosY < SENSITIVITY)) {
-					indicateKeyPress = false;
-					if(currPosY >= 0)
-						notifyComm(new CommunicationNotifier(stickUpID, currPosY));
-					else
-						notifyComm(new CommunicationNotifier(stickDownID, currPosY));
-				}
-				else if(!(currPosY > -SENSITIVITY && currPosY < SENSITIVITY)){
-					indicateKeyPress = true;
-					if(currPosY >= 0)
-						notifyComm(new CommunicationNotifier(stickUpID, currPosY));
-					else
-						notifyComm(new CommunicationNotifier(stickDownID, currPosY));							
-				}
+			int rounding = (int)(currPosY);
+			if((rounding % 2) != 0) {
+				rounding += currPosY > rounding ? 1 : -1;
+			}
+			if(prevPosY != rounding) {
+				prevPosY = rounding;
+				if(currPosY > 0)
+					notifyComm(new CommunicationNotifier(stickUpID, Math.abs(((float) rounding) / 10)));
+				else if(currPosY < 0)
+					notifyComm(new CommunicationNotifier(stickDownID,  Math.abs(((float) rounding) / 10)));
+				else
+					notifyComm(new CommunicationNotifier((prevPosY > 0) ? stickUpID : stickDownID , 0));
 			}
 		}
 	}
@@ -114,7 +92,6 @@ public class JoystickHandler extends Joystick {
 	public boolean isIndicateKeyPress() {
 		return indicateKeyPress;
 	}
-
 
 
 	private void notifyComm(CommunicationNotifier notifier) {

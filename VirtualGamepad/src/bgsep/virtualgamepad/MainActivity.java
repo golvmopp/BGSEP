@@ -93,38 +93,5 @@ public class MainActivity extends Activity implements Observer {
 		}
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-		Intent i;
-	    switch (item.getItemId()) {
-        
-	        case R.id.action_nes:
-	        	i = new Intent(this, NesActivity.class);
-	    		startActivity(i);
-	            return true;
-	            
-	        case R.id.action_gc:
-	        	i = new Intent(this, GcActivity.class);
-	    		startActivity(i);
-	            return true;
-	        
-	        case R.id.action_ps:
-	        	i = new Intent(this, PsActivity.class);
-	    		startActivity(i);
-	            return true;
-	            
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-
-	
 }
