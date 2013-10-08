@@ -27,6 +27,7 @@ public class Configuration {
 	}
 	
 	private Configuration() {
+		keyCodes = new ArrayList<Integer>();
 		determineConfigFileLocation(); //different path on different operating systems
 		if (!configFile.exists()) {
 			generateConfiguration();
@@ -36,7 +37,6 @@ public class Configuration {
 	}
 	
 	private void addDefaultKeyCodes() {
-		keyCodes = new ArrayList<Integer>();
 		for (int i = 1; i <= 7; i++) {
 			keyCodes.add(i);
 		}
@@ -91,15 +91,74 @@ public class Configuration {
 		System.out.println("done");
 	}
 	
+	private void parseNumberOfClients(String line) {
+		int number = Integer.parseInt(line.split("=")[1]);
+		System.out.println("setting number of clients to " + number);
+		numberOfClients = number;
+	}
+	
+	private void parseLine(String line) {
+		if (line.contains("NumberOfClients")) {
+			parseNumberOfClients(line);
+		} else {
+			if (line.contains(":")) {
+				int client, button, code;
+				client = getClient(line);
+				button = getButton(line);
+				code = getCode(line);
+				System.out.println("client " + client + " : button " + button + " : code " + code);
+				keyCodes.add(client * numberOfClients + button, code);
+			}
+		}
+	}
+	
 	private void parseConfigFile() {
 		System.out.println("parsing config file...");
+		String line = "";
 		if (configFile.exists()) {
-			
+			try {
+				FileReader fr = new FileReader(configFile);
+				BufferedReader br = new BufferedReader(fr);
+				while ((line = br.readLine()) != null) {
+					parseLine(line);
+				}
+				br.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("cannot open config file");
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("error reading config file");
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				System.out.println("failed parsing integer at line: " + line);
+				e.printStackTrace();
+			}
 		} else {
 			System.out.println("config file not found!");
 			System.exit(1);
 		}
 		System.out.println("done");
+	}
+	
+	private int getClient(String line) {
+		line = line.split(":")[0];
+		line = line.split("client")[1];
+		int number = Integer.parseInt(line);
+		return number;
+	}
+	
+	private int getButton(String line) {
+		line = line.split(":")[1];
+		line = line.split("button")[1];
+		line = line.split("=")[0];
+		int number = Integer.parseInt(line);
+		return number;
+	}
+	
+	private int getCode(String line) {
+		line = line.split("=")[1];
+		int number = Integer.parseInt(line);
+		return number;
 	}
 	
 	public int getKeyCode(int clientID, int buttonID) {
