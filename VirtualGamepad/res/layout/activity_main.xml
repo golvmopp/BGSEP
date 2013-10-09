@@ -39,4 +39,14 @@
         android:layout_toRightOf="@+id/mainpage_gc"
         android:src="@drawable/mainpage_ps" />
 
+    <ImageView
+        android:id="@+id/mainpage_connected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="13dp"
+        android:src="@drawable/mainpage_connected" />
+
 </RelativeLayout>
