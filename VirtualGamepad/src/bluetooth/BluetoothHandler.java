@@ -147,13 +147,18 @@ public class BluetoothHandler extends Thread {
 			socket.connect();
 			outputStream = socket.getOutputStream();
 			if (socket.isConnected()) {
-				showToast("Connected");
+				notifyConnected();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
         return true;
     }
+	
+	private void notifyConnected() {
+		showToast("Connected");
+		((MainActivity) activity).serverConnected();
+	}
 	
 	@Override
 	public void run() {
