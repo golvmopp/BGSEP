@@ -3,13 +3,16 @@ package bluetooth;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
+
 import lib.Protocol;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 	
 public class BluetoothHandler extends Thread {
 	
@@ -117,5 +120,11 @@ public class BluetoothHandler extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void showToast(CharSequence text) {
+		Context context = activity.getApplicationContext();
+		Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+		toast.show();
 	}
 }
