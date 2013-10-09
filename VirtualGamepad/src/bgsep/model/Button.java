@@ -36,6 +36,10 @@ public class Button extends Observable {
 		buttonID = id;
 	}
 	
+	/**
+	 * If the button doesnt need an ID for server communication. This type of Button should now
+	 * have a communication observer
+	 */	
 	public Button(ImageView button, int unPressedDrawableID, int pressedDrawableID) {
 		buttonID = 0;
 		button.setOnTouchListener(new ButtonTouchEvent());
