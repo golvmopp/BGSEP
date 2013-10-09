@@ -53,7 +53,7 @@ public class BluetoothHandler extends Thread {
 	 * Loops through all bounded devices and connects to the device which is running the Virtual Gamepad Host.  
 	 * 
 	 */
-	public void connectToServer() {
+	public boolean connectToServer() {
 		boolean serverFound = false;
 		if (adapter.getBondedDevices() != null
 				&& adapter.getBondedDevices().size() != 0) {
@@ -63,8 +63,7 @@ public class BluetoothHandler extends Thread {
 				serverFound = checkForServer(d);
 				if (serverFound) {
 					Log.d(TAG, "Connecting to server..");
-					connect(d.getAddress());
-					return;
+					return connect(d.getAddress());
 				} else {
 					System.out.println("start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
 					d.fetchUuidsWithSdp();
@@ -77,8 +76,7 @@ public class BluetoothHandler extends Thread {
 				for (BluetoothDevice d : adapter.getBondedDevices()) {
 					if (checkForServer(d)) {
 						Log.d(TAG, "Connecting to server..");
-						connect(d.getAddress());
-						return;
+						return connect(d.getAddress());
 					}
 				}
 				try {
@@ -87,12 +85,17 @@ public class BluetoothHandler extends Thread {
 					e.printStackTrace();
 				}
 				if (count > 10) {
-					Log.d(TAG, "no servers found!");
-					return;
+					notifyNoServerFound();
+					return false;
 				}
 			}
 		}
+		notifyNoServerFound();
+	}
+	
+	private void notifyNoServerFound() {
 		Log.d(TAG, "no servers found!");
+		showToast("No server found");
 	}
 	
 	public boolean isConnected() {
@@ -152,11 +155,14 @@ public class BluetoothHandler extends Thread {
 			outputStream = socket.getOutputStream();
 			if (socket.isConnected()) {
 				notifyConnected();
+				return true;
+			} else {
+				return false;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("unable to connect to server: " + e.getMessage());
+			return false;
 		}
-        return true;
     }
 	
 	private void notifyConnected() {
