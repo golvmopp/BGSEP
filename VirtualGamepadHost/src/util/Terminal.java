@@ -15,6 +15,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import bluetooth.BluetoothServer;
+
 public class Terminal extends Thread {
 	private BufferedReader br;
 	private static final String name = "virtual-gamepad$ ";
@@ -100,11 +102,12 @@ public class Terminal extends Thread {
 	
 	private void kick(String[] arguments) throws IOException {
 		if (arguments.length > 1) {
-			//kick client (arguments[1])
+			BluetoothServer.getClient(Integer.parseInt(arguments[1]));
 		} else {
-			// show clients
-			System.out.println("Choose client ID");
-			//br.readLine() & kick client
+			System.out.println("clients online:");
+			for (int client : BluetoothServer.getClients().keySet()) {
+				System.out.println(client + " ");
+			}
 		}
 	}
 			
@@ -117,6 +120,6 @@ public class Terminal extends Thread {
 	}
 	
 	private void reloadConfiguration(String[] arguments) {
-		// reload config file
+		
 	}
 }
