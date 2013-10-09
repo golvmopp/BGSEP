@@ -53,12 +53,24 @@ public class JoystickHandler extends Joystick {
 		setChanged();
 		notifyObservers();
 		
-		if(leftRightEnabled) {
-			prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickLeftID);
+		if(leftRightEnabled && upDownEnabled) { 
+			// The axis with highest value got the highest priority
+			if(getX() > getY()) {
+				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickDownID);
+				prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
+			}
+			else {
+				prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
+				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickDownID);
+			}
+				
 		}
+		else {
+			if(leftRightEnabled)
+				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickLeftID);
 		
-		if(upDownEnabled) {
-			prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
+			if(upDownEnabled)
+				prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
 		}
 	}
 	
