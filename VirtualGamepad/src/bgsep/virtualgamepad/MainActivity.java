@@ -28,17 +28,24 @@ public class MainActivity extends Activity implements Observer {
 
 		setContentView(R.layout.activity_main);
 		
-		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;
+		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton,
+						imageCommButton;
+		Button			nesButton, gcButton, psButton,
+						commButton;
+		
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
-		new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr,
-				45, this);
-		new Button(imageGCbutton, R.drawable.mainpage_gc, R.drawable.mainpage_gc_pr,
-				46, this);
-		new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr,
-				47, this);	
-				
+		
+		nesButton = new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr);
+		gcButton = new Button(imageGCbutton, R.drawable.mainpage_gc, R.drawable.mainpage_gc_pr);
+		psButton = new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr);
+		
+		nesButton.addObserver(this);
+		gcButton.addObserver(this);
+		psButton.addObserver(this);
+		
+		
 		bh = new BluetoothHandler(this);
 		bh.start();
 
@@ -46,10 +53,6 @@ public class MainActivity extends Activity implements Observer {
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
 		
-	}
-	
-	public void testa() {
-		Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
