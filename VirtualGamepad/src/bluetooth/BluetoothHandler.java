@@ -37,7 +37,6 @@ public class BluetoothHandler extends Thread {
 	private boolean checkForServer(BluetoothDevice d) {
 		for (ParcelUuid uuid : d.getUuids()) {
 			Log.d(TAG, "UUID:" + uuid.toString());
-			checkForServer(d);
 			if (uuid.toString().equals(ExpectedUUID.toString())) {
 				Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
 				return true;
@@ -59,9 +58,11 @@ public class BluetoothHandler extends Thread {
 					connect(d.getAddress());
 					return;
 				} else {
+					System.out.println("start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
 					d.fetchUuidsWithSdp();
 				}
 			}
+			System.out.println("Did not found server, trying more!");
 			int count = 0;
 			while (true) {
 				count++;
