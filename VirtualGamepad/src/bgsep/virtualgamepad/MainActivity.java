@@ -35,11 +35,7 @@ public class MainActivity extends Activity implements Observer {
 				46, this);
 		new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr,
 				47, this);
-		
-		
-		//Hides soft menu keys if present
-		if (!ViewConfiguration.get(this).hasPermanentMenuKey())
-			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);	
+			
 		/*
 		refer to:
 		http://stackoverflow.com/questions/937313/android-basic-gesture-detection
