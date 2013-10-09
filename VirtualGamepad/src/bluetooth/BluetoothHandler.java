@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import bgsep.virtualgamepad.MainActivity;
 import lib.Protocol;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -11,6 +12,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
@@ -113,12 +115,18 @@ public class BluetoothHandler extends Thread {
 			outputStream.write(data);
 		} catch (IOException e) {
 			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
-			stopped = true;
+			notifyDisconnected();
 		} catch (NullPointerException e) {
 			Log.d(TAG, "No connection to server, stopping communication..");
+			notifyDisconnected();
 		}
 	}
-
+	
+	private void notifyDisconnected() {
+		stopped = true;
+		showToast("No connection to server");
+	}
+	
 	private boolean connect(final String address) {
         if (adapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
@@ -133,6 +141,9 @@ public class BluetoothHandler extends Thread {
 			socket = device.createInsecureRfcommSocketToServiceRecord(ExpectedUUID);
 			socket.connect();
 			outputStream = socket.getOutputStream();
+			if (socket.isConnected()) {
+				showToast("Connected");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -152,9 +163,12 @@ public class BluetoothHandler extends Thread {
 		}
 	}
 	
-	private void showToast(CharSequence text) {
-		Context context = activity.getApplicationContext();
-		Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-		toast.show();
+	private void showToast(final CharSequence text) {
+		System.out.println("toastar!");
+		activity.runOnUiThread(new Runnable() {
+		    public void run() {
+		        Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
+		    }
+		});
 	}
 }
