@@ -68,8 +68,7 @@ public class JoystickHandler extends Joystick {
 		else {
 			if(leftRightEnabled)
 				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickLeftID);
-		
-			if(upDownEnabled)
+			else if(upDownEnabled)
 				prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
 		}
 	}
