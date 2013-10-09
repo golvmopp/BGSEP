@@ -95,6 +95,10 @@ public class BluetoothHandler extends Thread {
 		Log.d(TAG, "no servers found!");
 	}
 	
+	public boolean isConnected() {
+		return socket.isConnected();
+	}
+	
 	private boolean initBluetoothAdapter() {
 		adapter = BluetoothAdapter.getDefaultAdapter();
 		if (adapter == null) {
@@ -162,6 +166,7 @@ public class BluetoothHandler extends Thread {
 	
 	@Override
 	public void run() {
+		stopped = true;
 		while (!interrupted() && !stopped) {
 			si.poll();
 			Log.d(TAG, "poll");
