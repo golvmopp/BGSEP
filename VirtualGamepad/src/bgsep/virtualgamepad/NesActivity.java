@@ -6,6 +6,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,7 +103,7 @@ public class NesActivity extends Activity implements Observer {
 	    switch (item.getItemId()) {
         
 	        case R.id.action_gc:
-	        	i = new Intent(this, NesActivity.class);
+	        	i = new Intent(this, GcActivity.class);
 	    		startActivity(i);
 	            finish();
 	            return true;
