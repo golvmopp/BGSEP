@@ -97,7 +97,7 @@ public class BluetoothClient extends Thread {
 		}
 	}
 
-	private void disconnect() {
+	public void disconnect() {
 		for (Joystick j : joyStick.values()) {
 			j.setStopped();
 		}

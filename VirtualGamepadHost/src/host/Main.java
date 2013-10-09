@@ -1,5 +1,6 @@
 package host;
 
+import util.Terminal;
 import bluetooth.BluetoothServer;
 
 public class Main {
@@ -7,5 +8,7 @@ public class Main {
 		System.out.println("VIRTUAL GAMEPAD HOST");
 		Configuration configuration = Configuration.getInstance();
 		BluetoothServer bs = new BluetoothServer();
+		Terminal terminal = new Terminal();
+		terminal.start();
 	} 
 }
