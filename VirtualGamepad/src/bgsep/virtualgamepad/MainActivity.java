@@ -16,7 +16,6 @@ import bgsep.communication.Communication;
 import bgsep.model.Button;
 import bluetooth.BluetoothHandler;
 import bluetooth.SenderImpl;
-//import bluetooth.BluetoothHandler;
 
 public class MainActivity extends Activity implements Observer {
 
