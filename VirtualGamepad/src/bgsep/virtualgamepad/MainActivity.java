@@ -30,8 +30,7 @@ public class MainActivity extends Activity implements Observer {
 		
 		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton,
 						imageCommButton;
-		Button			nesButton, gcButton, psButton,
-						commButton;
+		Button			nesButton, gcButton, psButton;
 		
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
