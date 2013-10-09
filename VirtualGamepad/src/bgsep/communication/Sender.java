@@ -29,5 +29,5 @@ public interface Sender {
 	 * @param message a cause to display in the server
 	 * @return
 	 */
-	public boolean send(String message);
+	public boolean sendCloseMessage(String message);
 }
