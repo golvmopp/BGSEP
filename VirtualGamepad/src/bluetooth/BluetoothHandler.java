@@ -95,6 +95,10 @@ public class BluetoothHandler extends Thread {
 		Log.d(TAG, "no servers found!");
 	}
 	
+	public boolean isConnected() {
+		return socket.isConnected();
+	}
+	
 	private boolean initBluetoothAdapter() {
 		adapter = BluetoothAdapter.getDefaultAdapter();
 		if (adapter == null) {
@@ -147,7 +151,7 @@ public class BluetoothHandler extends Thread {
 			socket.connect();
 			outputStream = socket.getOutputStream();
 			if (socket.isConnected()) {
-				showToast("Connected");
+				notifyConnected();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -155,8 +159,14 @@ public class BluetoothHandler extends Thread {
         return true;
     }
 	
+	private void notifyConnected() {
+		showToast("Connected");
+		((MainActivity) activity).serverConnected();
+	}
+	
 	@Override
 	public void run() {
+		stopped = true;
 		while (!interrupted() && !stopped) {
 			si.poll();
 			Log.d(TAG, "poll");
