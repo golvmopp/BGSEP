@@ -1,11 +1,14 @@
 package bluetooth;
 
 import host.Configuration;
+import host.Joystick;
+
 import java.awt.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import lib.Protocol;
 import util.ClientIdGenerator;
 
@@ -16,7 +19,7 @@ public class BluetoothClient extends Thread {
 	private DataInputStream dis;
 	private boolean running;
 	private long lastPoll;
-	private HashMap<Integer, Boolean> joyStick;
+	private HashMap<Integer, Joystick> joyStick;
 
 	public BluetoothClient(DataInputStream dis) throws Exception {
 		this.dis = dis;
@@ -26,7 +29,7 @@ public class BluetoothClient extends Thread {
 		}
 		lastPoll = System.currentTimeMillis();
 		robot = new Robot();
-		joyStick = new HashMap<Integer, Boolean>();
+		joyStick = new HashMap<Integer, Joystick>();
 	}
 
 	@Override
@@ -35,7 +38,6 @@ public class BluetoothClient extends Thread {
 		ArrayList<Byte> data = new ArrayList<Byte>();
 		boolean escape = false;
 		boolean arrayStopped = true;
-
 		while (!interrupted() && running) {
 			try {
 				byte[] byteArray = new byte[1000];
@@ -83,12 +85,10 @@ public class BluetoothClient extends Thread {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 			if (System.currentTimeMillis() - lastPoll >= lib.Constants.CLIENT_TIMEOUT) {
 				System.out.println("Client with ID " + getClientId() + " timed out!");
 				disconnect();
 			}
-
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -98,6 +98,9 @@ public class BluetoothClient extends Thread {
 	}
 
 	private void disconnect() {
+		for (Joystick j : joyStick.values()) {
+			j.setStopped();
+		}
 		BluetoothServer.removeClient(this);
 		running = false;
 	}
@@ -105,12 +108,12 @@ public class BluetoothClient extends Thread {
 	private void handleButtonEvent(ArrayList<Byte> data) {
 		try {
 			if (data.get(2) == 0x01) {
-				System.out.println("Pressing key " +
-				Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				//System.out.println("Pressing key " +
+				//Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 				robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			} else {
-				System.out.println("Releasing key " +
-						Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				//System.out.println("Releasing key " +
+				//		Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 				robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			}
 		} catch (IllegalArgumentException e) {
@@ -121,8 +124,13 @@ public class BluetoothClient extends Thread {
 	private void handleJoystickEvent(ArrayList<Byte> data) {
 		byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
 		float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
-		int joyStickId = data.get(1);
-		this.joyStick.put(joyStickId, false);
+		int joyStickId = data.get(1);		
+		if (!joyStick.containsKey(joyStickId)) {
+			System.out.println("button " + joyStickId + " on client " + clientId + " is a joystick, creating a Joystick for it..");
+			this.joyStick.put(joyStickId, new Joystick(joyStickId, clientId));
+		}
+		//System.out.println("received position " + position + " on ID " + joyStickId);
+		joyStick.get(joyStickId).setNewValue(position);
 	}
 	
 	private void handleCloseEvent(ArrayList<Byte> data) {

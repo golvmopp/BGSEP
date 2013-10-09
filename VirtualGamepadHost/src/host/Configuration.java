@@ -4,9 +4,9 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Configuration {
-	private static final int DEFAULT_NUMBER_OF_CLIENTS = 5;
+	private static final int DEFAULT_NUMBER_OF_CLIENTS = 2;
 	private int numberOfClients;
-	private static final int DEFAULT_NUMBER_OF_BUTTONS = 25;
+	private static final int DEFAULT_NUMBER_OF_BUTTONS = 15;
 	private int numberOfButtons;
 	private static final int MY_COMPUTER = 182;
 	private static final int MY_CALCULATOR = 183;
@@ -35,6 +35,7 @@ public class Configuration {
 	}
 	
 	private void addDefaultKeyCodes() {
+		/*
 		for (int i = 1; i <= 7; i++) {
 			keyCodes.add(i);
 		}
@@ -45,7 +46,11 @@ public class Configuration {
 			if (i != MY_COMPUTER && i != MY_CALCULATOR && i != NUM_LOCK && i != SCROLL_LOCK) { 
 				keyCodes.add(i);
 			}
+		}*/
+		for (int i = 65; i <= 111; i++) {
+			keyCodes.add(i);
 		}
+		
 	}
 	
 	private void determineConfigFileLocation() {
@@ -66,7 +71,7 @@ public class Configuration {
 		StringBuilder buttonKeyCodes = new StringBuilder();
 		for (int client = 0; client < DEFAULT_NUMBER_OF_CLIENTS; client++) {
 			for (int button = 0; button < DEFAULT_NUMBER_OF_BUTTONS; button++) {
-				buttonKeyCodes.append("client" + client + ":button" + button + "=" + keyCodes.get(client * DEFAULT_NUMBER_OF_CLIENTS + button) + "\n");
+				buttonKeyCodes.append("client" + client + ":button" + button + "=" + keyCodes.get(client * DEFAULT_NUMBER_OF_BUTTONS + button) + "\n");
 			}
 		}
 		this.configuration = "[General]\n" + general + "\n\n[KeyCodes]\n" + buttonKeyCodes.toString();
