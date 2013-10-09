@@ -3,13 +3,19 @@ package bluetooth;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
+
+import bgsep.virtualgamepad.MainActivity;
 import lib.Protocol;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.os.Looper;
+import android.os.ParcelUuid;
 import android.util.Log;
+import android.widget.Toast;
 	
 public class BluetoothHandler extends Thread {
 	
@@ -31,24 +37,53 @@ public class BluetoothHandler extends Thread {
 			connectToServer();
 		}
 	}
+
+	private boolean checkForServer(BluetoothDevice d) {
+		for (ParcelUuid uuid : d.getUuids()) {
+			Log.d(TAG, "UUID:" + uuid.toString());
+			if (uuid.toString().equals(ExpectedUUID.toString())) {
+				Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	private void connectToServer() {
 		boolean serverFound = false;
-		if (adapter.getBondedDevices() != null && adapter.getBondedDevices().size() != 0) {
+		if (adapter.getBondedDevices() != null
+				&& adapter.getBondedDevices().size() != 0) {
 			Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
-			for(BluetoothDevice d : adapter.getBondedDevices()){
+			for (BluetoothDevice d : adapter.getBondedDevices()) {
 				Log.d(TAG, "\t" + d.getName());
-				serverFound = true; // this should only be done if the server program was found but it does not work yet
-				/*for (ParcelUuid uuid : d.getUuids()) {
-					Log.d(TAG, "UUID:" + uuid.toString());
-					if (uuid.toString().equals(ExpectedUUID.toString())) {
-						serverFound = true;
-						Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
-					}
-				}*/
+				serverFound = checkForServer(d);
 				if (serverFound) {
-					Log.d(TAG, "Connecting to server..");	
+					Log.d(TAG, "Connecting to server..");
 					connect(d.getAddress());
+					return;
+				} else {
+					System.out.println("start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
+					d.fetchUuidsWithSdp();
+				}
+			}
+			System.out.println("Did not found server, trying more!");
+			int count = 0;
+			while (true) {
+				count++;
+				for (BluetoothDevice d : adapter.getBondedDevices()) {
+					if (checkForServer(d)) {
+						Log.d(TAG, "Connecting to server..");
+						connect(d.getAddress());
+						return;
+					}
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if (count > 10) {
+					Log.d(TAG, "no servers found!");
 					return;
 				}
 			}
@@ -80,12 +115,18 @@ public class BluetoothHandler extends Thread {
 			outputStream.write(data);
 		} catch (IOException e) {
 			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
-			stopped = true;
+			notifyDisconnected();
 		} catch (NullPointerException e) {
 			Log.d(TAG, "No connection to server, stopping communication..");
+			notifyDisconnected();
 		}
 	}
-
+	
+	private void notifyDisconnected() {
+		stopped = true;
+		showToast("No connection to server");
+	}
+	
 	private boolean connect(final String address) {
         if (adapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
@@ -100,6 +141,9 @@ public class BluetoothHandler extends Thread {
 			socket = device.createInsecureRfcommSocketToServiceRecord(ExpectedUUID);
 			socket.connect();
 			outputStream = socket.getOutputStream();
+			if (socket.isConnected()) {
+				showToast("Connected");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -117,5 +161,14 @@ public class BluetoothHandler extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void showToast(final CharSequence text) {
+		System.out.println("toastar!");
+		activity.runOnUiThread(new Runnable() {
+		    public void run() {
+		        Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
+		    }
+		});
 	}
 }

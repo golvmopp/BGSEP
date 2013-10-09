@@ -1,12 +1,15 @@
 package bluetooth;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnectionNotifier;
+
 import util.ClientIdGenerator;
 
 public class BluetoothServer {
@@ -14,12 +17,12 @@ public class BluetoothServer {
 	private final static UUID uuid = new UUID("27012f0c68af4fbf8dbe6bbaf7aa432a", false);
 	private final static String name = "Virtual Gamepad Host";
 	private static final String url = "btspp://localhost:" + uuid + ";name=" + name + ";authenticate=false;encrypt=false;";;
-	private static HashSet<BluetoothClient> clients;
+	private static HashMap<Integer, BluetoothClient> clients;
 	private LocalDevice device;
 	private StreamConnectionNotifier server;
 
 	public BluetoothServer() {
-		clients = new HashSet<BluetoothClient>();
+		clients = new HashMap<Integer, BluetoothClient>();
 		try {
 			device = LocalDevice.getLocalDevice();
 			if (device != null) {
@@ -60,7 +63,7 @@ public class BluetoothServer {
 	}
 	
 	public static void addClient(BluetoothClient client) {
-		clients.add(client);
+		clients.put(client.getClientId(), client);
 	}
 	
 	public static void removeClient(BluetoothClient client){
@@ -68,7 +71,11 @@ public class BluetoothServer {
 		ClientIdGenerator.getInstance().removeClient(client.getClientId());
 	}
 
-	public static HashSet<BluetoothClient> getClients() {
+	public static BluetoothClient getClient(int id) {
+		return clients.get(id);
+	}
+	
+	public static HashMap<Integer, BluetoothClient> getClients() {
 		return clients;
 	}
 }

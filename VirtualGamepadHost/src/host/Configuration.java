@@ -58,6 +58,7 @@ public class Configuration {
 		if (os.startsWith("Linux")) {
 			System.out.println("you are running on a Linux machine, setting config location to ~/.config/");
 			configFile = new File(System.getProperty("user.home") + File.separatorChar + ".config" + File.separatorChar + "virtual-gamepad.conf");
+			
 		} else if (os.startsWith("Windows")) {
 			System.out.println("Windoze is not yet supported. Get a Linux based OS now!");
 			System.exit(1);
