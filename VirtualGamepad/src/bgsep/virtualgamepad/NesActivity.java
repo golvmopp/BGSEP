@@ -51,17 +51,23 @@ public class NesActivity extends Activity implements Observer {
 		bButton = new Button(imageBbutton, R.drawable.nes_b_button, R.drawable.nes_b_button_pressed,
 				1, this);
 		
-		leftArrowButton = new Button(imageLeftArrow, 2);
+		leftArrowButton = new Button(imageLeftArrow, R.drawable.nes_left_arrow, R.drawable.nes_left_arrow_pressed,
+				2, this);
 		
-		rightArrowButton = new Button(imageRightArrow, 3);
+		rightArrowButton = new Button(imageRightArrow, R.drawable.nes_right_arrow, R.drawable.nes_right_arrow_pressed,
+				3, this);
 		
-		upArrowButton = new Button(imageUpArrow, 4);
+		upArrowButton = new Button(imageUpArrow, R.drawable.nes_up_arrow, R.drawable.nes_up_arrow_pressed,
+				4, this);
 		
-		downArrowButton = new Button(imageDownArrow, 5);
+		downArrowButton = new Button(imageDownArrow, R.drawable.nes_down_arrow, R.drawable.nes_down_arrow_pressed,
+				5, this);
 		
-		selectButton = new Button(imageSelect, 15);
+		selectButton = new Button(imageSelect, R.drawable.nes_select_button, R.drawable.nes_select_button_pressed,
+				15, this);
 		
-		startButton = new Button(imageStart, 16);
+		startButton = new Button(imageStart, R.drawable.nes_start_button, R.drawable.nes_start_button_pressed,
+				16, this);
 		
 		Communication comm = Communication.getInstance();
 		
