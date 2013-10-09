@@ -83,5 +83,7 @@ public class MainActivity extends Activity implements Observer {
 		}
 	}
 	
-
+	public void serverDisconnected() {
+		
+	}
 }

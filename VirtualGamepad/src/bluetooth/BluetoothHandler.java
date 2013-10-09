@@ -49,7 +49,11 @@ public class BluetoothHandler extends Thread {
 		return false;
 	}
 	
-	private void connectToServer() {
+	/**
+	 * Loops through all bounded devices and connects to the device which is running the Virtual Gamepad Host.  
+	 * 
+	 */
+	public void connectToServer() {
 		boolean serverFound = false;
 		if (adapter.getBondedDevices() != null
 				&& adapter.getBondedDevices().size() != 0) {
@@ -125,6 +129,7 @@ public class BluetoothHandler extends Thread {
 	private void notifyDisconnected() {
 		stopped = true;
 		showToast("No connection to server");
+		((MainActivity) activity).serverDisconnected();
 	}
 	
 	private boolean connect(final String address) {
@@ -161,6 +166,12 @@ public class BluetoothHandler extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void disconnectFromServer() {
+		stopped = true;
+		si.sendCloseMessage("Disconnected by user");
+		
 	}
 	
 	private void showToast(final CharSequence text) {

@@ -45,7 +45,7 @@ public class SenderImpl implements Sender {
 	}
 
 	@Override
-	public boolean send(String message) {
+	public boolean sendCloseMessage(String message) {
 		byte[] data = message.getBytes();
 		send(data, Protocol.MESSAGE_TYPE_CLOSE);
 		return false;
