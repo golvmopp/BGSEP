@@ -9,6 +9,19 @@ import java.io.InputStreamReader;
 import bluetooth.BluetoothClient;
 import bluetooth.BluetoothServer;
 
+/**
+ * 
+ * This is a terminal designed for the {@link BluetoothServer}. It's a {@link Thread} that will
+ * listen to inputs from the user and will interpret some specified commands:
+ * <i>halt</i> <i>kick</i> <i>list</i> <i>reloadConfiguration </i>
+ * <i>logProtocol</i> <i>help</i>
+ * 
+ * 
+ * @author Linus Lindgren (linlind@student.chalmers.se) & Isak Eriksson
+ *         (isak.eriksson@mail.com)
+ * 
+ */
+
 public class Terminal extends Thread {
 	private BufferedReader br;
 	private static final String name = "virtual-gamepad$ ";
@@ -96,10 +109,10 @@ public class Terminal extends Thread {
 
 	private void kick(String[] arguments) throws IOException {
 		if (arguments.length > 1) {
-			BluetoothServer.getClient(Integer.parseInt(arguments[1]));
+			BluetoothServer.getInstance().getClient(Integer.parseInt(arguments[1]));
 		} else {
 			System.out.println("clients online:");
-			for (BluetoothClient client : BluetoothServer.getClients().values()) {
+			for (BluetoothClient client : BluetoothServer.getInstance().getClients().values()) {
 				String name = client.getClientName();
 				int id = client.getClientId();
 				if (client.getName().isEmpty()) {
@@ -112,7 +125,7 @@ public class Terminal extends Thread {
 
 	private void list() {
 		System.out.println("clients online:");
-		for (BluetoothClient client : BluetoothServer.getClients().values()) {
+		for (BluetoothClient client : BluetoothServer.getInstance().getClients().values()) {
 			String name = client.getClientName();
 			int id = client.getClientId();
 			if (client.getName().isEmpty()) {

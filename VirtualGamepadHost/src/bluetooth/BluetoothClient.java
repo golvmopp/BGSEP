@@ -10,28 +10,58 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import lib.Protocol;
-import util.ClientIdGenerator;
+import util.IdHandler;
 
+/**
+ * 
+ * The BluetoothClient is a {@link Thread} that represents a client to the
+ * {@link BluetoothServer} and contains a {@link DataInputStream} from the client's
+ * bluetooth device. The thread interprets the incoming data from the client and
+ * uses a {@link Robot} to give key presses on the keyboard.
+ * 
+ * @author Linus Lindgren(linlind@student.chalmers.com) & Isak
+ *         Eriksson(isak.eriksson@mail.com)
+ * 
+ */
 public class BluetoothClient extends Thread {
-	private int clientId;
-	private String clientName = "";
-	private Robot robot;
 	private DataInputStream dis;
+	private int clientId;
+	private String clientName;
+
+	private Robot robot;
 	private boolean running;
 	private long lastPoll;
 	private HashMap<Integer, Joystick> joyStick;
 
+	/**
+	 * Constructor that tries to get a client ID. If the server is full the
+	 * constructor will throw an exception and close the {@link DataInputStream}
+	 * .
+	 * 
+	 * @param dis
+	 *            The data input stream from the client.
+	 * @throws Exception
+	 *             Is thrown when the server is full.
+	 */
+
 	public BluetoothClient(DataInputStream dis) throws Exception {
 		this.dis = dis;
-		setClientId(ClientIdGenerator.getInstance().getGeneratedId());
+		setClientId(IdHandler.getInstance(Configuration.getInstance().getNumberOfClients()).getUnoccupiedId());
 		if (getClientId() == -1) {
+			dis.close();
 			throw new Exception("Server is full!");
 		}
 		lastPoll = System.currentTimeMillis();
 		robot = new Robot();
 		joyStick = new HashMap<Integer, Joystick>();
+		clientName = "";
 	}
 
+	/**
+	 * While the thread is running, it will constantly collect data from the
+	 * input stream and interpret the data by the standard described in
+	 * {@link Protocol}.
+	 */
 	@Override
 	public void run() {
 		running = true;
@@ -97,11 +127,16 @@ public class BluetoothClient extends Thread {
 		}
 	}
 
+	/**
+	 * Disconnects the client by stopping the {@link Thread}, stopping the {@link Joystick}, closing the
+	 * {@link DataInputStream} and removing the client from the
+	 * {@link BluetoothServer}.
+	 */
 	public void disconnect() {
 		for (Joystick j : joyStick.values()) {
 			j.setStopped();
 		}
-		BluetoothServer.removeClient(this);
+		BluetoothServer.getInstance().removeClient(this);
 		try {
 			this.dis.close();
 		} catch (IOException e) {
@@ -110,34 +145,47 @@ public class BluetoothClient extends Thread {
 		running = false;
 	}
 
+	public int getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(int id) {
+		this.clientId = id;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+
 	private void handleButtonEvent(ArrayList<Byte> data) {
 		try {
 			if (data.get(2) == 0x01) {
-				//System.out.println("Pressing key " +
-				//Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 				robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			} else {
-				//System.out.println("Releasing key " +
-				//		Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 				robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			}
 		} catch (IllegalArgumentException e) {
 			System.out.println("Failed getting key code: " + e.getMessage());
 		}
 	}
-	
+
 	private void handleJoystickEvent(ArrayList<Byte> data) {
 		byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
 		float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
-		int joyStickId = data.get(1);		
+		int joyStickId = data.get(1);
 		if (!joyStick.containsKey(joyStickId)) {
 			System.out.println("button " + joyStickId + " on client " + clientId + " is a joystick, creating a Joystick for it..");
 			this.joyStick.put(joyStickId, new Joystick(joyStickId, clientId));
 		}
-		//System.out.println("received position " + position + " on ID " + joyStickId);
+		// System.out.println("received position " + position + " on ID " +
+		// joyStickId);
 		joyStick.get(joyStickId).setNewValue(position);
 	}
-	
+
 	private void handleCloseEvent(ArrayList<Byte> data) {
 		byte[] stringBytes = new byte[data.size() - 1];
 		for (int i = 1; i < data.size(); i++) {
@@ -147,7 +195,7 @@ public class BluetoothClient extends Thread {
 		System.out.println("Client closes connection: " + message);
 		disconnect();
 	}
-	
+
 	private void handleNameEvent(ArrayList<Byte> data) {
 		byte[] stringBytes2 = new byte[data.size() - 1];
 		for (int i = 1; i < data.size(); i++) {
@@ -157,7 +205,7 @@ public class BluetoothClient extends Thread {
 		System.out.println("Client name: " + name);
 		setClientName(name);
 	}
-	
+
 	private void interpretByteArray(ArrayList<Byte> data) throws IndexOutOfBoundsException {
 		int id = data.get(0);
 		switch (id) {
@@ -177,22 +225,6 @@ public class BluetoothClient extends Thread {
 			lastPoll = System.currentTimeMillis();
 			break;
 		}
-	}
-
-	public int getClientId() {
-		return clientId;
-	}
-
-	public void setClientId(int id) {
-		this.clientId = id;
-	}
-
-	public String getClientName() {
-		return clientName;
-	}
-
-	public void setClientName(String clientName) {
-		this.clientName = clientName;
 	}
 
 }

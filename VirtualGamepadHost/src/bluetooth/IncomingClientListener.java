@@ -6,8 +6,18 @@ import java.io.IOException;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
+/**
+ * 
+ * This is a {@link Thread} that, with a given server ({@link StreamConnectionNotifier}),
+ * listens to new input streams and tries to create new {@link BluetoothClient}s.
+ * 
+ * @author Linus Lindgren (linlind@student.chalmers.se)
+ * 
+ */
+
 public class IncomingClientListener extends Thread {
 
+	
 	private StreamConnectionNotifier server;
 
 	public IncomingClientListener(StreamConnectionNotifier server) {
@@ -27,10 +37,10 @@ public class IncomingClientListener extends Thread {
 				try {
 					client = new BluetoothClient(dis);
 
-					BluetoothServer.addClient(client);
-					
+					BluetoothServer.getInstance().addClient(client);
+
 					System.out.println("Added client with ID: " + client.getClientId());
-					
+
 					client.start();
 
 				} catch (Exception e) {
