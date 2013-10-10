@@ -58,7 +58,7 @@ public class Configuration {
 		if (index < keyCodes.size() && buttonID < numberOfButtons) {
 			return keyCodes.get(clientID * numberOfButtons + buttonID);
 		} else {
-			throw new IllegalArgumentException("Client with id " + clientID + " send an illegal argument!");
+			throw new IllegalArgumentException("Too high button id! Ignoring button event.\n(Edit your config file or restart the server with a higher number of buttons to prevent this error.)");
 		}
 	}
 

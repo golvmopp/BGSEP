@@ -170,7 +170,7 @@ public class BluetoothClient extends Thread {
 				robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
 			}
 		} catch (IllegalArgumentException e) {
-			System.out.println("Failed getting key code: " + e.getMessage());
+			System.out.println(e.getMessage());
 		}
 	}
 
