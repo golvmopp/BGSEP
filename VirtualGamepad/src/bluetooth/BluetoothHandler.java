@@ -42,19 +42,21 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	public synchronized void send(byte[] data) {
-		try {
-			outputStream.write(data);
-		} catch (IOException e) {
-			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
-			disconnect();
-		} catch (NullPointerException e) {
-			Log.d(TAG, "No connection to server, stopping communication..");
-			disconnect();
+		if (isConnected()) {
+			try {
+				outputStream.write(data);
+			} catch (IOException e) {
+				Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
+				disconnect();
+			} catch (NullPointerException e) {
+				Log.d(TAG, "No connection to server, stopping communication..");
+				disconnect();
+			}
 		}
 	}
 	
 	public boolean isConnected() {
-		return (socket != null && socket.isConnected() &! stopped);
+		return (socket != null && socket.isConnected() && !stopped && isAlive());
 	}
 	
 	@Override
