@@ -42,31 +42,31 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	public synchronized void send(byte[] data) {
-		try {
-			outputStream.write(data);
-		} catch (IOException e) {
-			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
-			disconnect();
-		} catch (NullPointerException e) {
-			Log.d(TAG, "No connection to server, stopping communication..");
-			disconnect();
+		if (isConnected()) {
+			try {
+				outputStream.write(data);
+			} catch (IOException e) {
+				Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
+				disconnect();
+			} catch (NullPointerException e) {
+				Log.d(TAG, "No connection to server, stopping communication..");
+				disconnect();
+			}
 		}
 	}
 	
-	
 	public boolean isConnected() {
-		return (socket != null && socket.isConnected());
+		return (socket != null && socket.isConnected() && !stopped && isAlive());
 	}
-	
 	
 	@Override
 	public void run() {
+		Log.d(TAG, "running...");
 		stopped = false;
-		
 		if(!connectToServer()){
 			return;
 		}
-		
+		Log.d(TAG, "server connected, entering poll loop..");
 		while (!interrupted() && !stopped) {
 			si.poll();
 			Log.d(TAG, "poll");
@@ -106,17 +106,16 @@ public class BluetoothHandler extends Thread {
 				if (serverFound) {
 					Log.d(TAG, "Connecting to server..");
 					boolean connected = connect(d.getAddress());
-					
 					if(connected){
 						notifyConnected();
-						this.start();
+						return true;
 					}
 				} else {
 					System.out.println("start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
 					d.fetchUuidsWithSdp();
 				}
 			}
-			System.out.println("Did not found server, trying more!");
+			System.out.println("did not find server, trying more..");
 			int count = 0;
 			while (true) {
 				count++;
@@ -124,11 +123,11 @@ public class BluetoothHandler extends Thread {
 					if (checkForServer(d)) {
 						Log.d(TAG, "Connecting to server..");
 						boolean connected = connect(d.getAddress());
-						
 						if(connected){
 							notifyConnected();
-							this.start();
-						}					}
+							return true;
+						}
+					}
 				}
 				try {
 					Thread.sleep(1000);
@@ -205,19 +204,29 @@ public class BluetoothHandler extends Thread {
 	
 	private void notifyConnected() {
 		showToast("Connected");
-		((MainActivity) activity).serverConnected();
-
+		activity.runOnUiThread(new Runnable() {
+		    public void run() {
+		    	((MainActivity) activity).serverConnected();
+		    }
+		});
 	}
 	
 	private void notifyDisconnected() {
 		showToast("No connection to server");
-		((MainActivity) activity).serverDisconnected();
+		activity.runOnUiThread(new Runnable() {
+		    public void run() {
+		    	((MainActivity) activity).serverDisconnected();
+		    }
+		});
 	}
 	
 	private void notifyNoServerFound() {
 		Log.d(TAG, "no servers found!");
 		showToast("No server found");
-		((MainActivity) activity).serverDisconnected();
-
+		activity.runOnUiThread(new Runnable() {
+		    public void run() {
+		    	((MainActivity) activity).serverDisconnected();
+		    }
+		});
 	}
 }

@@ -50,8 +50,8 @@ public class GcActivity extends Activity implements Observer {
 			Communication comm = Communication.getInstance();
 			
 			gcJoystick = new JoystickHandler(boundary, stick);
-			gcJoystick.setLeftRightJoystickID(4, 5);
-			gcJoystick.setUpDownJoystickID(6, 7);
+			gcJoystick.setLeftRightJoystickID(17, 18);
+			gcJoystick.setUpDownJoystickID(19, 20);
 			gcJoystick.addObserver(this);
 			gcJoystick.addObserver(comm);
 			
@@ -84,6 +84,7 @@ public class GcActivity extends Activity implements Observer {
 			
 			isInitialized = true;
 		}
+		super.onWindowFocusChanged(hasChanged);
 	}
 
 

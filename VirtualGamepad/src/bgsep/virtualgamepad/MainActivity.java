@@ -44,10 +44,15 @@ public class MainActivity extends Activity implements Observer {
 		communicationIndicator.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(bh.isConnected())
+				if(bh.isConnected()) {
 					bh.disconnect();
-				else
-					bh.start();
+				} else {
+					if (!bh.isAlive()) {
+						bh.start();
+					} else {
+						Log.d("Gamepad", "disconnected from server but is alive");
+					}
+				}
 			}
 		});
 
