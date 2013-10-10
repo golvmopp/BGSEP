@@ -6,7 +6,7 @@ import android.util.Log;
 import lib.Protocol;
 
 /**
- * 
+ * @author Isak Eriksson (isak.eriksson@mail.com)
  * This class implements Sender using bluetooth.
  *
  */
@@ -20,35 +20,34 @@ public class SenderImpl implements Sender {
 	}
 	
 	@Override
-	public boolean send(byte id, boolean pressed) {
+	public void send(byte id, boolean pressed) {
 		byte[] data = new byte[2];
 		data[0] = id;
 		data[1] = (byte) (pressed ? 0x01 : 0x00);
 		send(data, Protocol.MESSAGE_TYPE_BUTTON);
-		return false;
 	}
 
 	@Override
-	public boolean send(byte id, float value) {
+	public void send(byte id, float value) {
 		int floatbits = Float.floatToIntBits(value);
 		Log.d(TAG, "floatbits == " + Integer.toBinaryString(floatbits));
 		byte[] data = new byte[5];
 		data[0] = id;
-		//data[1] = (byte) ((floatbits >> 24) & 0xFF);
-		//data[2] = (byte) ((floatbits >> 16) & 0xFF);
-		//data[3] = (byte) ((floatbits >> 8) & 0xFF);
-		//data[4] = (byte) (floatbits & 0xFF);
 		byte[] floatArray = ByteBuffer.allocate(4).putFloat(value).array();
 		System.arraycopy(floatArray, 0, data, 1, 4);
 		send(data, Protocol.MESSAGE_TYPE_JOYSTICK);
-		return false;
 	}
 
 	@Override
-	public boolean sendCloseMessage(String message) {
+	public void sendCloseMessage(String message) {
 		byte[] data = message.getBytes();
 		send(data, Protocol.MESSAGE_TYPE_CLOSE);
-		return false;
+	}
+	
+	@Override
+	public void sendNameMessage(String name) {
+		byte[] data = name.getBytes();
+		send(data, Protocol.MESSAGE_TYPE_NAME);
 	}
 	
 	private boolean shouldBeEscaped(byte b) {

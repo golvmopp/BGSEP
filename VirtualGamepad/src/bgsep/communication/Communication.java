@@ -2,11 +2,14 @@ package bgsep.communication;
 
 import java.util.Observable;
 import java.util.Observer;
-
 import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
 
-
+/**
+ * description...
+ * @author Patrik Wållgren
+ *
+ */
 public class Communication implements Observer{
 	
 	private Sender sender;
