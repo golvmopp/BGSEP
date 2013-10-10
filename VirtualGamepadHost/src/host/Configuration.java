@@ -14,9 +14,9 @@ import bluetooth.BluetoothServer;
 /**
  * 
  * This is a singleton class which will handle the mapping between different
- * {@link BluetoothClient}s buttons and the key codes. A configuration file folder will be
- * created and read from. Configuration files, containing different setups of
- * key code mappings, will be created and parsed.
+ * {@link BluetoothClient}s buttons and the key codes. A configuration file
+ * folder will be created and read from. Configuration files, containing
+ * different setups of key code mappings, will be created and parsed.
  * 
  * @author Isak Eriksson (isak.eriksson@mail.com) & Linus Lindren
  *         (linlind@student.chalmers.se)
@@ -49,13 +49,16 @@ public class Configuration {
 	 * @param buttonID
 	 *            the button which was pressed/released
 	 * @return the configured key code
+	 * @throws IllegalArgumentException
+	 *             If the clientID or the buttonID exceeds the allowed values,
+	 *             an {@link IllegalArgumentException} is thrown.
 	 */
-	public synchronized int getKeyCode(int clientID, int buttonID) {
+	public synchronized int getKeyCode(int clientID, int buttonID) throws IllegalArgumentException {
 		int index = clientID * numberOfClients + buttonID;
 		if (index < keyCodes.size() && buttonID < numberOfButtons) {
 			return keyCodes.get(clientID * numberOfButtons + buttonID);
 		} else {
-			throw new IllegalArgumentException(clientID + " send an illegal argument!");
+			throw new IllegalArgumentException("Client with id " + clientID + " send an illegal argument!");
 		}
 	}
 
