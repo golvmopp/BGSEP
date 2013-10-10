@@ -34,7 +34,7 @@ public class MainActivity extends Activity implements Observer {
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
-		communicationIndicator = (ImageView)findViewById(R.id.mainpage_indicator);
+		//communicationIndicator = (ImageView)findViewById(R.id.mainpage_indicator);
 		
 		new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr,
 				45, this);
