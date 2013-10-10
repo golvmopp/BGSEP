@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements Observer {
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
-		//communicationIndicator = (ImageView)findViewById(R.id.mainpage_indicator);
+		communicationIndicator = (ImageView)findViewById(R.id.mainpage_indicator);
 		
 		new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr,
 				45, this);
@@ -41,18 +41,18 @@ public class MainActivity extends Activity implements Observer {
 				47, this);
 		
 		bh = new BluetoothHandler(this);
-		bh.start();
-		if(bh.isConnected())
-			communicationIndicator.setImageResource(R.drawable.mainpage_connected);
-		else
-			communicationIndicator.setImageResource(R.drawable.mainpage_disconnected);
 		communicationIndicator.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(bh.isConnected())
+				if(bh.isConnected()) {
 					bh.disconnect();
-				else
-					bh.start();
+				} else {
+					if (!bh.isAlive()) {
+						bh.start();
+					} else {
+						Log.d("Gamepad", "disconnected from server but is alive");
+					}
+				}
 			}
 		});
 
@@ -64,8 +64,8 @@ public class MainActivity extends Activity implements Observer {
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-		if(!bh.isAlive())
-			bh.start();
+		//if(!bh.isAlive())
+			//bh.start();
 	}
 	
 	@Override
