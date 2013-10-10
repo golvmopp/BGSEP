@@ -83,20 +83,10 @@ public class SenderImpl implements Sender {
 		allData[1] = type;
 		System.arraycopy(data, 0, allData, 2, data.length);
 		allData[data.length + 2] = Protocol.STOP;
-		logData(allData);
 		bh.send(insertEscapeBytes(allData));
-	}
-	
-	private void logData(byte[] data) {
-		String dataString = "";
-		for (int i = 0; i < data.length; i++) {
-			dataString += ((int) data[i]) + " "; 
-		}
-		Log.d(TAG, dataString);
 	}
 	
 	public void poll() {
 		send(new byte[0], Protocol.MESSAGE_TYPE_POLL);
 	}
-
 }

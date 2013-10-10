@@ -19,6 +19,11 @@ public class Configuration {
 	private static ArrayList<Integer> keyCodes;
 	private static Configuration instance = null;
 
+
+	private Configuration() {
+		loadConfig();
+	}
+	
 	public synchronized static Configuration getInstance() {
 		if (instance == null) {
 			instance = new Configuration();
@@ -56,6 +61,11 @@ public class Configuration {
 		numberOfClients = BluetoothServer.getNumberOfClients();
 		numberOfButtons = BluetoothServer.getNumberOfButtons();
 		keyCodes = new ArrayList<Integer>();
+		
+		//Allocating space for array
+		for(int i=0; i<(numberOfClients*numberOfClients)+numberOfButtons; i++){
+			keyCodes.add(0);
+		}
 		determineConfigFileLocation(); // different path on different operating
 										// systems
 		if (!configFile.exists()) {
@@ -66,10 +76,6 @@ public class Configuration {
 	
 	}
 
-
-	private Configuration() {
-		loadConfig();
-	}
 	
 	private void addDefaultKeyCodes() {
 		/*
@@ -78,6 +84,7 @@ public class Configuration {
 		 * if (i != MY_COMPUTER && i != MY_CALCULATOR && i != NUM_LOCK && i !=
 		 * SCROLL_LOCK) { keyCodes.add(i); } }
 		 */
+		keyCodes = new ArrayList<Integer>();
 		for (int i = 65; i <= 249; i++) {
 			keyCodes.add(i);
 		}
@@ -138,26 +145,17 @@ public class Configuration {
 		System.out.println("done");
 	}
 
-	private void parseNumberOfClients(String line) {
-		int number = Integer.parseInt(line.split("=")[1]);
-		System.out.println("setting number of clients to " + number);
-		numberOfClients = number;
-	}
 
 	private void parseLine(String line) {
-		if (line.contains("NumberOfClients")) {
-			parseNumberOfClients(line);
-		} else {
 			if (line.contains(":")) {
 				int client, button, code;
 				client = getClient(line);
 				button = getButton(line);
 				code = getCode(line);
-				// System.out.println("client " + client + " : button " + button
-				// + " : code " + code);
+				/*System.out.println("client " + client + " : button " + button
+				 + " : code " + code);*/
 				keyCodes.add(client * numberOfClients + button, code);
 			}
-		}
 	}
 
 	private void parseConfigFile() {
