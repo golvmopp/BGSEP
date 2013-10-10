@@ -46,6 +46,7 @@ public class BluetoothClient extends Thread {
 
 	public BluetoothClient(DataInputStream dis) throws Exception {
 		this.dis = dis;
+		
 		setClientId(IdHandler.getInstance(Configuration.getInstance().getNumberOfClients()).getUnoccupiedId());
 		if (getClientId() == -1) {
 			dis.close();
@@ -178,11 +179,9 @@ public class BluetoothClient extends Thread {
 		float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
 		int joyStickId = data.get(1);
 		if (!joyStick.containsKey(joyStickId)) {
-			System.out.println("button " + joyStickId + " on client " + clientId + " is a joystick, creating a Joystick for it..");
 			this.joyStick.put(joyStickId, new Joystick(joyStickId, clientId));
 		}
-		// System.out.println("received position " + position + " on ID " +
-		// joyStickId);
+
 		joyStick.get(joyStickId).setNewValue(position);
 	}
 

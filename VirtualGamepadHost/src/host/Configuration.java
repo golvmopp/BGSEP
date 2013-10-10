@@ -52,10 +52,10 @@ public class Configuration {
 	 */
 	public synchronized int getKeyCode(int clientID, int buttonID) {
 		int index = clientID * numberOfClients + buttonID;
-		if (index < keyCodes.size()) {
+		if (index < keyCodes.size() && buttonID < numberOfButtons) {
 			return keyCodes.get(clientID * numberOfButtons + buttonID);
 		} else {
-			throw new IllegalArgumentException("clientID " + clientID + " is too big!");
+			throw new IllegalArgumentException(clientID + " send an illegal argument!");
 		}
 	}
 
