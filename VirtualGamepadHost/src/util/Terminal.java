@@ -5,27 +5,29 @@ import host.Configuration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import bluetooth.BluetoothClient;
 import bluetooth.BluetoothServer;
 
 public class Terminal extends Thread {
 	private BufferedReader br;
 	private static final String name = "virtual-gamepad$ ";
-	
+
 	public Terminal() {
 		setName("Terminal");
 	}
-	
+
 	private enum Command {
 		halt, kick, list, reloadConfiguration, logProtocol, help
 	}
-	
+
 	public void run() {
 		br = new BufferedReader(new InputStreamReader(System.in));
 		while (!interrupted()) {
 			nextCommand();
 		}
 	}
-	
+
 	private void nextCommand() {
 		Command command;
 		String[] arguments;
@@ -72,7 +74,7 @@ public class Terminal extends Thread {
 			System.exit(0);
 		}
 	}
-	
+
 	private void logProtocol(String[] arguments) {
 		if (arguments.length > 1) {
 			if (arguments[1].equals("1")) {
@@ -86,31 +88,41 @@ public class Terminal extends Thread {
 			System.out.println("Illegal argument: use 1 or 0");
 		}
 	}
-	
+
 	private void halt() {
 		System.out.println("Server will now halt");
 		System.exit(0);
 	}
-	
+
 	private void kick(String[] arguments) throws IOException {
 		if (arguments.length > 1) {
 			BluetoothServer.getClient(Integer.parseInt(arguments[1]));
 		} else {
 			System.out.println("clients online:");
-			for (int client : BluetoothServer.getClients().keySet()) {
-				System.out.println(client + " ");
+			for (BluetoothClient client : BluetoothServer.getClients().values()) {
+				String name = client.getClientName();
+				int id = client.getClientId();
+				if (client.getName().isEmpty()) {
+					name = "[noname]";
+				}
+				System.out.println("\t" + name + ", id:" + id);
 			}
 		}
 	}
-	
-	private void list(){
+
+	private void list() {
 		System.out.println("clients online:");
-		for(Integer s : BluetoothServer.getClients().keySet()){
-			System.out.println(s + " ");
+		for (BluetoothClient client : BluetoothServer.getClients().values()) {
+			String name = client.getClientName();
+			int id = client.getClientId();
+			if (client.getName().isEmpty()) {
+				name = "[noname]";
+			}
+			System.out.println("\t" + name + ", id:" + id);
 		}
 
 	}
-			
+
 	private void help() {
 		System.out.println("Available commands:");
 		System.out.println("");
@@ -118,7 +130,7 @@ public class Terminal extends Thread {
 			System.out.println(c.toString());
 		}
 	}
-	
+
 	private void reloadConfiguration(String[] arguments) {
 		Configuration.getInstance().loadConfig();
 	}

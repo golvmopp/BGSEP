@@ -174,7 +174,6 @@ public class BluetoothClient extends Thread {
 			handleNameEvent(data);
 			break;
 		case Protocol.MESSAGE_TYPE_POLL:
-			System.out.println("pollll");
 			lastPoll = System.currentTimeMillis();
 			break;
 		}
