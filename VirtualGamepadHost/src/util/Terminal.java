@@ -1,20 +1,10 @@
 package util;
 
+import host.Configuration;
+
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import bluetooth.BluetoothServer;
 
 public class Terminal extends Thread {
@@ -26,7 +16,7 @@ public class Terminal extends Thread {
 	}
 	
 	private enum Command {
-		halt, kick, reloadConfiguration, logProtocol, help
+		halt, kick, list, reloadConfiguration, logProtocol, help
 	}
 	
 	public void run() {
@@ -58,6 +48,9 @@ public class Terminal extends Thread {
 					break;
 				case kick:
 					kick(arguments);
+					break;
+				case list:
+					list();
 					break;
 				case help:
 					help();
@@ -110,6 +103,14 @@ public class Terminal extends Thread {
 			}
 		}
 	}
+	
+	private void list(){
+		System.out.println("clients online:");
+		for(Integer s : BluetoothServer.getClients().keySet()){
+			System.out.println(s + " ");
+		}
+
+	}
 			
 	private void help() {
 		System.out.println("Available commands:");
@@ -120,6 +121,6 @@ public class Terminal extends Thread {
 	}
 	
 	private void reloadConfiguration(String[] arguments) {
-		
+		Configuration.getInstance().loadConfig();
 	}
 }

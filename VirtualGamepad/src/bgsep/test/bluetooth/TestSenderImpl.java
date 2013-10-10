@@ -13,7 +13,6 @@ import static lib.Protocol.*;
 public class TestSenderImpl extends TestCase {
 	
 	SenderImpl testSender = new SenderImpl(new BluetoothHandler(new Activity()));
-	
 
 	public void testShouldBeEscaped() {
 		Method method;
