@@ -33,9 +33,7 @@ public class BluetoothHandler extends Thread {
 		this.activity = activity;
 		stopped = false;
 		si = new SenderImpl(this);
-		if (initBluetoothAdapter()) {
-			connectToServer();
-		}
+		initBluetoothAdapter();
 	}
 
 	private boolean checkForServer(BluetoothDevice d) {
@@ -54,6 +52,7 @@ public class BluetoothHandler extends Thread {
 	 * 
 	 */
 	public boolean connectToServer() {
+		Log.d(TAG, "trying to connect to server..");
 		boolean serverFound = false;
 		if (adapter.getBondedDevices() != null
 				&& adapter.getBondedDevices().size() != 0) {
@@ -100,7 +99,7 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	public boolean isConnected() {
-		return socket.isConnected();
+		return (socket != null && socket.isConnected());
 	}
 	
 	private boolean initBluetoothAdapter() {
@@ -167,8 +166,12 @@ public class BluetoothHandler extends Thread {
     }
 	
 	private void notifyConnected() {
+		stopped = false;
 		showToast("Connected");
 		((MainActivity) activity).serverConnected();
+		if (!Thread.currentThread().isAlive()) {
+			start();
+		}
 	}
 	
 	@Override
@@ -186,6 +189,7 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	public void disconnectFromServer() {
+		Log.d(TAG, "disconnecting from server");
 		stopped = true;
 		si.sendCloseMessage("Disconnected by user");
 		notifyDisconnected();

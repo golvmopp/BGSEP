@@ -67,6 +67,11 @@ public class MainActivity extends Activity implements Observer {
 	}
 
 	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		bh.connectToServer();
+	}
+	
+	@Override
 	public void update(Observable o, Object obj) {
 		if(o instanceof Button) {
 			Button button = (Button)o;
