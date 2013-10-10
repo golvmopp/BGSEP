@@ -37,11 +37,19 @@ public class BluetoothHandler extends Thread {
 		start();
 	}
 	
-	public void disconnect() {
-		si.sendCloseMessage("Disconnected by user");
+	public void disconnect(boolean expected) {
+		if (expected) {
+			si.sendCloseMessage("Disconnected by user");
+		}
+		try {
+			outputStream.close();
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Log.d(TAG, "disconnecting from server");
 		stopped = true;
-		notifyDisconnected();
+		notifyDisconnected(expected);
 	}
 	
 	public synchronized void send(byte[] data) {
@@ -49,10 +57,10 @@ public class BluetoothHandler extends Thread {
 			outputStream.write(data);
 		} catch (IOException e) {
 			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
-			disconnect();
+			disconnect(false);
 		} catch (NullPointerException e) {
 			Log.d(TAG, "No connection to server, stopping communication..");
-			disconnect();
+			disconnect(false);
 		}
 	}
 
@@ -184,9 +192,6 @@ public class BluetoothHandler extends Thread {
 		return true;
 	}
 	
-
-
-	
 	private boolean connect(final String address) {
         if (adapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
@@ -232,8 +237,12 @@ public class BluetoothHandler extends Thread {
 		});
 	}
 	
-	private void notifyDisconnected() {
-		showToast("No connection to server");
+	private void notifyDisconnected(boolean expected) {
+		if (expected) {
+			showToast("Disconnected");
+		} else {
+			showToast("No connection to server");
+		}
 		activity.runOnUiThread(new Runnable() {
 		    public void run() {
 		    	((MainActivity) activity).serverDisconnected();

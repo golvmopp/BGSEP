@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements Observer {
 			@Override
 			public void onClick(View v) {
 				if(bh.isConnected()) {
-					bh.disconnect();
+					bh.disconnect(true);
 				} else {
 					if (!bh.isStarted()) {
 						Log.d("Gamepad", "BluetoothHandler is not alive, starting it..");
