@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import bgsep.communication.Communication;
 import bgsep.model.Button;
@@ -18,7 +20,8 @@ import bluetooth.SenderImpl;
 public class MainActivity extends Activity implements Observer {
 
 	private BluetoothHandler bh;
-	private ImageView communicationIndicator;
+	private ImageView communicationIndicator, communicationButton;
+	private Animation rotate;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,11 @@ public class MainActivity extends Activity implements Observer {
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
-		communicationIndicator = (ImageView)findViewById(R.id.mainpage_indicator);
+		communicationButton = (ImageView) findViewById(R.id.mainpage_connection_button);
+		communicationIndicator = (ImageView)findViewById(R.id.mainpage_connection_indicator);
+		communicationIndicator.setVisibility(View.INVISIBLE);
+		
+		Animation rotate = AnimationUtils.loadAnimation(this, R.anim.rotate_view);
 		
 		new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr,
 				45, this);
@@ -101,11 +108,13 @@ public class MainActivity extends Activity implements Observer {
 	
 	public void serverDisconnected() {
 		Log.d("Gamepad", "BLI RÖD!");
-		communicationIndicator.setImageResource(R.drawable.mainpage_disconnected);
+		communicationButton.setImageResource(R.drawable.mainpage_red_arrows);
 	}
 	
 	public void serverConnected() {
 		Log.d("Gamepad", "BLI GRÖN!");
-		communicationIndicator.setImageResource(R.drawable.mainpage_connected);
+		communicationIndicator.setVisibility(View.INVISIBLE);
+		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
+		
 	}
 }

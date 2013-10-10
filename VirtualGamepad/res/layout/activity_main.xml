@@ -39,14 +39,27 @@
         android:layout_toRightOf="@+id/mainpage_gc"
         android:src="@drawable/mainpage_ps" />
 
-    <ImageView
-        android:id="@+id/mainpage_indicator"
+    <RelativeLayout 
+        android:id="@+id/mainpage_connectlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="13dp"
-        android:src="@drawable/mainpage_connect_button" />
+        android:layout_marginTop="13dp">
+        
+         <ImageView
+        android:id="@+id/mainpage_connection_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/mainpage_red_arrows" />
+         
+         <ImageView 
+             android:id="@+id/mainpage_connection_indicator"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerInParent="true"
+             android:src="@drawable/mainpage_yellow_arrows"/>
+    </RelativeLayout>
+   
 
 </RelativeLayout>
