@@ -6,6 +6,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,25 +44,19 @@ public class MainActivity extends Activity implements Observer {
 		new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr,
 				47, this);
 		
-		
-		
-		
 		bh = new BluetoothHandler(this);
 		bh.start();
-		
 		if(bh.isConnected())
 			communicationIndicator.setImageResource(R.drawable.mainpage_connected);
 		else
 			communicationIndicator.setImageResource(R.drawable.mainpage_disconnected);
-		
 		communicationIndicator.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				if(bh.isConnected())
-					serverDisconnect();
+					bh.disconnectFromServer();
 				else
-					serverConnect();
+					bh.connectToServer();
 			}
 		});
 
@@ -90,8 +85,8 @@ public class MainActivity extends Activity implements Observer {
 					startActivity(i);
 					break;
 				case 47:
-					/*i = new Intent(this, NesActivity.class);
-					startActivity(i);*/
+					i = new Intent(this, PsActivity.class);
+					startActivity(i);
 					break;
 				default:
 					break;
@@ -102,13 +97,13 @@ public class MainActivity extends Activity implements Observer {
 		}
 	}
 	
-	public void serverDisconnect() {
-		bh.disconnectFromServer();
+	public void serverDisconnected() {
+		Log.d("Gamepad", "BLI RÖD!");
 		communicationIndicator.setImageResource(R.drawable.mainpage_disconnected);
 	}
 	
-	public void serverConnect() {
-		bh.connectToServer();
+	public void serverConnected() {
+		Log.d("Gamepad", "BLI GRÖN!");
 		communicationIndicator.setImageResource(R.drawable.mainpage_connected);
 	}
 }

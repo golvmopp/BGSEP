@@ -91,6 +91,7 @@ public class BluetoothHandler extends Thread {
 			}
 		}
 		notifyNoServerFound();
+		return false;
 	}
 	
 	private void notifyNoServerFound() {
@@ -187,7 +188,7 @@ public class BluetoothHandler extends Thread {
 	public void disconnectFromServer() {
 		stopped = true;
 		si.sendCloseMessage("Disconnected by user");
-		
+		notifyDisconnected();
 	}
 	
 	private void showToast(final CharSequence text) {
