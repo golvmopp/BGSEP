@@ -32,10 +32,9 @@
             android:layout_centerInParent="true"
             android:src="@drawable/gc_joystick" />
 
-
-
     </RelativeLayout>
-        <ImageView
+    
+    <ImageView
             android:id="@+id/gc_start_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
