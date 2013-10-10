@@ -89,7 +89,6 @@ public class Terminal extends Thread {
 	
 	private void halt() {
 		System.out.println("Server will now halt");
-		//halta servern!
 		System.exit(0);
 	}
 	
