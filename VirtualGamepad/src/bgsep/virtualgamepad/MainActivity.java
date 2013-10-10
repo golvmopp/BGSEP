@@ -49,6 +49,8 @@ public class MainActivity extends Activity implements Observer {
 				} else {
 					if (!bh.isAlive()) {
 						bh.start();
+					} else {
+						Log.d("Gamepad", "disconnected from server but is alive");
 					}
 				}
 			}
