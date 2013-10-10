@@ -103,11 +103,7 @@ public class BluetoothClient extends Thread {
 		}
 		BluetoothServer.removeClient(this);
 		try {
-<<<<<<< HEAD
-			dis.close();
-=======
 			this.dis.close();
->>>>>>> 2ee76d1b9ae89e4478e942025430e349ee51e07c
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
