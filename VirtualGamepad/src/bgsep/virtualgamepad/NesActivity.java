@@ -46,22 +46,22 @@ public class NesActivity extends Activity implements Observer {
 		imageSelect		= (ImageView) findViewById(R.id.nes_select_button);
 		imageStart		= (ImageView) findViewById(R.id.nes_start_button);
 		
-		aButton = new Button(imageAbutton, R.drawable.nes_a_button, R.drawable.nes_a_button_pressed,
+		leftArrowButton = new Button(imageLeftArrow, R.drawable.nes_left_arrow, R.drawable.nes_left_arrow_pressed,
 				0, this);
 		
-		bButton = new Button(imageBbutton, R.drawable.nes_b_button, R.drawable.nes_b_button_pressed,
+		rightArrowButton = new Button(imageRightArrow, R.drawable.nes_right_arrow, R.drawable.nes_right_arrow_pressed,
 				1, this);
 		
-		leftArrowButton = new Button(imageLeftArrow, R.drawable.nes_left_arrow, R.drawable.nes_left_arrow_pressed,
+		upArrowButton = new Button(imageUpArrow, R.drawable.nes_up_arrow, R.drawable.nes_up_arrow_pressed,
 				2, this);
 		
-		rightArrowButton = new Button(imageRightArrow, R.drawable.nes_right_arrow, R.drawable.nes_right_arrow_pressed,
+		downArrowButton = new Button(imageDownArrow, R.drawable.nes_down_arrow, R.drawable.nes_down_arrow_pressed,
 				3, this);
 		
-		upArrowButton = new Button(imageUpArrow, R.drawable.nes_up_arrow, R.drawable.nes_up_arrow_pressed,
+		aButton = new Button(imageAbutton, R.drawable.nes_a_button, R.drawable.nes_a_button_pressed,
 				4, this);
 		
-		downArrowButton = new Button(imageDownArrow, R.drawable.nes_down_arrow, R.drawable.nes_down_arrow_pressed,
+		bButton = new Button(imageBbutton, R.drawable.nes_b_button, R.drawable.nes_b_button_pressed,
 				5, this);
 		
 		selectButton = new Button(imageSelect, R.drawable.nes_select_button, R.drawable.nes_select_button_pressed,

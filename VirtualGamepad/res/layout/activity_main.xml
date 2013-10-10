@@ -47,6 +47,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="13dp"
-        android:src="@drawable/mainpage_disconnected" />
+        android:src="@drawable/mainpage_connect_button" />
 
 </RelativeLayout>

@@ -19,7 +19,6 @@ public class BluetoothServer {
 	private final static String name = "Virtual Gamepad Host";
 	private static final String url = "btspp://localhost:" + uuid + ";name=" + name + ";authenticate=false;encrypt=false;";;
 	private static HashMap<Integer, BluetoothClient> clients;
-	private static int numberOfPlayers; 
 
 	private LocalDevice device;
 	private StreamConnectionNotifier server;
@@ -82,19 +81,49 @@ public class BluetoothServer {
 		return clients;
 	}
 	
-	private static void getNumberOfClients(){
+	public static int getNumberOfButtons(){
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
-			System.out.println("Please enter the maximal number of clients [1-10] (default=5):");
-			int i = br.read();
-			if(i>0 && i<= 10){
-				System.out.println("Maximal number of clients is set to " + i);
-				
+			System.out.println();
+			System.out.println("Please enter the number of buttons [0-24] (default="+ lib.Constants.DEFAULT_NUMBER_OF_BUTTONS +"):");
+			int i = Integer.parseInt(br.readLine());
+			if(i>=0 && i< 25){
+				System.out.println("Number of buttons is set to " + i);
+				System.out.println();
+				return i;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (NumberFormatException e){
 		}
+		
+		System.out.println("Number of buttons is set to default: " + lib.Constants.DEFAULT_NUMBER_OF_BUTTONS);
+		System.out.println();
+		return lib.Constants.DEFAULT_NUMBER_OF_BUTTONS;
+
+	
+	}
+	
+	public static int getNumberOfClients(){
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			System.out.println();
+			System.out.println("Please enter the maximal number of clients [1-10] (default="+ lib.Constants.DEFAULT_MAX_CLIENTS +"):");
+			int i = Integer.parseInt(br.readLine());
+			if(i>0 && i<= 10){
+				System.out.println("Maximal number of clients is set to " + i);
+				System.out.println();
+				return i;
+			}
+		} catch (IOException e) {
+		} catch (NumberFormatException e){
+		}
+		
+		System.out.println("Maximal number of clients is set to default: " + lib.Constants.DEFAULT_MAX_CLIENTS);
+		System.out.println();
+		return lib.Constants.DEFAULT_MAX_CLIENTS;
 
 	}
+
+
 }
