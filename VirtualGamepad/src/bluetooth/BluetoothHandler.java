@@ -24,56 +24,77 @@ public class BluetoothHandler extends Thread {
 	private UUID ExpectedUUID;
 	private SenderImpl si;
 	private boolean stopped;
+	private boolean connect;
 	
 	public BluetoothHandler(Activity activity) {
 		setName("BluetoothHandler");
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
 		this.activity = activity;
-		stopped = false;
+		stopped = true;
+		connect = false;
 		si = new SenderImpl(this);
 		initBluetoothAdapter();
+		start();
 	}
 	
 	public void disconnect() {
+		si.sendCloseMessage("Disconnected by user");
 		Log.d(TAG, "disconnecting from server");
 		stopped = true;
-		si.sendCloseMessage("Disconnected by user");
 		notifyDisconnected();
 	}
 	
 	public synchronized void send(byte[] data) {
-		if (isConnected()) {
-			try {
-				outputStream.write(data);
-			} catch (IOException e) {
-				Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
-				disconnect();
-			} catch (NullPointerException e) {
-				Log.d(TAG, "No connection to server, stopping communication..");
-				disconnect();
-			}
+		try {
+			outputStream.write(data);
+		} catch (IOException e) {
+			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
+			disconnect();
+		} catch (NullPointerException e) {
+			Log.d(TAG, "No connection to server, stopping communication..");
+			disconnect();
 		}
+	}
+
+	public void startThread() {
+		connect = true;
+	}
+	
+	public boolean isStarted() {
+		return !stopped;
 	}
 	
 	public boolean isConnected() {
-		return (socket != null && socket.isConnected() && !stopped && isAlive());
+		return (socket != null && socket.isConnected() && !stopped);
 	}
 	
 	@Override
 	public void run() {
-		Log.d(TAG, "running...");
-		stopped = false;
-		if(!connectToServer()){
-			return;
-		}
-		Log.d(TAG, "server connected, entering poll loop..");
-		while (!interrupted() && !stopped) {
-			si.poll();
-			Log.d(TAG, "poll");
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		while (!interrupted()) {
+			if (connect) {
+				Log.d(TAG, "connecting...");
+				stopped = false;
+				if(!connectToServer()){
+					stopped = true;
+				} else {
+					Log.d(TAG, "server connected, entering poll loop..");
+				}
+				connect = false;
+			} else {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			while (!interrupted() && !stopped) {
+				si.poll();
+				Log.d(TAG, "poll");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

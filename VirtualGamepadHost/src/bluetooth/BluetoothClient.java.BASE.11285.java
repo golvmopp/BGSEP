@@ -102,15 +102,6 @@ public class BluetoothClient extends Thread {
 			j.setStopped();
 		}
 		BluetoothServer.removeClient(this);
-		try {
-<<<<<<< HEAD
-			dis.close();
-=======
-			this.dis.close();
->>>>>>> 2ee76d1b9ae89e4478e942025430e349ee51e07c
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		running = false;
 	}
 
@@ -178,7 +169,6 @@ public class BluetoothClient extends Thread {
 			handleNameEvent(data);
 			break;
 		case Protocol.MESSAGE_TYPE_POLL:
-			System.out.println("pollll");
 			lastPoll = System.currentTimeMillis();
 			break;
 		}
