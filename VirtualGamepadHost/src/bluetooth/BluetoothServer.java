@@ -70,7 +70,7 @@ public class BluetoothServer {
 	}
 	
 	public static void removeClient(BluetoothClient client){
-		clients.remove(client);
+		clients.remove(client.getClientId());
 		ClientIdGenerator.getInstance().removeClient(client.getClientId());
 	}
 

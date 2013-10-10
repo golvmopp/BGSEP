@@ -47,8 +47,9 @@ public class MainActivity extends Activity implements Observer {
 				if(bh.isConnected()) {
 					bh.disconnect();
 				} else {
-					if (!bh.isAlive()) {
-						bh.start();
+					if (!bh.isStarted()) {
+						Log.d("Gamepad", "BluetoothHandler is not alive, starting it..");
+						bh.startThread();
 					} else {
 						Log.d("Gamepad", "disconnected from server but is alive");
 					}
