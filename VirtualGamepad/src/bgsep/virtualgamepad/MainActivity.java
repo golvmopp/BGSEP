@@ -20,7 +20,7 @@ import bluetooth.SenderImpl;
 public class MainActivity extends Activity implements Observer {
 
 	private BluetoothHandler bh;
-	private ImageView communicationIndicator, communicationButton;
+	private ImageView communicationIndicator, communicationButton, connectText;
 	private Animation rotate;
 	
 	@Override
@@ -36,9 +36,10 @@ public class MainActivity extends Activity implements Observer {
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
 		communicationButton = (ImageView) findViewById(R.id.mainpage_connection_button);
 		communicationIndicator = (ImageView)findViewById(R.id.mainpage_connection_indicator);
-		communicationIndicator.setVisibility(View.INVISIBLE);
+		connectText = (ImageView) findViewById(R.id.mainpage_connect_text);
 		
-		Animation rotate = AnimationUtils.loadAnimation(this, R.anim.rotate_view);
+		communicationIndicator.setVisibility(View.INVISIBLE);
+		rotate = AnimationUtils.loadAnimation(this, R.anim.rotate_view);
 		
 		new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr,
 				45, this);
@@ -48,7 +49,7 @@ public class MainActivity extends Activity implements Observer {
 				47, this);
 		
 		bh = new BluetoothHandler(this);
-		communicationIndicator.setOnClickListener(new OnClickListener() {
+		communicationButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if(bh.isConnected()) {
@@ -56,7 +57,9 @@ public class MainActivity extends Activity implements Observer {
 				} else {
 					if (!bh.isStarted()) {
 						Log.d("Gamepad", "BluetoothHandler is not alive, starting it..");
+						indicateConnecting();
 						bh.startThread();
+						
 					} else {
 						Log.d("Gamepad", "disconnected from server but is alive");
 					}
@@ -68,12 +71,6 @@ public class MainActivity extends Activity implements Observer {
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
 		
-	}
-
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		//if(!bh.isAlive())
-			//bh.start();
 	}
 	
 	@Override
@@ -109,13 +106,27 @@ public class MainActivity extends Activity implements Observer {
 	
 	public void serverDisconnected() {
 		Log.d("Gamepad", "BLI RÖD!");
+		if(communicationIndicator.getVisibility() == View.VISIBLE) {
+			communicationIndicator.setAnimation(null);
+			communicationIndicator.setVisibility(View.INVISIBLE);
+		}
+		
 		communicationButton.setImageResource(R.drawable.mainpage_red_arrows);
+		connectText.setVisibility(View.VISIBLE);
 	}
 	
 	public void serverConnected() {
 		Log.d("Gamepad", "BLI GRÖN!");
+		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
 		
+	}
+	
+	private void indicateConnecting() {
+		connectText.setVisibility(View.INVISIBLE);
+		communicationButton.setImageResource(R.drawable.mainpage_connect_button);
+		communicationIndicator.setVisibility(View.VISIBLE);
+		communicationIndicator.startAnimation(rotate);
 	}
 }
