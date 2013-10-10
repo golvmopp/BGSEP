@@ -26,6 +26,7 @@ public class BluetoothHandler extends Thread {
 	private boolean stopped;
 	
 	public BluetoothHandler(Activity activity) {
+		setName("BluetoothHandler");
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
 		this.activity = activity;
 		stopped = false;
