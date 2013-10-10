@@ -7,13 +7,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewConfiguration;
 import android.widget.ImageView;
-import android.widget.Toast;
 import bgsep.communication.Communication;
 import bgsep.model.Button;
 import bluetooth.BluetoothHandler;
@@ -54,9 +50,9 @@ public class MainActivity extends Activity implements Observer {
 			@Override
 			public void onClick(View v) {
 				if(bh.isConnected())
-					bh.disconnectFromServer();
+					bh.disconnect();
 				else
-					bh.connectToServer();
+					bh.start();
 			}
 		});
 
@@ -68,7 +64,8 @@ public class MainActivity extends Activity implements Observer {
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-		bh.connectToServer();
+		if(!bh.isAlive())
+			bh.start();
 	}
 	
 	@Override

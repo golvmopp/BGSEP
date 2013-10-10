@@ -1,8 +1,9 @@
 package bluetooth;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
@@ -18,6 +19,8 @@ public class BluetoothServer {
 	private final static String name = "Virtual Gamepad Host";
 	private static final String url = "btspp://localhost:" + uuid + ";name=" + name + ";authenticate=false;encrypt=false;";;
 	private static HashMap<Integer, BluetoothClient> clients;
+	private static int numberOfPlayers; 
+
 	private LocalDevice device;
 	private StreamConnectionNotifier server;
 
@@ -77,5 +80,21 @@ public class BluetoothServer {
 	
 	public static HashMap<Integer, BluetoothClient> getClients() {
 		return clients;
+	}
+	
+	private static void getNumberOfClients(){
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			System.out.println("Please enter the maximal number of clients [1-10] (default=5):");
+			int i = br.read();
+			if(i>0 && i<= 10){
+				System.out.println("Maximal number of clients is set to " + i);
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }
