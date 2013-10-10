@@ -15,10 +15,6 @@ public class SenderImpl implements Sender {
 	private BluetoothHandler bh;
 	private static final String TAG = "Gamepad";
 	
-	public SenderImpl(BluetoothHandler bh) {
-		this.bh = bh;
-	}
-	
 	@Override
 	public void send(byte id, boolean pressed) {
 		byte[] data = new byte[2];
@@ -26,7 +22,11 @@ public class SenderImpl implements Sender {
 		data[1] = (byte) (pressed ? 0x01 : 0x00);
 		send(data, Protocol.MESSAGE_TYPE_BUTTON);
 	}
-
+	
+	public SenderImpl(BluetoothHandler bh) {
+		this.bh = bh;
+	}
+	
 	@Override
 	public void send(byte id, float value) {
 		int floatbits = Float.floatToIntBits(value);
@@ -48,6 +48,10 @@ public class SenderImpl implements Sender {
 	public void sendNameMessage(String name) {
 		byte[] data = name.getBytes();
 		send(data, Protocol.MESSAGE_TYPE_NAME);
+	}
+	
+	public void poll() {
+		send(new byte[0], Protocol.MESSAGE_TYPE_POLL);
 	}
 	
 	private boolean shouldBeEscaped(byte b) {
@@ -83,9 +87,5 @@ public class SenderImpl implements Sender {
 		System.arraycopy(data, 0, allData, 2, data.length);
 		allData[data.length + 2] = Protocol.STOP;
 		bh.send(insertEscapeBytes(allData));
-	}
-	
-	public void poll() {
-		send(new byte[0], Protocol.MESSAGE_TYPE_POLL);
 	}
 }

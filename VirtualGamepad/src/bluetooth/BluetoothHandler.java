@@ -58,6 +58,10 @@ public class BluetoothHandler extends Thread {
 		notifyDisconnected(expected);
 	}
 	
+	/**
+	 * Sends an array of bytes to the server.
+	 * @param data the data that will be sent to the server
+	 */
 	public synchronized void send(byte[] data) {
 		try {
 			outputStream.write(data);
@@ -92,6 +96,7 @@ public class BluetoothHandler extends Thread {
 					stopped = true;
 				} else {
 					Log.d(TAG, "server connected, entering poll loop..");
+					si.sendNameMessage(adapter.getName()); // send the device name to server
 				}
 				connect = false;
 			} else {
