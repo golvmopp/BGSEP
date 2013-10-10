@@ -49,7 +49,11 @@ public class BluetoothHandler extends Thread {
 		return false;
 	}
 	
-	private void connectToServer() {
+	/**
+	 * Loops through all bounded devices and connects to the device which is running the Virtual Gamepad Host.  
+	 * 
+	 */
+	public boolean connectToServer() {
 		boolean serverFound = false;
 		if (adapter.getBondedDevices() != null
 				&& adapter.getBondedDevices().size() != 0) {
@@ -59,8 +63,7 @@ public class BluetoothHandler extends Thread {
 				serverFound = checkForServer(d);
 				if (serverFound) {
 					Log.d(TAG, "Connecting to server..");
-					connect(d.getAddress());
-					return;
+					return connect(d.getAddress());
 				} else {
 					System.out.println("start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
 					d.fetchUuidsWithSdp();
@@ -73,8 +76,7 @@ public class BluetoothHandler extends Thread {
 				for (BluetoothDevice d : adapter.getBondedDevices()) {
 					if (checkForServer(d)) {
 						Log.d(TAG, "Connecting to server..");
-						connect(d.getAddress());
-						return;
+						return connect(d.getAddress());
 					}
 				}
 				try {
@@ -83,12 +85,21 @@ public class BluetoothHandler extends Thread {
 					e.printStackTrace();
 				}
 				if (count > 10) {
-					Log.d(TAG, "no servers found!");
-					return;
+					notifyNoServerFound();
+					return false;
 				}
 			}
 		}
+		notifyNoServerFound();
+	}
+	
+	private void notifyNoServerFound() {
 		Log.d(TAG, "no servers found!");
+		showToast("No server found");
+	}
+	
+	public boolean isConnected() {
+		return socket.isConnected();
 	}
 	
 	private boolean initBluetoothAdapter() {
@@ -125,6 +136,7 @@ public class BluetoothHandler extends Thread {
 	private void notifyDisconnected() {
 		stopped = true;
 		showToast("No connection to server");
+		((MainActivity) activity).serverDisconnected();
 	}
 	
 	private boolean connect(final String address) {
@@ -142,16 +154,25 @@ public class BluetoothHandler extends Thread {
 			socket.connect();
 			outputStream = socket.getOutputStream();
 			if (socket.isConnected()) {
-				showToast("Connected");
+				notifyConnected();
+				return true;
+			} else {
+				return false;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("unable to connect to server: " + e.getMessage());
+			return false;
 		}
-        return true;
     }
+	
+	private void notifyConnected() {
+		showToast("Connected");
+		((MainActivity) activity).serverConnected();
+	}
 	
 	@Override
 	public void run() {
+		stopped = true;
 		while (!interrupted() && !stopped) {
 			si.poll();
 			Log.d(TAG, "poll");
@@ -161,6 +182,12 @@ public class BluetoothHandler extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void disconnectFromServer() {
+		stopped = true;
+		si.sendCloseMessage("Disconnected by user");
+		
 	}
 	
 	private void showToast(final CharSequence text) {
