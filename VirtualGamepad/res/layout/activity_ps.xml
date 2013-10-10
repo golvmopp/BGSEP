@@ -3,10 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#161616"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
     <ImageView
@@ -123,46 +119,12 @@
         android:layout_marginRight="20dp"
         android:layout_toLeftOf="@+id/ps_start"
         android:src="@drawable/ps_select" />
-
-   <!--   <ImageView
-        android:id="@+id/ps_joy_bg_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/ps_select"
-        android:layout_below="@+id/ps_arrow_down"
-        android:src="@drawable/ps_joy_bg_left" />
-
-    <ImageView
-        android:id="@+id/ps_joy_bg_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ps_arrow_down"
-        android:layout_toRightOf="@+id/ps_select"
-        android:src="@drawable/ps_joy_bg_right" />
-
-    <ImageView
-        android:id="@+id/ps_joy_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/ps_joy_bg_left"
-        android:layout_below="@+id/ps_arrow_cross"
-        android:layout_marginRight="17dp"
-        android:src="@drawable/ps_joy_left" />
-
-    <ImageView
-        android:id="@+id/ps_joy_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/ps_joy_bg_right"
-        android:layout_alignTop="@+id/ps_joy_left"
-        android:layout_marginRight="19dp"
-        android:src="@drawable/ps_joy_right" /> -->
         
     <RelativeLayout 
         android:layout_width="168dp"
         android:layout_height="168dp"
-        android:layout_alignRight="@+id/ps_select"
-        android:layout_below="@+id/ps_arrow_down">
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="130dp">
         
         <ImageView 
             android:id="@+id/ps_joy_bg_left"
@@ -182,8 +144,9 @@
     <RelativeLayout 
         android:layout_width="168dp"
         android:layout_height="168dp"
-        android:layout_below="@+id/ps_arrow_down"
-        android:layout_toRightOf="@+id/ps_select">
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="130dp">
         
         <ImageView 
             android:id="@+id/ps_joy_bg_right"

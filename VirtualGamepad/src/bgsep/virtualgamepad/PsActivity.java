@@ -56,6 +56,7 @@ public class PsActivity extends Activity implements Observer {
 			initImages();
 			initButtons();
 			initJoysticks();
+			isInitialized = true;
 			
 		}
 		super.onWindowFocusChanged(hasFocus);
