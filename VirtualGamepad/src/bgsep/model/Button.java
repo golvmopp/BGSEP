@@ -1,23 +1,22 @@
 package bgsep.model;
 
-import java.nio.ByteBuffer;
 import java.util.Observable;
 import java.util.Observer;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
-
+/**
+ * description...
+ * @author 
+ *
+ */
 public class Button extends Observable {
-
-	//private int buttonKeyCode;
 	private int buttonID;
 	private ImageView buttonView;
 	private boolean isPressed;
 	private int pressedDrawableID, unPressedDrawableID;
-	
 	
 	public Button(ImageView button, int unPressedDrawableID, int pressedDrawableID,
 			int id, Observer o) {
@@ -91,18 +90,6 @@ public class Button extends Observable {
 		
 	}
 	
-	/*private ByteBuffer convertToByteBuffer(int value, boolean press) {
-		ByteBuffer byteBuffer = ByteBuffer.allocate(32);
-		byteBuffer.putInt(value);
-		
-		// Set first bit to 1 to indicate a keyPress, else its 0 by default
-		// and indicate a keyRelease
-		if(press)
-			byteBuffer.array()[0] = 1;
-		
-		return byteBuffer;
-	}*/
-	
 	public int getPressedDrawableID() {
 		return pressedDrawableID;
 	}
@@ -110,5 +97,4 @@ public class Button extends Observable {
 	public int getUnPressedDrawableID() {
 		return unPressedDrawableID;
 	}
-
 }

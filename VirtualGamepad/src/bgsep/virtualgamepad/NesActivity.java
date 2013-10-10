@@ -2,11 +2,9 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +13,11 @@ import android.widget.ImageView;
 import bgsep.communication.Communication;
 import bgsep.model.Button;
 
+/**
+ * description...
+ * @author 
+ *
+ */
 public class NesActivity extends Activity implements Observer {
 
 	

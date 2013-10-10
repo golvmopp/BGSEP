@@ -2,7 +2,6 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +16,11 @@ import bgsep.model.Button;
 import bluetooth.BluetoothHandler;
 import bluetooth.SenderImpl;
 
+/**
+ * description...
+ * @author Patrik Wållgren
+ *
+ */
 public class MainActivity extends Activity implements Observer {
 
 	private BluetoothHandler bh;
@@ -55,14 +59,7 @@ public class MainActivity extends Activity implements Observer {
 				if(bh.isConnected()) {
 					bh.disconnect(true);
 				} else {
-					if (!bh.isStarted()) {
-						Log.d("Gamepad", "BluetoothHandler is not alive, starting it..");
-						indicateConnecting();
-						bh.startThread();
-						
-					} else {
-						Log.d("Gamepad", "disconnected from server but is alive");
-					}
+					startBluetooth();
 				}
 			}
 		});
@@ -70,7 +67,16 @@ public class MainActivity extends Activity implements Observer {
 		SenderImpl si = new SenderImpl(bh);
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
-		
+	}
+	
+	private void startBluetooth() {
+		if (!bh.isStarted()) {
+			Log.d("Gamepad", "BluetoothHandler is not alive, starting it..");
+			indicateConnecting();
+			bh.startThread();
+		} else {
+			Log.d("Gamepad", "disconnected from server but is alive");
+		}
 	}
 	
 	@Override
@@ -79,8 +85,7 @@ public class MainActivity extends Activity implements Observer {
 			Button button = (Button)o;
 			Intent i;
 			if(button.isPressed())
-				button.getButtonView().setImageResource(button.getPressedDrawableID());
-			
+				button.getButtonView().setImageResource(button.getPressedDrawableID());			
 			else {
 				switch(button.getButtonID()) {
 				case 45:
@@ -100,27 +105,28 @@ public class MainActivity extends Activity implements Observer {
 				}
 				button.getButtonView().setImageResource(button.getUnPressedDrawableID());
 			}
-				
 		}
 	}
 	
+	/**
+	 * Indicate to GUI that the server is not connected. 
+	 */
 	public void serverDisconnected() {
-		Log.d("Gamepad", "BLI RÖD!");
 		if(communicationIndicator.getVisibility() == View.VISIBLE) {
 			communicationIndicator.setAnimation(null);
 			communicationIndicator.setVisibility(View.INVISIBLE);
 		}
-		
 		communicationButton.setImageResource(R.drawable.mainpage_red_arrows);
 		connectText.setVisibility(View.VISIBLE);
 	}
 	
+	/**
+	 * Indicate to GUI that the server is connected.
+	 */
 	public void serverConnected() {
-		Log.d("Gamepad", "BLI GRÖN!");
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
-		
 	}
 	
 	private void indicateConnecting() {
@@ -128,5 +134,10 @@ public class MainActivity extends Activity implements Observer {
 		communicationButton.setImageResource(R.drawable.mainpage_connect_button);
 		communicationIndicator.setVisibility(View.VISIBLE);
 		communicationIndicator.startAnimation(rotate);
+	}
+	
+	@Override
+	public void onWindowFocusChanged(boolean has) {
+		startBluetooth();
 	}
 }

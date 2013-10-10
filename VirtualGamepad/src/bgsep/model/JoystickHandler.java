@@ -1,6 +1,5 @@
 package bgsep.model;
 
-import android.util.Log;
 import android.widget.ImageView;
 import bgsep.communication.CommunicationNotifier;
 

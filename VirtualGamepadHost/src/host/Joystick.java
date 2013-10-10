@@ -3,14 +3,28 @@ package host;
 import java.awt.AWTException;
 import java.awt.Robot;
 
+/**
+ * @author Isak Eriksson (isak.eriksson@mail.com) & Patrik Wållgren ()
+ *
+ * This class simulates an analog stick, by pressing keys rapidly.
+ * A float value represents the percentage of the time in which the key is pressed.
+ * The key is pressed for a calculated amount of time and is then released for the
+ * remaining time of the PERIOD.
+ * 
+ */
 public class Joystick extends Thread {
 	private int joystickID;
 	private float value;
 	private boolean stopped;
-	private final static int PERIOD = 100;
+	private final static int PERIOD = 100; //amount of time between each key press
 	private Robot robot;
 	private int clientID;
 	
+	/**
+	 * Constructs a new instance of Joystick. 
+	 * @param joystickID the ID of the button/joystick axis
+	 * @param clientID ID of the client that sent the joystick belongs to
+	 */
 	public Joystick(int joystickID, int clientID) {
 		stopped = false;
 		this.joystickID = joystickID;
@@ -24,6 +38,10 @@ public class Joystick extends Thread {
 		start();
 	}
 	
+	/**
+	 * Sets how much the joystick is moved.
+	 * @param value a float between 0 and 1 where 0 is released and 1 is fully pressed.
+	 */
 	public void setNewValue(float value) {
 		this.value = value;
 	}
@@ -60,6 +78,9 @@ public class Joystick extends Thread {
 		}
 	}
 	
+	/**
+	 * Stops the thread.
+	 */
 	public void setStopped() {
 		stopped = true;
 	}

@@ -1,15 +1,11 @@
 package bgsep.virtualgamepad;
 
-import java.nio.ByteBuffer;
 import java.util.Observable;
 import java.util.Observer;
-
 import bgsep.communication.Communication;
 import bgsep.communication.CommunicationNotifier;
 import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
-import bgsep.model.KeyCode;
-import bgsep.wifi.Client;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +15,11 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
+/**
+ * description...
+ * @author 
+ *
+ */
 public class GcActivity extends Activity implements Observer {
 
 	private boolean isInitialized;

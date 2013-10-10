@@ -1,12 +1,16 @@
 package bgsep.model;
 
 import java.util.Observable;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+/**
+ * description...
+ * @author 
+ *
+ */
 public class Gyro extends Observable implements SensorEventListener {
 
 	private SensorManager 	sensorManager;

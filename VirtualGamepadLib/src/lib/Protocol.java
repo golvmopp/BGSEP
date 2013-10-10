@@ -36,6 +36,7 @@ package lib;
      * <tr><td>Poll</td></tr>
      * </table>
      * <br>
+     * @author Isak Eriksson (isak.eriksson@mail.com) & Linus Lindgren (linlind@student.chalmers.se)
      **/
 public class Protocol {
 	
@@ -52,6 +53,4 @@ public class Protocol {
     
     public static final String SERVER_UUID = "27012f0c-68af-4fbf-8dbe-6bbaf7aa432a";
 
-	
-    
 }

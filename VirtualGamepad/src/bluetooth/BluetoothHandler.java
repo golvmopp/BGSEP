@@ -13,7 +13,13 @@ import android.bluetooth.BluetoothSocket;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
-	
+
+/**
+ * @author Isak Eriksson (isak.eriksson@mail.com) & Linus Lindgren (linlind@student.chalmers.se)
+ * This is the main bluetooth handler. It handles discovery of and connection to the server.
+ * It also notifies the GUI about connection state.
+ *
+ */
 public class BluetoothHandler extends Thread {
 	
 	private Activity activity;
@@ -52,6 +58,10 @@ public class BluetoothHandler extends Thread {
 		notifyDisconnected(expected);
 	}
 	
+	/**
+	 * Sends an array of bytes to the server.
+	 * @param data the data that will be sent to the server
+	 */
 	public synchronized void send(byte[] data) {
 		try {
 			outputStream.write(data);
@@ -86,6 +96,7 @@ public class BluetoothHandler extends Thread {
 					stopped = true;
 				} else {
 					Log.d(TAG, "server connected, entering poll loop..");
+					si.sendNameMessage(adapter.getName()); // send the device name to server
 				}
 				connect = false;
 			} else {
@@ -105,8 +116,7 @@ public class BluetoothHandler extends Thread {
 				}
 			}
 		}
-	}
-	
+	}	
 
 	private boolean checkForServer(BluetoothDevice d) {
 		for (ParcelUuid uuid : d.getUuids()) {
@@ -119,57 +129,72 @@ public class BluetoothHandler extends Thread {
 		return false;
 	}
 	
+	private boolean checkBoundedDevices() {
+		Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
+		for (BluetoothDevice d : adapter.getBondedDevices()) {
+			Log.d(TAG, "\t" + d.getName());
+			if (checkForServer(d)) {
+				Log.d(TAG, "Connecting to server..");
+				boolean connected = connect(d.getAddress());
+				if(connected){
+					notifyConnected();
+					return true;
+				}
+			} else {
+				Log.d(TAG, "start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
+				d.fetchUuidsWithSdp();
+			}
+		}
+		return false;
+	}
+	
 	/**
-	 * Loops through all bounded devices and connects to the device which is running the Virtual Gamepad Host.  
-	 * 
+	 * Loops through the bounded devices to check if expected UUID was fetched.
+	 * If so, tries to connect to it.
+	 * @return true if a server was found and successfully connected to
 	 */
-	private boolean connectToServer() {
-		Log.d(TAG, "trying to connect to server..");
-		boolean serverFound = false;
-		if (adapter.getBondedDevices() != null
-				&& adapter.getBondedDevices().size() != 0) {
-			Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
+	private boolean checkIfUUIDFetchedWithSDP() {
+		int count = 0;
+		while (true) {
+			count++;
 			for (BluetoothDevice d : adapter.getBondedDevices()) {
-				Log.d(TAG, "\t" + d.getName());
-				serverFound = checkForServer(d);
-				if (serverFound) {
+				if (checkForServer(d)) {
 					Log.d(TAG, "Connecting to server..");
-					boolean connected = connect(d.getAddress());
-					if(connected){
+					if (connect(d.getAddress())) {
 						notifyConnected();
 						return true;
 					}
-				} else {
-					System.out.println("start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
-					d.fetchUuidsWithSdp();
 				}
 			}
-			System.out.println("did not find server, trying more..");
-			int count = 0;
-			while (true) {
-				count++;
-				for (BluetoothDevice d : adapter.getBondedDevices()) {
-					if (checkForServer(d)) {
-						Log.d(TAG, "Connecting to server..");
-						boolean connected = connect(d.getAddress());
-						if(connected){
-							notifyConnected();
-							return true;
-						}
-					}
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				if (count > 10) {
-					notifyNoServerFound();
-					return false;
-				}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (count > 10) {
+				notifyNoServerFound();
+				return false;
 			}
 		}
-		notifyNoServerFound();
+	}
+	
+	/**
+	 * Loops through all bounded devices and connects to the device which is running the Virtual Gamepad Host.
+	 * If a server is not found on a bounded device, an SDP discovery is started.  
+	 * 
+	 */
+	private boolean connectToServer() {
+		Log.d(TAG, "searching for servers..");
+		if (adapter.getBondedDevices() == null || adapter.getBondedDevices().size() == 0) {
+			notifyNoServerFound();
+			return false;
+		}
+		if (checkBoundedDevices()) {
+			Log.d(TAG, "server found in bounded devices");
+			return true;
+		}
+		Log.d(TAG, "did not find server, starting to search for fetched UUIDs");
+		checkIfUUIDFetchedWithSDP();
 		return false;
 	}
 	
@@ -217,16 +242,18 @@ public class BluetoothHandler extends Thread {
 		}
     }
 	
-	
+	/**
+	 * This is used to display a message to the user about changed connection state.
+	 * @param text
+	 */
 	private void showToast(final CharSequence text) {
 		System.out.println("toastar!");
 		activity.runOnUiThread(new Runnable() {
 		    public void run() {
-		        Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
+		        Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
 		    }
 		});
 	}
-	
 	
 	private void notifyConnected() {
 		showToast("Connected");

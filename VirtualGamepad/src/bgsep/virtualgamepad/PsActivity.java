@@ -2,7 +2,6 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +15,11 @@ import bgsep.communication.CommunicationNotifier;
 import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
 
+/**
+ * description...
+ * @author 
+ *
+ */
 public class PsActivity extends Activity implements Observer {
 
 	private ImageView 	imageX, imageCircle, imageSquare, imageTriangle,
