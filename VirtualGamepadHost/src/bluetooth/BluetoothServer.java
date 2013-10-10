@@ -69,7 +69,7 @@ public class BluetoothServer {
 	}
 	
 	public static void removeClient(BluetoothClient client){
-		clients.remove(client);
+		clients.remove(client.getClientId());
 		ClientIdGenerator.getInstance().removeClient(client.getClientId());
 	}
 
@@ -86,9 +86,9 @@ public class BluetoothServer {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			System.out.println();
-			System.out.println("Please enter the number of buttons [0-24] (default="+ lib.Constants.DEFAULT_NUMBER_OF_BUTTONS +"):");
+			System.out.println("Please enter the number of buttons [1-25] (default="+ lib.Constants.DEFAULT_NUMBER_OF_BUTTONS +"):");
 			int i = Integer.parseInt(br.readLine());
-			if(i>=0 && i< 25){
+			if(i>0 && i<= 25){
 				System.out.println("Number of buttons is set to " + i);
 				System.out.println();
 				return i;
