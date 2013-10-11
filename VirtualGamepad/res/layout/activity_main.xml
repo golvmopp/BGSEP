@@ -83,20 +83,6 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="13dp" >
 
-        <ImageView
-            android:id="@+id/mainpage_connect_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/mainpage_connect_text" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mainpage_connect_text"
-            android:layout_centerHorizontal="true" >
-
             <ImageView
                 android:id="@+id/mainpage_connection_button"
                 android:layout_width="wrap_content"
@@ -110,7 +96,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:src="@drawable/mainpage_yellow_arrows" />
-        </RelativeLayout>
-    </RelativeLayout>
+     </RelativeLayout>
 
 </RelativeLayout>
