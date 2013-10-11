@@ -52,8 +52,13 @@ import bgsep.model.Button;
  */
 public class MainActivity extends Activity implements Observer {
 
+	private final int NES_CONTROLLER = 45,
+					  GC_CONTROLLER  = 46,
+					  PS_CONTROLLER  = 47;
+	
 	private BluetoothHandler bh;
-	private ImageView communicationIndicator, communicationButton, connectText;
+	private ImageView communicationIndicator, communicationButton;
+	private ImageView imageNESbutton, imageGCbutton, imagePSbutton;
 	private Animation rotate;
 
 	private PopupWindow popupMenu;
@@ -68,47 +73,19 @@ public class MainActivity extends Activity implements Observer {
 
 		setContentView(R.layout.activity_main);
 		
-		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;		
-		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
-		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
-		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
-		communicationButton = (ImageView) findViewById(R.id.mainpage_connection_button);
-		communicationIndicator = (ImageView)findViewById(R.id.mainpage_connection_indicator);
-		connectText = (ImageView) findViewById(R.id.mainpage_connect_text);
-		
-		communicationIndicator.setVisibility(View.INVISIBLE);
-		rotate = AnimationUtils.loadAnimation(this, R.anim.rotate_view);
-		
-		new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr,
-				45, this);
-		new Button(imageGCbutton, R.drawable.mainpage_gc, R.drawable.mainpage_gc_pr,
-				46, this);
-		new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr,
-				47, this);
-		
 		bh = new BluetoothHandler(this);
-		communicationButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if(bh.isConnected()) {
-					bh.disconnect(true);
-				} else {
-					allowedToAutoConnect = false;
-					startBluetooth();
-				}
-			}
-		});
 
 		SenderImpl si = new SenderImpl(bh);
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
 		
 		hapticFeedback = false;
+		allowedToAutoConnect = true;
 		
+		initControllerButtons();
+		initConnectionButtons();
 		initSettingsMenu();
 		initAboutPopup();
-		
-		allowedToAutoConnect = true;
 	}
 	
 	private void startBluetooth() {
@@ -130,16 +107,19 @@ public class MainActivity extends Activity implements Observer {
 				button.getButtonView().setImageResource(button.getPressedDrawableID());			
 			else {
 				switch(button.getButtonID()) {
-				case 45:
+				case NES_CONTROLLER:
 					i = new Intent(this, NesActivity.class);
+					i.putExtra("hapticFeedback", hapticFeedback);
 					startActivity(i);
 					break;
-				case 46:
+				case GC_CONTROLLER:
 					i = new Intent(this, GcActivity.class);
+					i.putExtra("hapticFeedback", hapticFeedback);
 					startActivity(i);
 					break;
-				case 47:
+				case PS_CONTROLLER:
 					i = new Intent(this, PsActivity.class);
+					i.putExtra("hapticFeedback", hapticFeedback);
 					startActivity(i);
 					break;
 				default:
@@ -177,16 +157,12 @@ public class MainActivity extends Activity implements Observer {
 			communicationIndicator.setVisibility(View.INVISIBLE);
 		}
 		communicationButton.setImageResource(R.drawable.mainpage_red_arrows);
-		connectText.setVisibility(View.VISIBLE);
-		connectText.setImageResource(R.drawable.mainpage_connect_text);
 	}
 	
 	/**
 	 * Indicate to GUI that the server is connected.
 	 */
 	public void serverConnected() {
-		connectText.setVisibility(View.VISIBLE);
-		connectText.setImageResource(R.drawable.mainpage_disconnect_text);
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
@@ -207,7 +183,6 @@ public class MainActivity extends Activity implements Observer {
 	}	
 	
 	private void indicateConnecting() {
-		connectText.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_connect_button);
 		communicationIndicator.setVisibility(View.VISIBLE);
 		communicationIndicator.startAnimation(rotate);
@@ -294,6 +269,47 @@ public class MainActivity extends Activity implements Observer {
 				popupAbout.dismiss();
 			}
 		});
+	}
+	
+	private void initConnectionButtons() {
+		communicationButton = (ImageView) findViewById(R.id.mainpage_connection_button);
+		communicationIndicator = (ImageView)findViewById(R.id.mainpage_connection_indicator);
+		
+		communicationIndicator.setVisibility(View.INVISIBLE);
+		rotate = AnimationUtils.loadAnimation(this, R.anim.rotate_view);
+		
+		communicationButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(bh.isConnected()) {
+					bh.disconnect(true);
+				} else {
+					allowedToAutoConnect = false;
+					startBluetooth();
+				}
+			}
+		});
+		
+		communicationIndicator.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				bh.cancelConnectionAttempt();
+			}
+		});
+	}
+	
+	private void initControllerButtons() {
+		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
+		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
+		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
+		
+		new Button(imageNESbutton, R.drawable.mainpage_nes, R.drawable.mainpage_nes_pr,
+				NES_CONTROLLER, this);
+		new Button(imageGCbutton, R.drawable.mainpage_gc, R.drawable.mainpage_gc_pr,
+				GC_CONTROLLER, this);
+		new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr,
+				PS_CONTROLLER, this);
 	}
 
 }

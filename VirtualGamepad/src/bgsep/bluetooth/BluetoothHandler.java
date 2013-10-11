@@ -104,8 +104,10 @@ public class BluetoothHandler extends Thread {
 	 * Stops the attempt to find and connect to a server.
 	 */
 	public void cancelConnectionAttempt() {
+		Log.d(TAG, "cancelling connection attempt");
 		cancelConnectionAttempt = true;
 		connect = false;
+		notifyNoServerFound();
 	}
 	
 	public void startThread() {

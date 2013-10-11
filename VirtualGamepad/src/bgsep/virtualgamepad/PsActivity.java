@@ -17,9 +17,12 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,11 +52,12 @@ public class PsActivity extends Activity implements Observer {
 						buttonR1, buttonR2, buttonL1, buttonL2,
 						buttonStart, buttonSelect;
 
-	JoystickHandler leftJoystick, rightJoystick;	
+	private JoystickHandler leftJoystick, rightJoystick;	
 	
 	private boolean isInitialized;
+	private boolean hapticFeedback;
 	
-	Communication comm;
+	private Communication comm;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,9 @@ public class PsActivity extends Activity implements Observer {
 		//Dim soft menu keys if present
 		if (!ViewConfiguration.get(this).hasPermanentMenuKey())
 			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+		
+		Intent i = getIntent();
+		hapticFeedback = i.getBooleanExtra("hapticFeedback", false);
 		
 		comm = Communication.getInstance();
 		isInitialized = false;
@@ -107,34 +114,36 @@ public class PsActivity extends Activity implements Observer {
 	}
 	
 	private void initButtons() {
+		Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+		
 		buttonLeft = new Button(imageLeft, R.drawable.ps_arrow_left, R.drawable.ps_arrow_left_pr,
-				0, this);
+				0, this, vibrator, hapticFeedback);
 		buttonRight = new Button(imageRight, R.drawable.ps_arrow_right, R.drawable.ps_arrow_right_pr,
-				1, this);
+				1, this, vibrator, hapticFeedback);
 		buttonUp = new Button(imageUp, R.drawable.ps_arrow_up, R.drawable.ps_arrow_up_pr,
-				2, this);
+				2, this, vibrator, hapticFeedback);
 		buttonDown = new Button(imageDown, R.drawable.ps_arrow_down, R.drawable.ps_arrow_down_pr,
-				3, this);
+				3, this, vibrator, hapticFeedback);
 		buttonX = new Button(imageX, R.drawable.ps_x, R.drawable.ps_x_pr,
-				4, this);
+				4, this, vibrator, hapticFeedback);
 		buttonCircle = new Button(imageCircle, R.drawable.ps_o, R.drawable.ps_o_pr,
-				5, this);
+				5, this, vibrator, hapticFeedback);
 		buttonTriangle = new Button(imageTriangle, R.drawable.ps_tr, R.drawable.ps_tr_pr,
-				6, this);
+				6, this, vibrator, hapticFeedback);
 		buttonSquare = new Button(imageSquare, R.drawable.ps_sq, R.drawable.ps_sq_pr,
-				7, this);
+				7, this, vibrator, hapticFeedback);
 		buttonR1 = new Button(imageR1, R.drawable.ps_r1, R.drawable.ps_r1_pr,
-				8, this);
+				8, this, vibrator, hapticFeedback);
 		buttonR2 = new Button(imageR2, R.drawable.ps_r2, R.drawable.ps_r2_pr,
-				9, this);
+				9, this, vibrator, hapticFeedback);
 		buttonL1 = new Button(imageL1, R.drawable.ps_l1, R.drawable.ps_l1_pr,
-				10, this);
+				10, this, vibrator, hapticFeedback);
 		buttonL2 = new Button(imageL2, R.drawable.ps_l2, R.drawable.ps_l2_pr,
-				11, this);
+				11, this, vibrator, hapticFeedback);
 		buttonSelect = new Button(imageSelect, R.drawable.ps_select, R.drawable.ps_select_pr,
-				12, this);
+				12, this, vibrator, hapticFeedback);
 		buttonStart = new Button(imageStart, R.drawable.ps_start, R.drawable.ps_start_pr,
-				13, this);
+				13, this, vibrator, hapticFeedback);
 		
 		buttonLeft.addObserver(comm);
 		buttonRight.addObserver(comm);
@@ -207,12 +216,14 @@ public class PsActivity extends Activity implements Observer {
 	        
 		        case R.id.action_nes:
 		        	i = new Intent(this, NesActivity.class);
+		        	i.putExtra("hapticFeedback", hapticFeedback);
 		    		startActivity(i);
 		            finish();
 		            return true;
 		        
 		        case R.id.action_gc:
 		        	i = new Intent(this, GcActivity.class);
+		        	i.putExtra("hapticFeedback", hapticFeedback);
 		    		startActivity(i);
 		            finish();
 		            return true;

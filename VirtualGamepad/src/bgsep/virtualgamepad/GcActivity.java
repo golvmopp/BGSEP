@@ -17,13 +17,16 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
+
 import bgsep.communication.Communication;
 import bgsep.communication.CommunicationNotifier;
 import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +48,8 @@ public class GcActivity extends Activity implements Observer {
 	private Button	aButton, bButton, xButton, yButton, startButton;
 	Communication comm;
 	
+	private boolean hapticFeedback;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,6 +58,9 @@ public class GcActivity extends Activity implements Observer {
 		//Dim soft menu keys if present
 		if (!ViewConfiguration.get(this).hasPermanentMenuKey())
 			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+		
+		Intent i = getIntent();
+		hapticFeedback = i.getBooleanExtra("hapticFeedback", false);
 		
 		isInitialized = false;
 		comm = Communication.getInstance();
@@ -113,12 +121,14 @@ public class GcActivity extends Activity implements Observer {
         
 	        case R.id.action_nes:
 	        	i = new Intent(this, NesActivity.class);
+	        	i.putExtra("hapticFeedback", hapticFeedback);
 	    		startActivity(i);
 	            finish();
 	            return true;
 	        
 	        case R.id.action_ps:
 	        	i = new Intent(this, PsActivity.class);
+	        	i.putExtra("hapticFeedback", hapticFeedback);
 	    		startActivity(i);
 	            finish();
 	            return true;
@@ -140,16 +150,17 @@ public class GcActivity extends Activity implements Observer {
 	}
 	
 	private void initButtons() {
+		Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 		aButton = new Button(aImageView, R.drawable.gc_a_button, R.drawable.gc_a_button_pressed, 
-				0, this);
+				0, this, vibrator, hapticFeedback);
 		bButton = new Button(bImageView, R.drawable.gc_b_button, R.drawable.gc_b_button_pressed, 
-				1, this);
+				1, this, vibrator, hapticFeedback);
 		xButton = new Button(xImageView, R.drawable.gc_x_button, R.drawable.gc_x_button_pressed, 
-				2, this);
+				2, this, vibrator, hapticFeedback);
 		yButton = new Button(yImageView, R.drawable.gc_y_button, R.drawable.gc_y_button_pressed, 
-				3, this);
+				3, this, vibrator, hapticFeedback);
 		startButton = new Button(imageStart, R.drawable.gc_start_button, R.drawable.gc_start_button_pressed,
-				4, this);
+				4, this, vibrator, hapticFeedback);
 		
 		aButton.addObserver(comm);
 		bButton.addObserver(comm);
