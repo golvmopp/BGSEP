@@ -66,8 +66,8 @@ public class GcActivity extends Activity implements Observer {
 			Communication comm = Communication.getInstance();
 			
 			gcJoystick = new JoystickHandler(boundary, stick);
-			gcJoystick.setLeftRightJoystickID(17, 18);
-			gcJoystick.setUpDownJoystickID(19, 20);
+			gcJoystick.setLeftRightJoystickID(5, 6);
+			gcJoystick.setUpDownJoystickID(7, 8);
 			gcJoystick.addObserver(this);
 			gcJoystick.addObserver(comm);
 			
@@ -87,7 +87,7 @@ public class GcActivity extends Activity implements Observer {
 			yButton = new Button(yImageView, R.drawable.gc_y_button, R.drawable.gc_y_button_pressed, 
 					3, this);
 			startButton = new Button(imageStart, R.drawable.gc_start_button, R.drawable.gc_start_button_pressed,
-					16, this);
+					4, this);
 					
 			
 			

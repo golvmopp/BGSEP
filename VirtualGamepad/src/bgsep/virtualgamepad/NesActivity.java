@@ -83,10 +83,10 @@ public class NesActivity extends Activity implements Observer {
 				5, this);
 		
 		selectButton = new Button(imageSelect, R.drawable.nes_select_button, R.drawable.nes_select_button_pressed,
-				15, this);
+				6, this);
 		
 		startButton = new Button(imageStart, R.drawable.nes_start_button, R.drawable.nes_start_button_pressed,
-				16, this);
+				7, this);
 		
 		Communication comm = Communication.getInstance();
 		
