@@ -1,6 +1,7 @@
 package bluetooth;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ public class BluetoothHandler extends Thread {
 	private SenderImpl si;
 	private boolean stopped;
 	private boolean connect;
+	private boolean cancelConnectionAttempt;
 	
 	public BluetoothHandler(Activity activity) {
 		setName("BluetoothHandler");
@@ -38,8 +41,9 @@ public class BluetoothHandler extends Thread {
 		this.activity = activity;
 		stopped = true;
 		connect = false;
+		cancelConnectionAttempt = false;
 		si = new SenderImpl(this);
-		initBluetoothAdapter();
+		//initBluetoothAdapter();
 		start();
 	}
 	
@@ -52,6 +56,8 @@ public class BluetoothHandler extends Thread {
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (NullPointerException e) {
+			Log.d(TAG, "no connection to server");
 		}
 		Log.d(TAG, "disconnecting from server");
 		stopped = true;
@@ -74,6 +80,13 @@ public class BluetoothHandler extends Thread {
 		}
 	}
 
+	/**
+	 * Stops the attempt to find and connect to a server.
+	 */
+	public void cancelConnectionAttempt() {
+		cancelConnectionAttempt = true;
+	}
+	
 	public void startThread() {
 		connect = true;
 	}
@@ -86,17 +99,26 @@ public class BluetoothHandler extends Thread {
 		return (socket != null && socket.isConnected() && !stopped);
 	}
 	
+	private void startConnectionAttempt() {
+		Log.d(TAG, "connecting...");
+		cancelConnectionAttempt = false;
+		stopped = false;
+		if(!connectToServer()){
+			stopped = true;
+		} else {
+			Log.d(TAG, "server connected, entering poll loop..");
+			si.sendNameMessage(adapter.getName()); // send the device name to server
+		}
+	}
+	
 	@Override
 	public void run() {
 		while (!interrupted()) {
 			if (connect) {
-				Log.d(TAG, "connecting...");
-				stopped = false;
-				if(!connectToServer()){
-					stopped = true;
+				if (initBluetoothAdapter()) {
+					startConnectionAttempt();
 				} else {
-					Log.d(TAG, "server connected, entering poll loop..");
-					si.sendNameMessage(adapter.getName()); // send the device name to server
+					notifyDisconnected(false);
 				}
 				connect = false;
 			} else {
@@ -156,6 +178,9 @@ public class BluetoothHandler extends Thread {
 	private boolean checkIfUUIDFetchedWithSDP() {
 		int count = 0;
 		while (true) {
+			if (cancelConnectionAttempt) {
+				return false;
+			}
 			count++;
 			for (BluetoothDevice d : adapter.getBondedDevices()) {
 				if (checkForServer(d)) {
@@ -212,9 +237,10 @@ public class BluetoothHandler extends Thread {
 		} else {
 			Log.d(TAG,"Bluetooth device is disabled");
 			Log.d(TAG,"Enabling bluetooth device..");
-			Log.d(TAG,adapter.enable() ? "Success" : "Failed");
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			activity.startActivityForResult(enableBtIntent, 1);
 		}
-		return true;
+		return adapter.isEnabled();
 	}
 	
 	private boolean connect(final String address) {
