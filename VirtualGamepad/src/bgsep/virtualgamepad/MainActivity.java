@@ -41,6 +41,7 @@ public class MainActivity extends Activity implements Observer {
 	private BluetoothHandler bh;
 	private ImageView communicationIndicator, communicationButton, connectText;
 	private Animation rotate;
+	private boolean allowedToAutoConnect;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class MainActivity extends Activity implements Observer {
 				if(bh.isConnected()) {
 					bh.disconnect(true);
 				} else {
+					allowedToAutoConnect = false;
 					startBluetooth();
 				}
 			}
@@ -81,6 +83,7 @@ public class MainActivity extends Activity implements Observer {
 		SenderImpl si = new SenderImpl(bh);
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
+		allowedToAutoConnect = true;
 	}
 	
 	private void startBluetooth() {
@@ -141,7 +144,21 @@ public class MainActivity extends Activity implements Observer {
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
+		allowedToAutoConnect = true;
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == BluetoothHandler.BLUETOOTH_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				allowedToAutoConnect = true;
+				startBluetooth();
+			} else {
+				allowedToAutoConnect = false;
+				bh.cancelConnectionAttempt();
+			}
+		}
+	}	
 	
 	private void indicateConnecting() {
 		connectText.setVisibility(View.INVISIBLE);
@@ -152,6 +169,9 @@ public class MainActivity extends Activity implements Observer {
 	
 	@Override
 	public void onWindowFocusChanged(boolean has) {
-		//startBluetooth();
-	}
+		if (allowedToAutoConnect && !bh.isConnected()) {
+			allowedToAutoConnect = false;
+			startBluetooth();
+		}
+	}	
 }
