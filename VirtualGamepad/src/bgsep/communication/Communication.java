@@ -20,7 +20,9 @@ package bgsep.communication;
 
 import java.util.Observable;
 import java.util.Observer;
+
 import bgsep.model.Button;
+import bgsep.model.Gyro;
 import bgsep.model.JoystickHandler;
 
 /**
@@ -53,7 +55,7 @@ public class Communication implements Observer{
 		if(o instanceof Button) {
 			Button button = (Button)o;
 			sender.send((byte)button.getButtonID(), button.isPressed());
-		} else if(o instanceof JoystickHandler && obj instanceof CommunicationNotifier) {
+		} else if((o instanceof JoystickHandler || o instanceof Gyro) && obj instanceof CommunicationNotifier) {
 			CommunicationNotifier cn = (CommunicationNotifier)obj;
 			sender.send((byte)cn.id, cn.value);
 		}
