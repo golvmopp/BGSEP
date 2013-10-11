@@ -31,8 +31,9 @@ import bgsep.model.Button;
 import bgsep.model.JoystickHandler;
 
 /**
- * description...
- * @author 
+ * The activity for the PS controller
+ * @author Victor Olausson
+ * @author Patrik Wållgren
  *
  */
 public class PsActivity extends Activity implements Observer {
@@ -203,13 +204,13 @@ public class PsActivity extends Activity implements Observer {
 		    switch (item.getItemId()) {
 	        
 		        case R.id.action_nes:
-		        	i = new Intent(this, GcActivity.class);
+		        	i = new Intent(this, NesActivity.class);
 		    		startActivity(i);
 		            finish();
 		            return true;
 		        
 		        case R.id.action_gc:
-		        	i = new Intent(this, PsActivity.class);
+		        	i = new Intent(this, GcActivity.class);
 		    		startActivity(i);
 		            finish();
 		            return true;

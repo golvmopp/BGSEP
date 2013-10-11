@@ -32,8 +32,10 @@ import bluetooth.BluetoothHandler;
 import bluetooth.SenderImpl;
 
 /**
- * description...
+ * This is the starting activity to allow a user to choose a gamepad,
+ * get information/help about the app, and (dis)connect to the server  
  * @author Patrik Wållgren
+ * @author Victor Olausson
  *
  */
 public class MainActivity extends Activity implements Observer {
