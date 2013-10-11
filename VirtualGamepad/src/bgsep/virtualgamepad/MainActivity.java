@@ -19,6 +19,7 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,22 +29,19 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import bgsep.bluetooth.BluetoothHandler;
+import bgsep.bluetooth.SenderImpl;
 import bgsep.communication.Communication;
 import bgsep.model.Button;
-import bgsep.bluetooth.SenderImpl;
-import bgsep.bluetooth.BluetoothHandler;
 
 /**
  * This is the starting activity to allow a user to choose a gamepad,

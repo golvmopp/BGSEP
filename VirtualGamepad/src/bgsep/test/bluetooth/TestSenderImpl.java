@@ -21,7 +21,7 @@ import java.util.Arrays;
 
 import android.app.Activity;
 import bgsep.bluetooth.BluetoothHandler;
-import bluetooth.SenderImpl;
+import bgsep.bluetooth.SenderImpl;
 import junit.framework.TestCase;
 import static lib.Protocol.*;
 
