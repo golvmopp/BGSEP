@@ -3,17 +3,23 @@ package bgsep.virtualgamepad;
 import java.util.Observable;
 import java.util.Observer;
 
+<<<<<<< HEAD
+=======
+import android.app.ActionBar.LayoutParams;
+>>>>>>> 3797e6fe82393c5c417dc0a23c6ed41bf46ac99a
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
@@ -207,6 +213,8 @@ public class MainActivity extends Activity implements Observer {
 			startBluetooth();
 		}
 	}
+<<<<<<< HEAD
+=======
 	
 	private void initSettingsMenu() {
 		LayoutInflater layoutInflater = 
@@ -280,4 +288,5 @@ public class MainActivity extends Activity implements Observer {
 		});
 	}
 
+>>>>>>> 3797e6fe82393c5c417dc0a23c6ed41bf46ac99a
 }
