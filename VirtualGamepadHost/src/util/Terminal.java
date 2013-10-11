@@ -32,7 +32,7 @@ import bluetooth.BluetoothServer;
  * This is a terminal designed for the {@link BluetoothServer}. It's a
  * {@link Thread} that will listen to inputs from the user and will interpret
  * some specified commands: <i>halt</i> <i>kick</i> <i>list</i> <i>reloadConfig
- * </i> <i>logProtocol</i> <i>help</i><i>ff (toggle freeze)</i>
+ * </i> <i>logProtocol</i> <i>help</i><i>f (toggle freeze)</i>
  * 
  * 
  * @author Linus Lindgren (linlind@student.chalmers.se) & Isak Eriksson
@@ -50,7 +50,7 @@ public class Terminal extends Thread {
 	}
 
 	private enum Command {
-		halt, kick, list, reloadConfig, show, help, ff
+		halt, kick, list, reloadConfig, show, help, f
 	}
 
 	public void run() {
@@ -96,8 +96,9 @@ public class Terminal extends Thread {
 				case show:
 					show(arguments);
 					break;
-				case ff:
+				case f:
 					toggleFreeze();
+					break;
 				default:
 					System.out.println(arguments[0] + ": Command not found");
 					break;
@@ -130,8 +131,10 @@ public class Terminal extends Thread {
 	private void toggleFreeze() {
 		if(BluetoothServer.isAllowClientInput()){
 			BluetoothServer.setAllowClientInput(false);
+			System.out.println("Input freezed");
 		}else{
 			BluetoothServer.setAllowClientInput(true);
+			System.out.println("Input unfreezed");
 		}
 	}
 
@@ -169,7 +172,7 @@ public class Terminal extends Thread {
 		System.out.println("Available commands:");
 		System.out.println("");
 		for (Command c : Command.values()) {
-			if(c.toString().equals("ff")){
+			if(c.toString().equals("f")){
 				System.out.print(c.toString() + " (");
 				System.out.println("Quickly freeze/unfreeze all clients - useful when you don't want the clients to mess with the terminal input)");
 			}else{
