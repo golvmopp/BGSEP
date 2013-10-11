@@ -1,3 +1,21 @@
+/*
+   Copyright (C) 2013  Isak Eriksson, Linus Lindgren
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
 package bluetooth;
 
 import host.Configuration;
@@ -15,9 +33,9 @@ import util.IdHandler;
 /**
  * 
  * The BluetoothClient is a {@link Thread} that represents a client to the
- * {@link BluetoothServer} and contains a {@link DataInputStream} from the client's
- * bluetooth device. The thread interprets the incoming data from the client and
- * uses a {@link Robot} to give key presses on the keyboard.
+ * {@link BluetoothServer} and contains a {@link DataInputStream} from the
+ * client's bluetooth device. The thread interprets the incoming data from the
+ * client and uses a {@link Robot} to give key presses on the keyboard.
  * 
  * @author Linus Lindgren(linlind@student.chalmers.com) & Isak
  *         Eriksson(isak.eriksson@mail.com)
@@ -46,7 +64,7 @@ public class BluetoothClient extends Thread {
 
 	public BluetoothClient(DataInputStream dis) throws Exception {
 		this.dis = dis;
-		
+
 		setClientId(IdHandler.getInstance(Configuration.getInstance().getNumberOfClients()).getUnoccupiedId());
 		if (getClientId() == -1) {
 			dis.close();
@@ -129,11 +147,17 @@ public class BluetoothClient extends Thread {
 	}
 
 	/**
-	 * Disconnects the client by stopping the {@link Thread}, stopping the {@link Joystick}, closing the
+	 * Disconnects the client by releasing all pressed keys, stopping the
+	 * {@link Thread}, stopping the {@link Joystick}, closing the
 	 * {@link DataInputStream} and removing the client from the
 	 * {@link BluetoothServer}.
 	 */
 	public void disconnect() {
+
+		for (Integer keyCode : Configuration.getInstance().getClientKeyCodes(clientId)) {
+			this.robot.keyRelease(keyCode);
+		}
+
 		for (Joystick j : joyStick.values()) {
 			j.setStopped();
 		}
