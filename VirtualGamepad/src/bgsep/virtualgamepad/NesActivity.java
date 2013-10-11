@@ -21,6 +21,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.Menu;
@@ -30,6 +31,7 @@ import android.view.ViewConfiguration;
 import android.widget.ImageView;
 import bgsep.communication.Communication;
 import bgsep.model.Button;
+import bgsep.model.Gyro;
 
 /**
  * The activity for the NES controller
@@ -50,6 +52,8 @@ public class NesActivity extends Activity implements Observer {
 	
 	private boolean hapticFeedback;
 	
+	private Gyro gyro;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,6 +69,12 @@ public class NesActivity extends Activity implements Observer {
 		comm = Communication.getInstance();
 		initImages();
 		initButtons();
+		
+		////////////////////////////////
+		SensorManager sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		gyro = new Gyro(sensorManager);
+		gyro.setLeftRightGyroID(8, 9);
+		gyro.addObserver(comm);
 	}
 
 	@Override
@@ -158,5 +168,24 @@ public class NesActivity extends Activity implements Observer {
 		selectButton.addObserver(comm);
 		startButton.addObserver(comm);
 	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		gyro.unregisterListener();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		gyro.unregisterListener();
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		gyro.registerListener();
+	}
+	
 	
 }
