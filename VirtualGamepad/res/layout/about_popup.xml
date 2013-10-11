@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
     
-    <RelativeLayout 
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/black"
@@ -30,6 +30,8 @@
 	    android:textSize="17sp"
 	    android:scrollbars="vertical"
 	    android:layout_centerHorizontal="true"
+	    android:linksClickable="true"
+	    android:autoLink="web"
 	    android:maxLines="7"/>
         
         <Button 

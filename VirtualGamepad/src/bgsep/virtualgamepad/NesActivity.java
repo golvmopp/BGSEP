@@ -1,4 +1,4 @@
-/* Copyright (C) <2013>  <Victor Olausson, Patrik Wållgren>
+/* Copyright (C) 2013  Patrik Wållgren, Victor Olausson,
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
