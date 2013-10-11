@@ -1,3 +1,21 @@
+/*
+   Copyright (C) 2013  Isak Eriksson, Linus Lindgren
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
 package host;
 
 import java.io.BufferedReader;
@@ -7,6 +25,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import bluetooth.BluetoothClient;
 import bluetooth.BluetoothServer;
@@ -27,7 +47,7 @@ public class Configuration {
 	private int numberOfButtons;
 	private File configFile;
 	private String configuration;
-	private static ArrayList<Integer> keyCodes;
+	private ArrayList<Integer> keyCodes;
 	private static Configuration instance = null;
 
 	private Configuration() {
@@ -42,6 +62,27 @@ public class Configuration {
 	}
 
 	/**
+	 * @param clientID
+	 *            The id of the client
+	 * @return A {@link Set} of existing key codes for the given client
+	 * @throws IllegalArgumentException
+	 */
+	public synchronized Set<Integer> getClientKeyCodes(int clientID) throws IllegalArgumentException {
+		int offset = clientID * numberOfButtons;
+		HashSet<Integer> keycodeSet = new HashSet<>();
+
+		for (int i = offset; i < (offset + numberOfButtons); i++) {
+			try {
+				keycodeSet.add(this.keyCodes.get(i));
+			} catch (ArrayIndexOutOfBoundsException e) {
+				throw new IllegalArgumentException();
+			}
+		}
+
+		return keycodeSet;
+	}
+
+	/**
 	 * Gets the configured key code for a specific client and a button.
 	 * 
 	 * @param clientID
@@ -53,12 +94,14 @@ public class Configuration {
 	 *             If the clientID or the buttonID exceeds the allowed values,
 	 *             an {@link IllegalArgumentException} is thrown.
 	 */
+
 	public synchronized int getKeyCode(int clientID, int buttonID) throws IllegalArgumentException {
 		int index = clientID * numberOfClients + buttonID;
 		if (index < keyCodes.size() && buttonID < numberOfButtons) {
 			return keyCodes.get(clientID * numberOfButtons + buttonID);
 		} else {
-			throw new IllegalArgumentException("Too high button id! Ignoring button event.\n(Edit your config file or restart the server with a higher number of buttons to prevent this error.)");
+			throw new IllegalArgumentException(
+					"Too high button id! Ignoring button event.\n(Edit your config file or run the command 'reloadConfiguration' and set a higher number of buttons to prevent this error.)");
 		}
 	}
 
