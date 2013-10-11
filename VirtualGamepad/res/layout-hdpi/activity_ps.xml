@@ -1,0 +1,228 @@
+ <!-- Copyright (C) <2013>  <Victor Olausson>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#161616"
+    tools:context=".MainActivity" >
+
+    <ImageView
+        android:id="@+id/ps_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ps_bg" />
+
+    <ImageView
+        android:id="@+id/ps_arrow_cross"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ps_bg"
+        android:layout_alignTop="@+id/ps_bg"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/ps_arrow_cross" />
+
+    <ImageView
+        android:id="@+id/ps_button_cross"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/ps_bg"
+        android:layout_alignTop="@+id/ps_arrow_cross"
+        android:src="@drawable/ps_button_cross" />
+
+    <ImageView
+        android:id="@+id/ps_tr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/ps_bg"
+        android:layout_alignTop="@+id/ps_button_cross"
+        android:layout_marginRight="82dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ps_tr" />
+
+    <ImageView
+        android:id="@+id/ps_x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ps_button_cross"
+        android:layout_alignLeft="@+id/ps_tr"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ps_x" />
+
+    <ImageView
+        android:id="@+id/ps_sq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="5dp"
+        android:layout_above="@+id/ps_x"
+        android:layout_toLeftOf="@+id/ps_x"
+        android:src="@drawable/ps_sq" />
+
+    <ImageView
+        android:id="@+id/ps_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_alignTop="@+id/ps_sq"
+        android:layout_toRightOf="@+id/ps_x"
+        android:src="@drawable/ps_o" />
+
+    <ImageView
+        android:id="@+id/ps_arrow_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/ps_arrow_cross"
+        android:layout_alignTop="@+id/ps_tr"
+        android:layout_marginRight="75dp"
+        android:src="@drawable/ps_arrow_up" />
+
+    <ImageView
+        android:id="@+id/ps_arrow_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ps_x"
+        android:layout_alignLeft="@+id/ps_arrow_up"
+        android:src="@drawable/ps_arrow_down" />
+
+    <ImageView
+        android:id="@+id/ps_arrow_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ps_bg"
+        android:layout_alignTop="@+id/ps_sq"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="23dp"
+        android:src="@drawable/ps_arrow_left" />
+
+    <ImageView
+        android:id="@+id/ps_arrow_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/ps_arrow_cross"
+        android:layout_alignTop="@+id/ps_arrow_left"
+        android:layout_marginRight="12dp"
+        android:src="@drawable/ps_arrow_right" />
+
+    <ImageView
+        android:id="@+id/ps_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ps_arrow_right"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@+id/ps_button_cross"
+        android:src="@drawable/ps_start" />
+
+    <ImageView
+        android:id="@+id/ps_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ps_start"
+        android:layout_marginRight="15dp"
+        android:layout_toLeftOf="@+id/ps_start"
+        android:src="@drawable/ps_select" />
+        
+    <RelativeLayout 
+        android:layout_width="168dp"
+        android:layout_height="168dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="130dp">
+        
+        <ImageView 
+            android:id="@+id/ps_joy_bg_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ps_joy_bg"/>
+        
+        <ImageView 
+            android:id="@+id/ps_joy_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ps_joy_stick"/>
+    </RelativeLayout>
+    
+    <RelativeLayout 
+        android:layout_width="168dp"
+        android:layout_height="168dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="130dp">
+        
+        <ImageView 
+            android:id="@+id/ps_joy_bg_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ps_joy_bg"/>
+        
+        <ImageView 
+            android:id="@+id/ps_joy_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ps_joy_stick"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/ps_l1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ps_bg"
+        android:layout_alignTop="@+id/ps_bg"
+        android:src="@drawable/ps_l1" />
+
+    <ImageView
+        android:id="@+id/ps_l2"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/ps_arrow_cross"
+        android:layout_alignTop="@+id/ps_bg"
+        android:src="@drawable/ps_l2" />
+
+    <ImageView
+        android:id="@+id/ps_r1"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ps_bg"
+        android:layout_toRightOf="@+id/ps_start"
+        android:src="@drawable/ps_r1" />
+
+    <ImageView
+        android:id="@+id/ps_r2"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/ps_bg"
+        android:layout_alignTop="@+id/ps_bg"
+        android:src="@drawable/ps_r2" />
+
+</RelativeLayout>
