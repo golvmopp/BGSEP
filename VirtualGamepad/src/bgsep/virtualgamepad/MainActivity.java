@@ -23,7 +23,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import bgsep.bluetooth.BluetoothHandler;
 import bgsep.bluetooth.SenderImpl;
 import bgsep.communication.Communication;
@@ -60,12 +61,11 @@ public class MainActivity extends Activity implements Observer {
 	private ImageView communicationIndicator, communicationButton;
 	private ImageView imageNESbutton, imageGCbutton, imagePSbutton;
 	private Animation rotate;
-
 	private PopupWindow popupMenu;
 	private PopupWindow popupAbout;
 	private boolean hapticFeedback;
 	private boolean allowedToAutoConnect;
-
+	private int easterEggCount;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,7 @@ public class MainActivity extends Activity implements Observer {
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
 		
+		easterEggCount = 0;
 		hapticFeedback = false;
 		allowedToAutoConnect = true;
 		
@@ -212,6 +213,7 @@ public class MainActivity extends Activity implements Observer {
 				ImageView anchor = (ImageView)findViewById(R.id.mainpage_menu_anchor);
 				popupMenu.showAsDropDown(anchor, 0, 0);
 				TextView txtAbout = (TextView)menuView.findViewById(R.id.menu_about);
+
 				final CheckBox hapticCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_haptic);
 				
 				txtAbout.setOnClickListener(new OnClickListener() {
@@ -256,7 +258,8 @@ public class MainActivity extends Activity implements Observer {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		
 		TextView txtInfo = (TextView)aboutView.findViewById(R.id.about_info);
-		txtInfo.setMovementMethod(new ScrollingMovementMethod());
+		
+		txtInfo.setMovementMethod(LinkMovementMethod.getInstance());
 		
 		android.widget.Button closeButton = (android.widget.Button)aboutView.findViewById(R.id.about_close_button);
 		
@@ -310,4 +313,23 @@ public class MainActivity extends Activity implements Observer {
 				PS_CONTROLLER, this);
 	}
 
+	private void easterEggPressed() {
+		easterEggCount++;
+		if (easterEggCount >= 20) {
+			inactivateEasterEgg();
+			easterEggCount = 0;
+			return;
+		}
+		if (easterEggCount >= 10) {
+			activateEasterEgg();
+		}
+	}
+	
+	private void activateEasterEgg() {
+		
+	}
+	
+	private void inactivateEasterEgg() {
+		
+	}
 }
