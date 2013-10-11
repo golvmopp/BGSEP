@@ -131,8 +131,10 @@ public class Terminal extends Thread {
 	private void toggleFreeze() {
 		if(BluetoothServer.isAllowClientInput()){
 			BluetoothServer.setAllowClientInput(false);
+			System.out.println("Input freezed");
 		}else{
 			BluetoothServer.setAllowClientInput(true);
+			System.out.println("Input unfreezed");
 		}
 	}
 
