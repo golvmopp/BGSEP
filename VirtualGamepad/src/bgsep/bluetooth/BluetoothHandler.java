@@ -20,7 +20,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import bgsep.virtualgamepad.MainActivity;
-import bluetooth.SenderImpl;
+import bgsep.bluetooth.SenderImpl;
 import lib.Protocol;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -106,6 +106,7 @@ public class BluetoothHandler extends Thread {
 	public void cancelConnectionAttempt() {
 		cancelConnectionAttempt = true;
 		connect = false;
+		notifyNoServerFound();
 	}
 	
 	public void startThread() {
