@@ -20,6 +20,8 @@ package bgsep.model;
 
 import java.util.Observable;
 import java.util.Observer;
+
+import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -36,7 +38,35 @@ public class Button extends Observable {
 	private ImageView buttonView;
 	private boolean isPressed;
 	private int pressedDrawableID, unPressedDrawableID;
+	private Vibrator vibrator;
+	private boolean useHapticFeedback;
 
+	/**
+	 * A button that has a pressed look and the observer should be an observer that handles the views.
+	 * Notifies the user that the button has been pressed using haptic feedback.
+	 * @param button
+	 * @param unPressedDrawableID
+	 * @param pressedDrawableID
+	 * @param id
+	 * @param o
+	 * @param vibrator
+	 * @param hapticFeedback
+	 */
+	public Button(ImageView button, int unPressedDrawableID, int pressedDrawableID,
+			int id, Observer o, Vibrator vibrator, boolean hapticFeedback) {
+		this(button, unPressedDrawableID, pressedDrawableID, id, o);
+		useHapticFeedback = hapticFeedback;
+		this.vibrator = vibrator;
+	}
+	
+	/**
+	 * A button that has a pressed look and the observer should be an observer that handles the views.
+	 * @param button
+	 * @param unPressedDrawableID
+	 * @param pressedDrawableID
+	 * @param id
+	 * @param o
+	 */
 	public Button(ImageView button, int unPressedDrawableID, int pressedDrawableID, int id, Observer o) {
 		this(button, unPressedDrawableID, pressedDrawableID);
 		buttonID = id;
@@ -66,6 +96,8 @@ public class Button extends Observable {
 		this.unPressedDrawableID = unPressedDrawableID;
 		isPressed = false;
 		buttonView = button;
+		useHapticFeedback = false;
+		vibrator = null;
 	}
 
 	public void setButtonID(int id) {
@@ -91,6 +123,8 @@ public class Button extends Observable {
 
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
+				if(useHapticFeedback)
+					vibrator.vibrate(50);
 				isPressed = true;
 				setChanged();
 				notifyObservers();
