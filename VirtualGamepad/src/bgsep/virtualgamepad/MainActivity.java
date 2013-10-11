@@ -221,7 +221,8 @@ public class MainActivity extends Activity implements Observer {
 			
 			@Override
 			public void onClick(View v) {
-				popupMenu.showAsDropDown(settingsButton, 0, v.getHeight());
+				ImageView anchor = (ImageView)findViewById(R.id.mainpage_menu_anchor);
+				popupMenu.showAsDropDown(anchor, 0, 0);
 				TextView txtAbout = (TextView)menuView.findViewById(R.id.menu_about);
 				final CheckBox hapticCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_haptic);
 				
