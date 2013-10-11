@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.util.UUID;
-
 import bgsep.virtualgamepad.MainActivity;
 import lib.Protocol;
 import android.app.Activity;
@@ -34,6 +33,8 @@ public class BluetoothHandler extends Thread {
 	private boolean stopped;
 	private boolean connect;
 	private boolean cancelConnectionAttempt;
+	private Toast mainToast;;
+	public static final int BLUETOOTH_REQUEST_CODE = 1;
 	
 	public BluetoothHandler(Activity activity) {
 		setName("BluetoothHandler");
@@ -42,8 +43,8 @@ public class BluetoothHandler extends Thread {
 		stopped = true;
 		connect = false;
 		cancelConnectionAttempt = false;
+		mainToast = new Toast((MainActivity) activity);
 		si = new SenderImpl(this);
-		//initBluetoothAdapter();
 		start();
 	}
 	
@@ -85,6 +86,7 @@ public class BluetoothHandler extends Thread {
 	 */
 	public void cancelConnectionAttempt() {
 		cancelConnectionAttempt = true;
+		connect = false;
 	}
 	
 	public void startThread() {
@@ -99,17 +101,7 @@ public class BluetoothHandler extends Thread {
 		return (socket != null && socket.isConnected() && !stopped);
 	}
 	
-	private void startConnectionAttempt() {
-		Log.d(TAG, "connecting...");
-		cancelConnectionAttempt = false;
-		stopped = false;
-		if(!connectToServer()){
-			stopped = true;
-		} else {
-			Log.d(TAG, "server connected, entering poll loop..");
-			si.sendNameMessage(adapter.getName()); // send the device name to server
-		}
-	}
+	
 	
 	@Override
 	public void run() {
@@ -139,7 +131,21 @@ public class BluetoothHandler extends Thread {
 			}
 		}
 	}	
-
+	
+	
+	
+	private void startConnectionAttempt() {
+		Log.d(TAG, "connecting...");
+		cancelConnectionAttempt = false;
+		stopped = false;
+		if(!connectToServer()){
+			stopped = true;
+		} else {
+			Log.d(TAG, "server connected, entering poll loop..");
+			si.sendNameMessage(adapter.getName()); // send the device name to server
+		}
+	}
+	
 	private boolean checkForServer(BluetoothDevice d) {
 		for (ParcelUuid uuid : d.getUuids()) {
 			Log.d(TAG, "UUID:" + uuid.toString());
@@ -238,7 +244,7 @@ public class BluetoothHandler extends Thread {
 			Log.d(TAG,"Bluetooth device is disabled");
 			Log.d(TAG,"Enabling bluetooth device..");
 			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			activity.startActivityForResult(enableBtIntent, 1);
+			activity.startActivityForResult(enableBtIntent, BLUETOOTH_REQUEST_CODE);
 		}
 		return adapter.isEnabled();
 	}
@@ -276,7 +282,9 @@ public class BluetoothHandler extends Thread {
 		System.out.println("toastar!");
 		activity.runOnUiThread(new Runnable() {
 		    public void run() {
-		        Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+		    	mainToast.cancel();
+		    	mainToast = Toast.makeText(activity, text, Toast.LENGTH_SHORT);
+		    	mainToast.show();
 		    }
 		});
 	}

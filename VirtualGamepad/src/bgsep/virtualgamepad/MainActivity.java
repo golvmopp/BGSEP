@@ -1,18 +1,3 @@
-/* Copyright (C) <2013>  <Victor Olausson, Patrik Wållgren>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/  */
-
 package bgsep.virtualgamepad;
 
 import java.util.Observable;
@@ -43,6 +28,7 @@ public class MainActivity extends Activity implements Observer {
 	private BluetoothHandler bh;
 	private ImageView communicationIndicator, communicationButton, connectText;
 	private Animation rotate;
+	private boolean allowedToAutoConnect;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +36,7 @@ public class MainActivity extends Activity implements Observer {
 
 		setContentView(R.layout.activity_main);
 		
-		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;
-		
+		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;		
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
@@ -76,6 +61,7 @@ public class MainActivity extends Activity implements Observer {
 				if(bh.isConnected()) {
 					bh.disconnect(true);
 				} else {
+					allowedToAutoConnect = false;
 					startBluetooth();
 				}
 			}
@@ -84,6 +70,7 @@ public class MainActivity extends Activity implements Observer {
 		SenderImpl si = new SenderImpl(bh);
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
+		allowedToAutoConnect = true;
 	}
 	
 	private void startBluetooth() {
@@ -147,7 +134,21 @@ public class MainActivity extends Activity implements Observer {
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
+		allowedToAutoConnect = true;
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == BluetoothHandler.BLUETOOTH_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				allowedToAutoConnect = true;
+				startBluetooth();
+			} else {
+				allowedToAutoConnect = false;
+				bh.cancelConnectionAttempt();
+			}
+		}
+	}	
 	
 	private void indicateConnecting() {
 		connectText.setVisibility(View.INVISIBLE);
@@ -158,6 +159,9 @@ public class MainActivity extends Activity implements Observer {
 	
 	@Override
 	public void onWindowFocusChanged(boolean has) {
-		startBluetooth();
-	}
+		if (allowedToAutoConnect && !bh.isConnected()) {
+			allowedToAutoConnect = false;
+			startBluetooth();
+		}
+	}	
 }

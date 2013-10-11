@@ -72,6 +72,8 @@ public class PsActivity extends Activity implements Observer {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		
+		// Initialization of the joystick must happen when all the views has been drawn.
+		// Therefore initialize it when the window has focus and not in onCreate.
 		if(!isInitialized) {
 			initImages();
 			initButtons();
@@ -130,9 +132,9 @@ public class PsActivity extends Activity implements Observer {
 		buttonL2 = new Button(imageL2, R.drawable.ps_l2, R.drawable.ps_l2_pr,
 				11, this);
 		buttonSelect = new Button(imageSelect, R.drawable.ps_select, R.drawable.ps_select_pr,
-				15, this);
+				12, this);
 		buttonStart = new Button(imageStart, R.drawable.ps_start, R.drawable.ps_start_pr,
-				16, this);
+				13, this);
 		
 		buttonLeft.addObserver(comm);
 		buttonRight.addObserver(comm);
@@ -156,10 +158,10 @@ public class PsActivity extends Activity implements Observer {
 		leftJoystick = new JoystickHandler(imageLeftBoundary, imageLeftStick);
 		rightJoystick = new JoystickHandler(imageRightBoundary, imageRightStick);
 		
-		leftJoystick.setLeftRightJoystickID(17, 18);
-		leftJoystick.setUpDownJoystickID(19, 20);
-		rightJoystick.setLeftRightJoystickID(21, 22);
-		rightJoystick.setUpDownJoystickID(23, 24);
+		leftJoystick.setLeftRightJoystickID(14, 15);
+		leftJoystick.setUpDownJoystickID(16, 17);
+		rightJoystick.setLeftRightJoystickID(18, 19);
+		rightJoystick.setUpDownJoystickID(20, 21);
 		
 		leftJoystick.addObserver(this);
 		leftJoystick.addObserver(comm);
