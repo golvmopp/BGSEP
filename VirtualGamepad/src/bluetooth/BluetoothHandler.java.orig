@@ -1,42 +1,22 @@
-/* Copyright (C) 2013  Isak Eriksson
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/  */
-
-package bgsep.bluetooth;
+package bluetooth;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
-
 import bgsep.virtualgamepad.MainActivity;
-import bluetooth.SenderImpl;
 import lib.Protocol;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
 
 /**
-
+ * @author Isak Eriksson (isak.eriksson@mail.com) & Linus Lindgren (linlind@student.chalmers.se)
  * This is the main bluetooth handler. It handles discovery of and connection to the server.
  * It also notifies the GUI about connection state.
- * 
- * @author Isak Eriksson (isak.eriksson@mail.com) & Linus Lindgren (linlind@student.chalmers.se)
  *
  */
 public class BluetoothHandler extends Thread {
@@ -50,10 +30,12 @@ public class BluetoothHandler extends Thread {
 	private SenderImpl si;
 	private boolean stopped;
 	private boolean connect;
+<<<<<<< HEAD
 	private boolean cancelConnectionAttempt;
 	private Toast mainToast;;
-	private static final int SLEEP_BETWEEN_CONNECTION_ATTEMPTS = 3000;
 	public static final int BLUETOOTH_REQUEST_CODE = 1;
+=======
+>>>>>>> 68beb011de8f1423c26dea33bae66009d15a69ce
 	
 	public BluetoothHandler(Activity activity) {
 		setName("BluetoothHandler");
@@ -61,9 +43,13 @@ public class BluetoothHandler extends Thread {
 		this.activity = activity;
 		stopped = true;
 		connect = false;
+<<<<<<< HEAD
 		cancelConnectionAttempt = false;
 		mainToast = new Toast((MainActivity) activity);
+=======
+>>>>>>> 68beb011de8f1423c26dea33bae66009d15a69ce
 		si = new SenderImpl(this);
+		initBluetoothAdapter();
 		start();
 	}
 	
@@ -76,8 +62,6 @@ public class BluetoothHandler extends Thread {
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (NullPointerException e) {
-			Log.d(TAG, "no connection to server");
 		}
 		Log.d(TAG, "disconnecting from server");
 		stopped = true;
@@ -100,6 +84,7 @@ public class BluetoothHandler extends Thread {
 		}
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Stops the attempt to find and connect to a server.
 	 */
@@ -108,6 +93,8 @@ public class BluetoothHandler extends Thread {
 		connect = false;
 	}
 	
+=======
+>>>>>>> 68beb011de8f1423c26dea33bae66009d15a69ce
 	public void startThread() {
 		connect = true;
 	}
@@ -120,14 +107,22 @@ public class BluetoothHandler extends Thread {
 		return (socket != null && socket.isConnected() && !stopped);
 	}
 	
+<<<<<<< HEAD
+	
+	
+=======
+>>>>>>> 68beb011de8f1423c26dea33bae66009d15a69ce
 	@Override
 	public void run() {
 		while (!interrupted()) {
 			if (connect) {
-				if (initBluetoothAdapter()) {
-					startConnectionAttempt();
+				Log.d(TAG, "connecting...");
+				stopped = false;
+				if(!connectToServer()){
+					stopped = true;
 				} else {
-					notifyDisconnected(false);
+					Log.d(TAG, "server connected, entering poll loop..");
+					si.sendNameMessage(adapter.getName()); // send the device name to server
 				}
 				connect = false;
 			} else {
@@ -148,6 +143,8 @@ public class BluetoothHandler extends Thread {
 			}
 		}
 	}	
+	
+	
 	
 	private void startConnectionAttempt() {
 		Log.d(TAG, "connecting...");
@@ -172,7 +169,7 @@ public class BluetoothHandler extends Thread {
 		return false;
 	}
 	
-	private boolean connectToBoundedDevices() {
+	private boolean checkBoundedDevices() {
 		Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
 		for (BluetoothDevice d : adapter.getBondedDevices()) {
 			Log.d(TAG, "\t" + d.getName());
@@ -192,6 +189,36 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	/**
+	 * Loops through the bounded devices to check if expected UUID was fetched.
+	 * If so, tries to connect to it.
+	 * @return true if a server was found and successfully connected to
+	 */
+	private boolean checkIfUUIDFetchedWithSDP() {
+		int count = 0;
+		while (true) {
+			count++;
+			for (BluetoothDevice d : adapter.getBondedDevices()) {
+				if (checkForServer(d)) {
+					Log.d(TAG, "Connecting to server..");
+					if (connect(d.getAddress())) {
+						notifyConnected();
+						return true;
+					}
+				}
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (count > 10) {
+				notifyNoServerFound();
+				return false;
+			}
+		}
+	}
+	
+	/**
 	 * Loops through all bounded devices and connects to the device which is running the Virtual Gamepad Host.
 	 * If a server is not found on a bounded device, an SDP discovery is started.  
 	 * 
@@ -202,19 +229,13 @@ public class BluetoothHandler extends Thread {
 			notifyNoServerFound();
 			return false;
 		}
-		while (true) { //start connecting 
-			if (connectToBoundedDevices()) {
-				return true;
-			}	
-			try {
-				Thread.sleep(SLEEP_BETWEEN_CONNECTION_ATTEMPTS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			if (cancelConnectionAttempt) {
-				return false;
-			}
+		if (checkBoundedDevices()) {
+			Log.d(TAG, "server found in bounded devices");
+			return true;
 		}
+		Log.d(TAG, "did not find server, starting to search for fetched UUIDs");
+		checkIfUUIDFetchedWithSDP();
+		return false;
 	}
 	
 	private boolean initBluetoothAdapter() {
@@ -231,10 +252,14 @@ public class BluetoothHandler extends Thread {
 		} else {
 			Log.d(TAG,"Bluetooth device is disabled");
 			Log.d(TAG,"Enabling bluetooth device..");
+<<<<<<< HEAD
 			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			activity.startActivityForResult(enableBtIntent, BLUETOOTH_REQUEST_CODE);
+=======
+			Log.d(TAG,adapter.enable() ? "Success" : "Failed");
+>>>>>>> 68beb011de8f1423c26dea33bae66009d15a69ce
 		}
-		return adapter.isEnabled();
+		return true;
 	}
 	
 	private boolean connect(final String address) {

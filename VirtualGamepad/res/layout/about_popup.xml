@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+    
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:alpha="0.9">
+        
+        <TextView 
+            android:id="@+id/about_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_title"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:textColor="@android:color/holo_orange_dark"/>
+       
+        <TextView 
+	    android:id="@+id/about_info"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/about_title"
+	    android:layout_margin="10dp"
+	    android:background="@android:color/black"
+	    android:textColor="@android:color/holo_blue_dark"
+	    android:text="@string/about_info"
+	    android:textSize="17sp"
+	    android:scrollbars="vertical"
+	    android:layout_centerHorizontal="true"
+	    android:linksClickable="true"
+	    android:autoLink="web"
+	    android:maxLines="7"/>
+        
+        <Button 
+        android:id="@+id/about_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_info"
+        android:text="@string/about_button_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:alpha="0.9"/>
+    </RelativeLayout>
+	
+
+</RelativeLayout>
