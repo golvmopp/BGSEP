@@ -51,6 +51,8 @@ public class BluetoothServer {
 	private final static String NAME = "Virtual Gamepad Host";
 	private final static String URL = "btspp://localhost:" + VIRTUALGAMEPAD_UUID + ";name=" + NAME + ";authenticate=false;encrypt=false;";
 
+	private static boolean allowClientInput;
+	
 	private LocalDevice device;
 	private StreamConnectionNotifier server;
 
@@ -109,6 +111,8 @@ public class BluetoothServer {
 		System.out.println("Server up and running!");
 		IncomingClientListener listener = new IncomingClientListener(server);
 		listener.start();
+		setAllowClientInput(true);
+
 	}
 
 	public void addClient(BluetoothClient client) {
@@ -180,6 +184,14 @@ public class BluetoothServer {
 		System.out.println();
 		return lib.Constants.DEFAULT_MAX_CLIENTS;
 
+	}
+	
+	public static boolean isAllowClientInput() {
+		return allowClientInput;
+	}
+
+	public static void setAllowClientInput(boolean allowClientInput) {
+		BluetoothServer.allowClientInput = allowClientInput;
 	}
 
 	private static int getInputInt(int lowest, int highest) throws IOException, NumberFormatException, WrongNumberArgsException {

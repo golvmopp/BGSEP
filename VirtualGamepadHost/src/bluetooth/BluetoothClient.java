@@ -187,26 +187,29 @@ public class BluetoothClient extends Thread {
 	}
 
 	private void handleButtonEvent(ArrayList<Byte> data) {
-		try {
-			if (data.get(2) == 0x01) {
-				robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
-			} else {
-				robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+		if (BluetoothServer.isAllowClientInput()) {
+			try {
+				if (data.get(2) == 0x01) {
+					robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				} else {
+					robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+				}
+			} catch (IllegalArgumentException e) {
+				System.out.println(e.getMessage());
 			}
-		} catch (IllegalArgumentException e) {
-			System.out.println(e.getMessage());
 		}
 	}
 
 	private void handleJoystickEvent(ArrayList<Byte> data) {
-		byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
-		float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
-		int joyStickId = data.get(1);
-		if (!joyStick.containsKey(joyStickId)) {
-			this.joyStick.put(joyStickId, new Joystick(joyStickId, clientId));
+		if (BluetoothServer.isAllowClientInput()) {
+			byte[] floatByte = { data.get(2), data.get(3), data.get(4), data.get(5) };
+			float position = java.nio.ByteBuffer.wrap(floatByte).asFloatBuffer().get();
+			int joyStickId = data.get(1);
+			if (!joyStick.containsKey(joyStickId)) {
+				this.joyStick.put(joyStickId, new Joystick(joyStickId, clientId));
+			}
+			joyStick.get(joyStickId).setNewValue(position);
 		}
-
-		joyStick.get(joyStickId).setNewValue(position);
 	}
 
 	private void handleCloseEvent(ArrayList<Byte> data) {
