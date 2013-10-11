@@ -17,9 +17,12 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -114,29 +117,30 @@ public class NesActivity extends Activity implements Observer {
 	}
 	
 	private void initButtons() {
+		Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 		leftArrowButton = new Button(imageLeftArrow, R.drawable.nes_left_arrow, R.drawable.nes_left_arrow_pressed,
-				0, this);
+				0, this, vibrator, true);
 		
 		rightArrowButton = new Button(imageRightArrow, R.drawable.nes_right_arrow, R.drawable.nes_right_arrow_pressed,
-				1, this);
+				1, this, vibrator, true);
 		
 		upArrowButton = new Button(imageUpArrow, R.drawable.nes_up_arrow, R.drawable.nes_up_arrow_pressed,
-				2, this);
+				2, this, vibrator, true);
 		
 		downArrowButton = new Button(imageDownArrow, R.drawable.nes_down_arrow, R.drawable.nes_down_arrow_pressed,
-				3, this);
+				3, this, vibrator, true);
 		
 		aButton = new Button(imageAbutton, R.drawable.nes_a_button, R.drawable.nes_a_button_pressed,
-				4, this);
+				4, this, vibrator, true);
 		
 		bButton = new Button(imageBbutton, R.drawable.nes_b_button, R.drawable.nes_b_button_pressed,
-				5, this);
+				5, this, vibrator, true);
 		
 		selectButton = new Button(imageSelect, R.drawable.nes_select_button, R.drawable.nes_select_button_pressed,
-				6, this);
+				6, this, vibrator, true);
 		
 		startButton = new Button(imageStart, R.drawable.nes_start_button, R.drawable.nes_start_button_pressed,
-				7, this);
+				7, this, vibrator, true);
 		
 		aButton.addObserver(comm);
 		bButton.addObserver(comm);
