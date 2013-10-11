@@ -169,7 +169,7 @@ public class Terminal extends Thread {
 		System.out.println("Available commands:");
 		System.out.println("");
 		for (Command c : Command.values()) {
-			if(c.toString().equals('f')){
+			if(c.toString().equals("f")){
 				System.out.print(c.toString() + " (");
 				System.out.println("Quickly freeze/unfreeze all clients - useful when you don't want the clients to mess with the terminal input)");
 			}else{
