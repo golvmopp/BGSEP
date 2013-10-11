@@ -42,7 +42,7 @@ public class Gyro extends Observable implements SensorEventListener {
 	private int leftID, rightID;
 
 	/**
-	 * Initializes the gyro. Disabled until setLeftRightGyroID() has been called.
+	 * Initializes the gyro. Disabled by default.
 	 * 
 	 * @param manager
 	 *            An initialized SensorManager.
@@ -50,7 +50,6 @@ public class Gyro extends Observable implements SensorEventListener {
 	public Gyro(SensorManager manager) {
 		sensorManager = manager;
 		sensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		registerListener();
 		indication = 0;
 		prevPosX = leftID = rightID = 0;
 		enabled = false;
@@ -59,7 +58,6 @@ public class Gyro extends Observable implements SensorEventListener {
 	public void setLeftRightGyroID(int left, int right) {
 		leftID = left;
 		rightID = right;
-		enabled = true;
 	}
 
 	public void registerListener() {
@@ -108,8 +106,6 @@ public class Gyro extends Observable implements SensorEventListener {
 		if((rounding % 2) != 0) {
 			rounding += currPos > rounding ? 1 : -1;
 		}
-		
-		Log.w("GYRO", String.valueOf(currPos));
 		
 		if(prevPos != rounding) {
 			float value = ((float)Math.abs(rounding))/10;

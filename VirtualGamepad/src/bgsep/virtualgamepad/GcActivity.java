@@ -21,10 +21,12 @@ import java.util.Observer;
 import bgsep.communication.Communication;
 import bgsep.communication.CommunicationNotifier;
 import bgsep.model.Button;
+import bgsep.model.Gyro;
 import bgsep.model.JoystickHandler;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.Menu;
@@ -45,10 +47,12 @@ public class GcActivity extends Activity implements Observer {
 	ImageView aImageView, bImageView, xImageView, yImageView, imageStart,
 			  imageBoundary, imageStick;
 	private JoystickHandler gcJoystick;
+	private Gyro gyro;
 	private Button	aButton, bButton, xButton, yButton, startButton;
 	Communication comm;
 	
 	private boolean hapticFeedback;
+	private boolean useAccelerometer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +65,13 @@ public class GcActivity extends Activity implements Observer {
 		
 		Intent i = getIntent();
 		hapticFeedback = i.getBooleanExtra("hapticFeedback", false);
+		useAccelerometer = i.getBooleanExtra("useAccelerometer", false);
 		
 		isInitialized = false;
 		comm = Communication.getInstance();
+		
+		if(useAccelerometer)
+			initGyro();
 	}
 	
 	
@@ -122,6 +130,7 @@ public class GcActivity extends Activity implements Observer {
 	        case R.id.action_nes:
 	        	i = new Intent(this, NesActivity.class);
 	        	i.putExtra("hapticFeedback", hapticFeedback);
+	        	i.putExtra("useAccelerometer", useAccelerometer);
 	    		startActivity(i);
 	            finish();
 	            return true;
@@ -129,6 +138,7 @@ public class GcActivity extends Activity implements Observer {
 	        case R.id.action_ps:
 	        	i = new Intent(this, PsActivity.class);
 	        	i.putExtra("hapticFeedback", hapticFeedback);
+	        	i.putExtra("useAccelerometer", useAccelerometer);
 	    		startActivity(i);
 	            finish();
 	            return true;
@@ -175,5 +185,35 @@ public class GcActivity extends Activity implements Observer {
 		gcJoystick.setUpDownJoystickID(7, 8);
 		gcJoystick.addObserver(this);
 		gcJoystick.addObserver(comm);
+	}
+	
+	private void initGyro() {
+		SensorManager sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		gyro = new Gyro(sensorManager);
+		gyro.setLeftRightGyroID(9, 10);
+		gyro.setEnabled(useAccelerometer);
+		gyro.registerListener();
+		gyro.addObserver(comm);
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(useAccelerometer)
+			gyro.unregisterListener();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(useAccelerometer)
+			gyro.unregisterListener();
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if(useAccelerometer)
+			gyro.registerListener();
 	}
 }

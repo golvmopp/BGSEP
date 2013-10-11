@@ -64,6 +64,7 @@ public class MainActivity extends Activity implements Observer {
 	private PopupWindow popupMenu;
 	private PopupWindow popupAbout;
 	private boolean hapticFeedback;
+	private boolean useAccelerometer;
 	private boolean allowedToAutoConnect;
 	private int easterEggCount;
 	
@@ -81,6 +82,7 @@ public class MainActivity extends Activity implements Observer {
 		
 		easterEggCount = 0;
 		hapticFeedback = false;
+		useAccelerometer = false;
 		allowedToAutoConnect = true;
 		
 		initControllerButtons();
@@ -111,16 +113,19 @@ public class MainActivity extends Activity implements Observer {
 				case NES_CONTROLLER:
 					i = new Intent(this, NesActivity.class);
 					i.putExtra("hapticFeedback", hapticFeedback);
+					i.putExtra("useAccelerometer", useAccelerometer);
 					startActivity(i);
 					break;
 				case GC_CONTROLLER:
 					i = new Intent(this, GcActivity.class);
 					i.putExtra("hapticFeedback", hapticFeedback);
+					i.putExtra("useAccelerometer", useAccelerometer);
 					startActivity(i);
 					break;
 				case PS_CONTROLLER:
 					i = new Intent(this, PsActivity.class);
 					i.putExtra("hapticFeedback", hapticFeedback);
+					i.putExtra("useAccelerometer", useAccelerometer);
 					startActivity(i);
 					break;
 				default:
@@ -213,8 +218,9 @@ public class MainActivity extends Activity implements Observer {
 				ImageView anchor = (ImageView)findViewById(R.id.mainpage_menu_anchor);
 				popupMenu.showAsDropDown(anchor, 0, 0);
 				TextView txtAbout = (TextView)menuView.findViewById(R.id.menu_about);
-
 				final CheckBox hapticCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_haptic);
+				final CheckBox accCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_accelerometer);
+				
 				
 				txtAbout.setOnClickListener(new OnClickListener() {
 					@Override
@@ -232,6 +238,18 @@ public class MainActivity extends Activity implements Observer {
 							hapticFeedback = true;
 						else
 							hapticFeedback = false;
+					}
+				});
+				
+				accCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						if(accCheckbox.isChecked())
+							useAccelerometer = true;
+						else
+							useAccelerometer = false;
+						
 					}
 				});
 			}

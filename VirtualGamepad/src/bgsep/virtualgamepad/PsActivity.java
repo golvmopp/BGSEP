@@ -21,6 +21,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.Menu;
@@ -31,6 +32,7 @@ import android.widget.ImageView;
 import bgsep.communication.Communication;
 import bgsep.communication.CommunicationNotifier;
 import bgsep.model.Button;
+import bgsep.model.Gyro;
 import bgsep.model.JoystickHandler;
 
 /**
@@ -52,10 +54,12 @@ public class PsActivity extends Activity implements Observer {
 						buttonR1, buttonR2, buttonL1, buttonL2,
 						buttonStart, buttonSelect;
 
-	private JoystickHandler leftJoystick, rightJoystick;	
+	private JoystickHandler leftJoystick, rightJoystick;
+	private Gyro gyro;
 	
 	private boolean isInitialized;
 	private boolean hapticFeedback;
+	private boolean useAccelerometer;
 	
 	private Communication comm;
 	
@@ -70,8 +74,14 @@ public class PsActivity extends Activity implements Observer {
 		
 		Intent i = getIntent();
 		hapticFeedback = i.getBooleanExtra("hapticFeedback", false);
+		useAccelerometer = i.getBooleanExtra("useAccelerometer", false);
+		
 		
 		comm = Communication.getInstance();
+		
+		if(useAccelerometer)
+			initGyro();
+		
 		isInitialized = false;
 	}
 		
@@ -217,6 +227,7 @@ public class PsActivity extends Activity implements Observer {
 		        case R.id.action_nes:
 		        	i = new Intent(this, NesActivity.class);
 		        	i.putExtra("hapticFeedback", hapticFeedback);
+		        	i.putExtra("useAccelerometer", useAccelerometer);
 		    		startActivity(i);
 		            finish();
 		            return true;
@@ -224,6 +235,7 @@ public class PsActivity extends Activity implements Observer {
 		        case R.id.action_gc:
 		        	i = new Intent(this, GcActivity.class);
 		        	i.putExtra("hapticFeedback", hapticFeedback);
+		        	i.putExtra("useAccelerometer", useAccelerometer);
 		    		startActivity(i);
 		            finish();
 		            return true;
@@ -231,5 +243,35 @@ public class PsActivity extends Activity implements Observer {
 		        default:
 		            return super.onOptionsItemSelected(item);
 		    }
+		}
+		
+		private void initGyro() {
+			SensorManager sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+			gyro = new Gyro(sensorManager);
+			gyro.setLeftRightGyroID(22, 23);
+			gyro.setEnabled(useAccelerometer);
+			gyro.registerListener();
+			gyro.addObserver(comm);
+		}
+		
+		@Override
+		public void onDestroy() {
+			super.onDestroy();
+			if(useAccelerometer)
+				gyro.unregisterListener();
+		}
+		
+		@Override
+		public void onPause() {
+			super.onPause();
+			if(useAccelerometer)
+				gyro.unregisterListener();
+		}
+		
+		@Override
+		public void onResume() {
+			super.onResume();
+			if(useAccelerometer)
+				gyro.registerListener();
 		}
 }

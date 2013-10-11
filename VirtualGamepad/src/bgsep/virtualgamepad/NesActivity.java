@@ -51,6 +51,7 @@ public class NesActivity extends Activity implements Observer {
 	private Communication comm;
 	
 	private boolean hapticFeedback;
+	private boolean useAccelerometer;
 	
 	private Gyro gyro;
 	
@@ -65,16 +66,14 @@ public class NesActivity extends Activity implements Observer {
 		
 		Intent i = getIntent();
 		hapticFeedback = i.getBooleanExtra("hapticFeedback", false);
+		useAccelerometer = i.getBooleanExtra("useAccelerometer", false);
 		
 		comm = Communication.getInstance();
+		
 		initImages();
 		initButtons();
-		
-		////////////////////////////////
-		SensorManager sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		gyro = new Gyro(sensorManager);
-		gyro.setLeftRightGyroID(8, 9);
-		gyro.addObserver(comm);
+		if(useAccelerometer)
+			initGyro();
 	}
 
 	@Override
@@ -106,6 +105,7 @@ public class NesActivity extends Activity implements Observer {
 	        case R.id.action_gc:
 	        	i = new Intent(this, GcActivity.class);
 	        	i.putExtra("hapticFeedback", hapticFeedback);
+	        	i.putExtra("useAccelerometer", useAccelerometer);
 	    		startActivity(i);
 	            finish();
 	            return true;
@@ -113,6 +113,7 @@ public class NesActivity extends Activity implements Observer {
 	        case R.id.action_ps:
 	        	i = new Intent(this, PsActivity.class);
 	        	i.putExtra("hapticFeedback", hapticFeedback);
+	        	i.putExtra("useAccelerometer", useAccelerometer);
 	    		startActivity(i);
 	            finish();
 	            return true;
@@ -169,22 +170,34 @@ public class NesActivity extends Activity implements Observer {
 		startButton.addObserver(comm);
 	}
 	
+	private void initGyro() {
+		SensorManager sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		gyro = new Gyro(sensorManager);
+		gyro.setLeftRightGyroID(8, 9);
+		gyro.setEnabled(useAccelerometer);
+		gyro.registerListener();
+		gyro.addObserver(comm);
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		gyro.unregisterListener();
+		if(useAccelerometer)
+			gyro.unregisterListener();
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		gyro.unregisterListener();
+		if(useAccelerometer)
+			gyro.unregisterListener();
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-		gyro.registerListener();
+		if(useAccelerometer)
+			gyro.registerListener();
 	}
 	
 	
