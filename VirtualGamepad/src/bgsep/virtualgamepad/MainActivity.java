@@ -133,12 +133,15 @@ public class MainActivity extends Activity implements Observer {
 		}
 		communicationButton.setImageResource(R.drawable.mainpage_red_arrows);
 		connectText.setVisibility(View.VISIBLE);
+		connectText.setImageResource(R.drawable.mainpage_connect_text);
 	}
 	
 	/**
 	 * Indicate to GUI that the server is connected.
 	 */
 	public void serverConnected() {
+		connectText.setVisibility(View.VISIBLE);
+		connectText.setImageResource(R.drawable.mainpage_disconnect_text);
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
