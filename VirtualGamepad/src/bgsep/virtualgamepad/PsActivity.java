@@ -71,6 +71,8 @@ public class PsActivity extends Activity implements Observer {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		
+		// Initialization of the joystick must happen when all the views has been drawn.
+		// Therefore initialize it when the window has focus and not in onCreate.
 		if(!isInitialized) {
 			initImages();
 			initButtons();
