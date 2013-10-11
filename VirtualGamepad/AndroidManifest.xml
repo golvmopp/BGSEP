@@ -28,7 +28,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/icon_bg"
+        android:icon="@drawable/icon_vg"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
         
