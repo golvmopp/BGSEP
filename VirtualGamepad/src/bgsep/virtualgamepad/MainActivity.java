@@ -2,17 +2,23 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import bgsep.communication.Communication;
 import bgsep.model.Button;
 import bluetooth.BluetoothHandler;
@@ -30,7 +36,13 @@ public class MainActivity extends Activity implements Observer {
 	private BluetoothHandler bh;
 	private ImageView communicationIndicator, communicationButton, connectText;
 	private Animation rotate;
+
+	private PopupWindow popupMenu;
+	private PopupWindow popupAbout;
+	private boolean hapticFeedback;
+
 	private boolean allowedToAutoConnect;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +84,12 @@ public class MainActivity extends Activity implements Observer {
 		SenderImpl si = new SenderImpl(bh);
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
+		
+		hapticFeedback = false;
+		
+		initSettingsMenu();
+		initAboutPopup();
+		
 		allowedToAutoConnect = true;
 	}
 	
@@ -112,6 +130,24 @@ public class MainActivity extends Activity implements Observer {
 				button.getButtonView().setImageResource(button.getUnPressedDrawableID());
 			}
 		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(popupMenu.isShowing())
+			popupMenu.dismiss();
+		if(popupAbout.isShowing())
+			popupAbout.dismiss();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(popupMenu.isShowing())
+			popupMenu.dismiss();
+		if(popupAbout.isShowing())
+			popupAbout.dismiss();
 	}
 	
 	/**
@@ -166,4 +202,77 @@ public class MainActivity extends Activity implements Observer {
 			startBluetooth();
 		}
 	}
+	
+	private void initSettingsMenu() {
+		LayoutInflater layoutInflater = 
+				(LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+		final View menuView = layoutInflater.inflate(R.layout.menu_popup, null);
+		popupMenu = new PopupWindow(menuView,
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+		final ImageView settingsButton = (ImageView) findViewById(R.id.mainpage_smalldots_button);
+		final RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.mainpage_main_layout);
+		settingsButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				popupMenu.showAsDropDown(settingsButton, 0, v.getHeight());
+				TextView txtAbout = (TextView)menuView.findViewById(R.id.menu_about);
+				final CheckBox hapticCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_haptic);
+				
+				txtAbout.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						popupAbout.showAtLocation(mainLayout, Gravity.CENTER, 0, 0);
+						popupMenu.dismiss();
+					}
+				});
+				
+				hapticCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						if(hapticCheckbox.isChecked())
+							hapticFeedback = true;
+						else
+							hapticFeedback = false;
+					}
+				});
+			}
+		});
+		
+		// Dismiss the popupMenu when user presses anywhere on the background
+		mainLayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(popupMenu.isShowing())
+					popupMenu.dismiss();
+				if(popupAbout.isShowing())
+					popupAbout.dismiss();
+			}
+		});
+	}
+	
+	private void initAboutPopup() {
+		LayoutInflater layoutInflater = 
+				(LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+		final View aboutView = layoutInflater.inflate(R.layout.about_popup, null);
+		popupAbout = new PopupWindow(aboutView,
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		
+		TextView txtInfo = (TextView)aboutView.findViewById(R.id.about_info);
+		txtInfo.setMovementMethod(new ScrollingMovementMethod());
+		
+		android.widget.Button closeButton = (android.widget.Button)aboutView.findViewById(R.id.about_close_button);
+		
+		closeButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				popupAbout.dismiss();
+			}
+		});
+	}
+
 }

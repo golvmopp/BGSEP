@@ -21,7 +21,8 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    android:theme="@android:style/Theme.Light.NoTitleBar" >
+    android:theme="@android:style/Theme.Light.NoTitleBar" 
+    android:id="@+id/mainpage_main_layout">
 
     <ImageView
         android:id="@+id/mainpage_background"
@@ -57,7 +58,7 @@
         android:src="@drawable/mainpage_ps" />     
        
     <ImageView
-        android:id="@+id/smalldots_button"
+        android:id="@+id/mainpage_smalldots_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -103,6 +104,5 @@
                 android:src="@drawable/mainpage_yellow_arrows" />
         </RelativeLayout>
     </RelativeLayout>
-
 
 </RelativeLayout>
