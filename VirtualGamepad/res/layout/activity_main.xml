@@ -66,6 +66,14 @@
         android:layout_marginTop="15dp" 
         android:src="@drawable/mainpage_small_dots" />
     
+    <ImageView 
+        android:id="@+id/mainpage_menu_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/mainpage_smalldots_button"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="170dp"/>
+    
     
 
     <RelativeLayout
