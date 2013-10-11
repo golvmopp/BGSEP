@@ -1,18 +1,3 @@
-/* Copyright (C) <2013>  <Victor Olausson, Patrik Wållgren>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/  */
-
 package bgsep.virtualgamepad;
 
 import java.util.Observable;
@@ -135,12 +120,15 @@ public class MainActivity extends Activity implements Observer {
 		}
 		communicationButton.setImageResource(R.drawable.mainpage_red_arrows);
 		connectText.setVisibility(View.VISIBLE);
+		connectText.setImageResource(R.drawable.mainpage_connect_text);
 	}
 	
 	/**
 	 * Indicate to GUI that the server is connected.
 	 */
 	public void serverConnected() {
+		connectText.setVisibility(View.VISIBLE);
+		connectText.setImageResource(R.drawable.mainpage_disconnect_text);
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);

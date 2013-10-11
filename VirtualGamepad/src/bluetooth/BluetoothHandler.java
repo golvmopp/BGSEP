@@ -1,6 +1,7 @@
 package bluetooth;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.util.UUID;
 import bgsep.virtualgamepad.MainActivity;
@@ -44,7 +45,6 @@ public class BluetoothHandler extends Thread {
 		cancelConnectionAttempt = false;
 		mainToast = new Toast((MainActivity) activity);
 		si = new SenderImpl(this);
-		//initBluetoothAdapter();
 		start();
 	}
 	
