@@ -23,7 +23,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -237,6 +237,7 @@ public class MainActivity extends Activity implements Observer {
 				ImageView anchor = (ImageView)findViewById(R.id.mainpage_menu_anchor);
 				popupMenu.showAsDropDown(anchor, 0, 0);
 				TextView txtAbout = (TextView)menuView.findViewById(R.id.menu_about);
+
 				final CheckBox hapticCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_haptic);
 				
 				txtAbout.setOnClickListener(new OnClickListener() {
@@ -281,7 +282,8 @@ public class MainActivity extends Activity implements Observer {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		
 		TextView txtInfo = (TextView)aboutView.findViewById(R.id.about_info);
-		txtInfo.setMovementMethod(new ScrollingMovementMethod());
+		
+		txtInfo.setMovementMethod(LinkMovementMethod.getInstance());
 		
 		android.widget.Button closeButton = (android.widget.Button)aboutView.findViewById(R.id.about_close_button);
 		
