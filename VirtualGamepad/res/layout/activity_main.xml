@@ -72,9 +72,13 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/mainpage_smalldots_button"
         android:layout_marginTop="20dp"
-        android:layout_marginRight="170dp"/>
+        android:layout_marginRight="170dp" />
     
-    
+    <ImageView 
+        android:id="@+id/mainpage_easter_egg"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerInParent="true" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"

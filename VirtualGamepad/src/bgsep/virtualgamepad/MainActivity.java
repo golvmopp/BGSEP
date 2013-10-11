@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import bgsep.bluetooth.BluetoothHandler;
 import bgsep.bluetooth.SenderImpl;
 import bgsep.communication.Communication;
@@ -60,12 +61,11 @@ public class MainActivity extends Activity implements Observer {
 	private ImageView communicationIndicator, communicationButton;
 	private ImageView imageNESbutton, imageGCbutton, imagePSbutton;
 	private Animation rotate;
-
 	private PopupWindow popupMenu;
 	private PopupWindow popupAbout;
 	private boolean hapticFeedback;
 	private boolean allowedToAutoConnect;
-
+	private int easterEggCount;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,7 @@ public class MainActivity extends Activity implements Observer {
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
 		
+		easterEggCount = 0;
 		hapticFeedback = false;
 		allowedToAutoConnect = true;
 		
@@ -312,4 +313,23 @@ public class MainActivity extends Activity implements Observer {
 				PS_CONTROLLER, this);
 	}
 
+	private void easterEggPressed() {
+		easterEggCount++;
+		if (easterEggCount >= 20) {
+			inactivateEasterEgg();
+			easterEggCount = 0;
+			return;
+		}
+		if (easterEggCount >= 10) {
+			activateEasterEgg();
+		}
+	}
+	
+	private void activateEasterEgg() {
+		
+	}
+	
+	private void inactivateEasterEgg() {
+		
+	}
 }
