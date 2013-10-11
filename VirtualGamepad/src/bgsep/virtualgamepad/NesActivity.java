@@ -48,6 +48,8 @@ public class NesActivity extends Activity implements Observer {
 	
 	private Communication comm;
 	
+	private boolean hapticFeedback;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,6 +58,9 @@ public class NesActivity extends Activity implements Observer {
 		//Dim soft menu keys if present
 		if (!ViewConfiguration.get(this).hasPermanentMenuKey())
 			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+		
+		Intent i = getIntent();
+		hapticFeedback = i.getBooleanExtra("hapticFeedback", false);
 		
 		comm = Communication.getInstance();
 		initImages();
@@ -90,12 +95,14 @@ public class NesActivity extends Activity implements Observer {
         
 	        case R.id.action_gc:
 	        	i = new Intent(this, GcActivity.class);
+	        	i.putExtra("hapticFeedback", hapticFeedback);
 	    		startActivity(i);
 	            finish();
 	            return true;
 	        
 	        case R.id.action_ps:
 	        	i = new Intent(this, PsActivity.class);
+	        	i.putExtra("hapticFeedback", hapticFeedback);
 	    		startActivity(i);
 	            finish();
 	            return true;
@@ -119,28 +126,28 @@ public class NesActivity extends Activity implements Observer {
 	private void initButtons() {
 		Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 		leftArrowButton = new Button(imageLeftArrow, R.drawable.nes_left_arrow, R.drawable.nes_left_arrow_pressed,
-				0, this, vibrator, true);
+				0, this, vibrator, hapticFeedback);
 		
 		rightArrowButton = new Button(imageRightArrow, R.drawable.nes_right_arrow, R.drawable.nes_right_arrow_pressed,
-				1, this, vibrator, true);
+				1, this, vibrator, hapticFeedback);
 		
 		upArrowButton = new Button(imageUpArrow, R.drawable.nes_up_arrow, R.drawable.nes_up_arrow_pressed,
-				2, this, vibrator, true);
+				2, this, vibrator, hapticFeedback);
 		
 		downArrowButton = new Button(imageDownArrow, R.drawable.nes_down_arrow, R.drawable.nes_down_arrow_pressed,
-				3, this, vibrator, true);
+				3, this, vibrator, hapticFeedback);
 		
 		aButton = new Button(imageAbutton, R.drawable.nes_a_button, R.drawable.nes_a_button_pressed,
-				4, this, vibrator, true);
+				4, this, vibrator, hapticFeedback);
 		
 		bButton = new Button(imageBbutton, R.drawable.nes_b_button, R.drawable.nes_b_button_pressed,
-				5, this, vibrator, true);
+				5, this, vibrator, hapticFeedback);
 		
 		selectButton = new Button(imageSelect, R.drawable.nes_select_button, R.drawable.nes_select_button_pressed,
-				6, this, vibrator, true);
+				6, this, vibrator, hapticFeedback);
 		
 		startButton = new Button(imageStart, R.drawable.nes_start_button, R.drawable.nes_start_button_pressed,
-				7, this, vibrator, true);
+				7, this, vibrator, hapticFeedback);
 		
 		aButton.addObserver(comm);
 		bButton.addObserver(comm);

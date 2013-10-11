@@ -109,14 +109,17 @@ public class MainActivity extends Activity implements Observer {
 				switch(button.getButtonID()) {
 				case NES_CONTROLLER:
 					i = new Intent(this, NesActivity.class);
+					i.putExtra("hapticFeedback", hapticFeedback);
 					startActivity(i);
 					break;
 				case GC_CONTROLLER:
 					i = new Intent(this, GcActivity.class);
+					i.putExtra("hapticFeedback", hapticFeedback);
 					startActivity(i);
 					break;
 				case PS_CONTROLLER:
 					i = new Intent(this, PsActivity.class);
+					i.putExtra("hapticFeedback", hapticFeedback);
 					startActivity(i);
 					break;
 				default:
