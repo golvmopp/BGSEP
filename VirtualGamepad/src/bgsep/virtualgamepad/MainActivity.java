@@ -33,8 +33,7 @@ public class MainActivity extends Activity implements Observer {
 
 		setContentView(R.layout.activity_main);
 		
-		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;
-		
+		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;		
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
@@ -138,6 +137,6 @@ public class MainActivity extends Activity implements Observer {
 	
 	@Override
 	public void onWindowFocusChanged(boolean has) {
-		startBluetooth();
+		//startBluetooth();
 	}
 }
