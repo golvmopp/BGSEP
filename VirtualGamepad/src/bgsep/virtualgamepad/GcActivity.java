@@ -31,8 +31,9 @@ import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
 /**
- * description...
- * @author 
+ * The activity for the GC controller
+ * @author Victor Olausson
+ * @author Patrik Wållgren
  *
  */
 public class GcActivity extends Activity implements Observer {
