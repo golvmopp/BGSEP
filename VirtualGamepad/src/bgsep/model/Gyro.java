@@ -16,10 +16,13 @@
 package bgsep.model;
 
 import java.util.Observable;
+
+import bgsep.communication.CommunicationNotifier;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 /**
  * description...
@@ -29,13 +32,17 @@ import android.hardware.SensorManager;
  */
 public class Gyro extends Observable implements SensorEventListener {
 
+	private final int GRAVITY = 9;
+	
 	private SensorManager sensorManager;
 	private Sensor sensorAccelerometer;
 	private float indication;
 	private boolean enabled;
+	private int prevPosX;
+	private int leftID, rightID;
 
 	/**
-	 * Initializes the gyro. Enabled by default.
+	 * Initializes the gyro. Disabled until setLeftRightGyroID() has been called.
 	 * 
 	 * @param manager
 	 *            An initialized SensorManager.
@@ -45,6 +52,14 @@ public class Gyro extends Observable implements SensorEventListener {
 		sensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		registerListener();
 		indication = 0;
+		prevPosX = leftID = rightID = 0;
+		enabled = false;
+	}
+	
+	public void setLeftRightGyroID(int left, int right) {
+		leftID = left;
+		rightID = right;
+		enabled = true;
 	}
 
 	public void registerListener() {
@@ -76,6 +91,7 @@ public class Gyro extends Observable implements SensorEventListener {
 		if (enabled)
 			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 				indication = event.values[1];
+				prevPosX = axisValueChanged((indication/GRAVITY), prevPosX, leftID, rightID);
 				setChanged();
 				notifyObservers();
 			}
@@ -84,6 +100,39 @@ public class Gyro extends Observable implements SensorEventListener {
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 
+	}
+	
+	private int axisValueChanged(float currPos, int prevPos, int left, int right) {
+		
+		int rounding = (int)(currPos*10);
+		if((rounding % 2) != 0) {
+			rounding += currPos > rounding ? 1 : -1;
+		}
+		
+		Log.w("GYRO", String.valueOf(currPos));
+		
+		if(prevPos != rounding) {
+			float value = ((float)Math.abs(rounding))/10;
+			if(rounding > 0) {
+				notifyComm(new CommunicationNotifier(right, value));
+				notifyComm(new CommunicationNotifier(left, 0));
+			}
+			else if(rounding < 0) {
+				notifyComm(new CommunicationNotifier(left,  value));
+				notifyComm(new CommunicationNotifier(right, 0));
+			}	
+			else {
+				notifyComm(new CommunicationNotifier(right, 0));
+				notifyComm(new CommunicationNotifier(left, 0));
+			}
+			return rounding;
+		}
+		return prevPos;
+	}
+	
+	private void notifyComm(CommunicationNotifier notifier) {
+		setChanged();
+		notifyObservers(notifier);
 	}
 
 }
