@@ -1,3 +1,21 @@
+/*
+Copyright (C) 2013 Linus Lindgren
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
 package bluetooth;
 
 import host.Configuration;
@@ -136,11 +154,12 @@ public class BluetoothServer {
 		return lib.Constants.DEFAULT_NUMBER_OF_BUTTONS;
 
 	}
+
 	/**
 	 * A static method that ask for a user input in the form of an integer with
 	 * values between 1 and 10 to set the number of clients.
 	 * 
-	 * @return Returns the number of clients. 
+	 * @return Returns the number of clients.
 	 */
 	public static int getNumberOfClients() {
 		try {

@@ -1,3 +1,21 @@
+/*
+   Copyright (C) 2013  Isak Eriksson, Linus Lindgren
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
 package util;
 
 import host.Configuration;
@@ -11,10 +29,10 @@ import bluetooth.BluetoothServer;
 
 /**
  * 
- * This is a terminal designed for the {@link BluetoothServer}. It's a {@link Thread} that will
- * listen to inputs from the user and will interpret some specified commands:
- * <i>halt</i> <i>kick</i> <i>list</i> <i>reloadConfiguration </i>
- * <i>logProtocol</i> <i>help</i>
+ * This is a terminal designed for the {@link BluetoothServer}. It's a
+ * {@link Thread} that will listen to inputs from the user and will interpret
+ * some specified commands: <i>halt</i> <i>kick</i> <i>list</i> <i>reloadConfig
+ * </i> <i>logProtocol</i> <i>help</i>
  * 
  * 
  * @author Linus Lindgren (linlind@student.chalmers.se) & Isak Eriksson
@@ -23,6 +41,7 @@ import bluetooth.BluetoothServer;
  */
 
 public class Terminal extends Thread {
+
 	private BufferedReader br;
 	private static final String name = "virtual-gamepad$ ";
 
@@ -31,10 +50,11 @@ public class Terminal extends Thread {
 	}
 
 	private enum Command {
-		halt, kick, list, reloadConfiguration, logProtocol, help
+		halt, kick, list, reloadConfig, show, help
 	}
 
 	public void run() {
+		System.out.println(lib.Constants.SHORT_LICENSE);
 		br = new BufferedReader(new InputStreamReader(System.in));
 		while (!interrupted()) {
 			nextCommand();
@@ -70,11 +90,11 @@ public class Terminal extends Thread {
 				case help:
 					help();
 					break;
-				case reloadConfiguration:
+				case reloadConfig:
 					reloadConfiguration(arguments);
 					break;
-				case logProtocol:
-					logProtocol(arguments);
+				case show:
+					show(arguments);
 					break;
 				default:
 					System.out.println(arguments[0] + ": Command not found");
@@ -88,17 +108,15 @@ public class Terminal extends Thread {
 		}
 	}
 
-	private void logProtocol(String[] arguments) {
+	private void show(String[] arguments) {
 		if (arguments.length > 1) {
-			if (arguments[1].equals("1")) {
-				System.out.println("Protocol logging enabled");
-			} else if (arguments[1].equals("0")) {
-				System.out.println("Protocol logging disabled");
-			} else {
-				System.out.println("Illegal argument: use 1 or 0");
+			if (arguments[1].equals("w")) {
+				System.out.println(lib.Constants.WARRANTY);
+			} else if (arguments[1].equals("c")) {
+				System.out.println(lib.Constants.CONDITIONS);
 			}
 		} else {
-			System.out.println("Illegal argument: use 1 or 0");
+			System.out.println("Illegal argument: use w or c");
 		}
 	}
 
@@ -109,7 +127,8 @@ public class Terminal extends Thread {
 
 	private void kick(String[] arguments) throws IOException {
 		if (arguments.length > 1) {
-			BluetoothServer.getInstance().getClient(Integer.parseInt(arguments[1])).disconnect();;
+			BluetoothServer.getInstance().getClient(Integer.parseInt(arguments[1])).disconnect();
+			;
 		} else {
 			System.out.println("clients online:");
 			for (BluetoothClient client : BluetoothServer.getInstance().getClients().values()) {
