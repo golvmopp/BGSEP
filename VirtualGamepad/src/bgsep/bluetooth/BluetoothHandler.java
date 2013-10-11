@@ -1,10 +1,26 @@
-package bluetooth;
+/* Copyright (C) 2013  Isak Eriksson
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/  */
+
+package bgsep.bluetooth;
 
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.util.UUID;
+
 import bgsep.virtualgamepad.MainActivity;
+import bluetooth.SenderImpl;
 import lib.Protocol;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -16,9 +32,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * @author Isak Eriksson (isak.eriksson@mail.com) & Linus Lindgren (linlind@student.chalmers.se)
+
  * This is the main bluetooth handler. It handles discovery of and connection to the server.
  * It also notifies the GUI about connection state.
+ * 
+ * @author Isak Eriksson (isak.eriksson@mail.com) & Linus Lindgren (linlind@student.chalmers.se)
  *
  */
 public class BluetoothHandler extends Thread {
