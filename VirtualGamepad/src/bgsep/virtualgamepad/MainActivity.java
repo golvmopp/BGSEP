@@ -32,8 +32,10 @@ import bluetooth.BluetoothHandler;
 import bluetooth.SenderImpl;
 
 /**
- * description...
+ * This is the starting activity to allow a user to choose a gamepad,
+ * get information/help about the app, and (dis)connect to the server  
  * @author Patrik Wållgren
+ * @author Victor Olausson
  *
  */
 public class MainActivity extends Activity implements Observer {
@@ -41,9 +43,13 @@ public class MainActivity extends Activity implements Observer {
 	private BluetoothHandler bh;
 	private ImageView communicationIndicator, communicationButton, connectText;
 	private Animation rotate;
+
 	private PopupWindow popupMenu;
 	private PopupWindow popupAbout;
 	private boolean hapticFeedback;
+
+	private boolean allowedToAutoConnect;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +57,7 @@ public class MainActivity extends Activity implements Observer {
 
 		setContentView(R.layout.activity_main);
 		
-		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;
-		
+		ImageView 		imageNESbutton, imageGCbutton, imagePSbutton;		
 		imageNESbutton = (ImageView)findViewById(R.id.mainpage_nes);
 		imageGCbutton = (ImageView)findViewById(R.id.mainpage_gc);
 		imagePSbutton = (ImageView)findViewById(R.id.mainpage_ps);
@@ -77,6 +82,7 @@ public class MainActivity extends Activity implements Observer {
 				if(bh.isConnected()) {
 					bh.disconnect(true);
 				} else {
+					allowedToAutoConnect = false;
 					startBluetooth();
 				}
 			}
@@ -91,6 +97,7 @@ public class MainActivity extends Activity implements Observer {
 		initSettingsMenu();
 		initAboutPopup();
 		
+		allowedToAutoConnect = true;
 	}
 	
 	private void startBluetooth() {
@@ -172,7 +179,21 @@ public class MainActivity extends Activity implements Observer {
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
+		allowedToAutoConnect = true;
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == BluetoothHandler.BLUETOOTH_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				allowedToAutoConnect = true;
+				startBluetooth();
+			} else {
+				allowedToAutoConnect = false;
+				bh.cancelConnectionAttempt();
+			}
+		}
+	}	
 	
 	private void indicateConnecting() {
 		connectText.setVisibility(View.INVISIBLE);
@@ -183,7 +204,10 @@ public class MainActivity extends Activity implements Observer {
 	
 	@Override
 	public void onWindowFocusChanged(boolean has) {
-		startBluetooth();
+		if (allowedToAutoConnect && !bh.isConnected()) {
+			allowedToAutoConnect = false;
+			startBluetooth();
+		}
 	}
 	
 	private void initSettingsMenu() {

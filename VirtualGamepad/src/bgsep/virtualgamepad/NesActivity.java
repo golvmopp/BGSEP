@@ -29,8 +29,9 @@ import bgsep.communication.Communication;
 import bgsep.model.Button;
 
 /**
- * description...
- * @author 
+ * The activity for the NES controller
+ * @author Victor Olausson
+ * @author Patrik Wållgren
  *
  */
 public class NesActivity extends Activity implements Observer {
