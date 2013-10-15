@@ -106,9 +106,9 @@ public class Gyro extends Observable implements SensorEventListener {
 		if((rounding % 2) != 0) {
 			rounding += currPos > rounding ? 1 : -1;
 		}
-		
 		if(prevPos != rounding) {
 			float value = ((float)Math.abs(rounding))/10;
+			Log.w("GYRO", String.valueOf((float)rounding/10));
 			if(rounding > 0) {
 				notifyComm(new CommunicationNotifier(right, value));
 				notifyComm(new CommunicationNotifier(left, 0));
