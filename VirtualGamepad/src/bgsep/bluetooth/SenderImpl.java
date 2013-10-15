@@ -16,10 +16,8 @@
 package bgsep.bluetooth;
 
 import java.nio.ByteBuffer;
-
 import bgsep.bluetooth.BluetoothHandler;
 import bgsep.communication.Sender;
-import android.util.Log;
 import lib.Protocol;
 
 /**
@@ -30,7 +28,6 @@ import lib.Protocol;
 public class SenderImpl implements Sender {
 
 	private BluetoothHandler bh;
-	private static final String TAG = "Gamepad";
 	
 	@Override
 	public void send(byte id, boolean pressed) {
@@ -46,8 +43,6 @@ public class SenderImpl implements Sender {
 	
 	@Override
 	public void send(byte id, float value) {
-		int floatbits = Float.floatToIntBits(value);
-		Log.d(TAG, "floatbits == " + Integer.toBinaryString(floatbits));
 		byte[] data = new byte[5];
 		data[0] = id;
 		byte[] floatArray = ByteBuffer.allocate(4).putFloat(value).array();
