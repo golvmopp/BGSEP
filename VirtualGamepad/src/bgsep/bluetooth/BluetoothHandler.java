@@ -16,6 +16,7 @@
 package bgsep.bluetooth;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
@@ -46,6 +47,7 @@ public class BluetoothHandler extends Thread {
 	private BluetoothAdapter adapter;
 	private BluetoothSocket socket;
 	private OutputStream outputStream;
+	private InputStream inputStream;
 	private UUID ExpectedUUID;
 	private SenderImpl si;
 	private boolean stopped;
@@ -122,6 +124,23 @@ public class BluetoothHandler extends Thread {
 		return (socket != null && socket.isConnected() && !stopped);
 	}
 	
+	/**
+	 * Reads one byte from the server.
+	 */
+	private void readInput() {
+		try {
+			if (isConnected() && inputStream.available() > 0) {
+				int data = inputStream.read();
+				if (data == Protocol.MESSAGE_TYPE_CLOSE) {
+					Log.d(TAG, "server closed the connection, you have probably been kicked");
+					disconnect(false);
+				}
+			}
+		} catch (IOException e) {
+			Log.d(TAG, "unable to read from input stream, disconnected");
+		}
+	}
+	
 	@Override
 	public void run() {
 		while (!interrupted()) {
@@ -140,7 +159,15 @@ public class BluetoothHandler extends Thread {
 				}
 			}
 			while (!interrupted() && !stopped) {
-				si.poll();
+				try {
+					si.poll();
+					readInput();
+				} catch (Exception e) {
+					Log.d(TAG, e.getMessage());
+					e.printStackTrace();
+					Log.d(TAG, "yey");
+				}
+				
 				Log.d(TAG, "poll");
 				try {
 					Thread.sleep(2000);
@@ -253,6 +280,7 @@ public class BluetoothHandler extends Thread {
 			socket = device.createInsecureRfcommSocketToServiceRecord(ExpectedUUID);
 			socket.connect();
 			outputStream = socket.getOutputStream();
+			inputStream = socket.getInputStream();
 			if (socket.isConnected()) {
 				return true;
 			} else {
