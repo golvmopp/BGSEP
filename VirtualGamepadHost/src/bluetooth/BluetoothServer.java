@@ -19,15 +19,18 @@ Copyright (C) 2013 Linus Lindgren
 package bluetooth;
 
 import host.Configuration;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnectionNotifier;
+
 import com.sun.org.apache.xpath.internal.functions.WrongNumberArgsException;
 
 import util.IdHandler;
@@ -74,6 +77,7 @@ public class BluetoothServer {
 			System.exit(1);
 		}
 	}
+	
 
 	/**
 	 * The constructor of BluetoothServer checks if the computer has a
@@ -95,11 +99,11 @@ public class BluetoothServer {
 	 */
 	public void startServer() {
 		System.out.println();
-		System.out.println("------------------------------------");
+		System.out.println();
 		System.out.println("Device:");
 		System.out.println("\t" + device.getFriendlyName());
 		System.out.println("\t" + device.getBluetoothAddress());
-		System.out.println("------------------------------------");
+		System.out.println();
 		System.out.println();
 		try {
 			System.out.println("Opening up server connection...");
@@ -115,6 +119,7 @@ public class BluetoothServer {
 
 	}
 
+	
 	public void addClient(BluetoothClient client) {
 		clients.put(client.getClientId(), client);
 	}

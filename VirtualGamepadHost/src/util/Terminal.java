@@ -54,7 +54,12 @@ public class Terminal extends Thread {
 	}
 
 	public void run() {
+		System.out.println();
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+						+ "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		System.out.println(lib.Constants.SHORT_LICENSE);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+				+ "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		br = new BufferedReader(new InputStreamReader(System.in));
 		while (!interrupted()) {
 			nextCommand();
