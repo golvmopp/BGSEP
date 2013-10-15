@@ -182,7 +182,7 @@ public class BluetoothHandler extends Thread {
 				Log.d(TAG, "Connecting to server..");
 				boolean connected = connect(d.getAddress());
 				if(connected){
-					notifyConnected();
+					notifyConnected(d.getName());
 					return true;
 				}
 			} else {
@@ -279,8 +279,8 @@ public class BluetoothHandler extends Thread {
 		});
 	}
 	
-	private void notifyConnected() {
-		showToast("Connected");
+	private void notifyConnected(String name) {
+		showToast("Connected to " + name);
 		activity.runOnUiThread(new Runnable() {
 		    public void run() {
 		    	((MainActivity) activity).serverConnected();
