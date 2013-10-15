@@ -59,6 +59,18 @@ public class JoystickHandler extends Joystick {
 		stickDownID 		= down;
 		upDownEnabled	 	= true;
 	}
+	
+	public void releaseJoystick() {
+		if(leftRightEnabled) {
+			notifyComm(new CommunicationNotifier(stickLeftID, 0));
+			notifyComm(new CommunicationNotifier(stickRightID, 0));
+		}
+		
+		if(upDownEnabled) {
+			notifyComm(new CommunicationNotifier(stickUpID, 0));
+			notifyComm(new CommunicationNotifier(stickDownID, 0));
+		}
+	}
 
 	/**
 	 * Determines Left/Right/Up/Down and notifies the observers observers.

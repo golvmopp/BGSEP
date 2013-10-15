@@ -115,6 +115,12 @@ public class Button extends Observable {
 	public boolean isPressed() {
 		return isPressed;
 	}
+	
+	public void setPressed(boolean pressed) {
+		isPressed = pressed;
+		setChanged();
+		notifyObservers();
+	}
 
 	private class ButtonTouchEvent implements OnTouchListener {
 

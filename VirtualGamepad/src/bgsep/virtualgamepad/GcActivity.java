@@ -15,6 +15,7 @@
 
 package bgsep.virtualgamepad;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -50,7 +51,9 @@ public class GcActivity extends Activity implements Observer {
 	private JoystickHandler gcJoystick;
 	private Gyro gyro;
 	private Button	aButton, bButton, xButton, yButton, startButton;
-	Communication comm;
+	private ArrayList<Button> buttons;
+	
+	private Communication comm;
 	
 	private boolean hapticFeedback;
 	private boolean useAccelerometer;
@@ -176,11 +179,16 @@ public class GcActivity extends Activity implements Observer {
 		startButton = new Button(imageStart, R.drawable.gc_start_button, R.drawable.gc_start_button_pressed,
 				4, this, vibrator, hapticFeedback);
 		
-		aButton.addObserver(comm);
-		bButton.addObserver(comm);
-		xButton.addObserver(comm);
-		yButton.addObserver(comm);
-		startButton.addObserver(comm);
+		buttons = new ArrayList<Button>();
+		
+		buttons.add(aButton);
+		buttons.add(bButton);
+		buttons.add(startButton);
+		buttons.add(xButton);
+		buttons.add(yButton);
+		
+		for(Button b : buttons)
+			b.addObserver(comm);
 	}
 	
 	private void initJoystick() {
@@ -203,15 +211,13 @@ public class GcActivity extends Activity implements Observer {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(useAccelerometer)
-			gyro.unregisterListener();
+		releaseAliciaKeys();
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(useAccelerometer)
-			gyro.unregisterListener();
+		releaseAliciaKeys();
 	}
 	
 	@Override
@@ -219,5 +225,18 @@ public class GcActivity extends Activity implements Observer {
 		super.onResume();
 		if(useAccelerometer)
 			gyro.registerListener();
+	}
+	
+	private void releaseAliciaKeys() {
+		if(useAccelerometer)
+			gyro.unregisterListener();
+		
+		unPressAllButtons();
+		gcJoystick.releaseJoystick();
+	}
+	
+	private void unPressAllButtons() {
+		for(Button b : buttons)
+			b.setPressed(false);
 	}
 }

@@ -65,6 +65,8 @@ public class Gyro extends Observable implements SensorEventListener {
 	}
 
 	public void unregisterListener() {
+		notifyComm(new CommunicationNotifier(leftID, 0));
+		notifyComm(new CommunicationNotifier(rightID, 0));
 		sensorManager.unregisterListener(this);
 	}
 
@@ -133,6 +135,7 @@ public class Gyro extends Observable implements SensorEventListener {
 		}
 		return prevPos;
 	}
+	
 	
 	private void notifyComm(CommunicationNotifier notifier) {
 		setChanged();
