@@ -27,7 +27,7 @@ import android.util.Log;
 /**
  * description...
  * 
- * @author
+ * @author Patrik Wållgren
  * 
  */
 public class Gyro extends Observable implements SensorEventListener {
@@ -102,12 +102,20 @@ public class Gyro extends Observable implements SensorEventListener {
 	
 	private int axisValueChanged(float currPos, int prevPos, int left, int right) {
 		
+		// Care for different accelerometers on different phones
+		if(currPos > 1)
+			currPos = 1;
+		else if(currPos < -1)
+			currPos = -1;
+		
 		int rounding = (int)(currPos*10);
+		
 		if((rounding % 2) != 0) {
 			rounding += currPos > rounding ? 1 : -1;
 		}
 		if(prevPos != rounding) {
 			float value = ((float)Math.abs(rounding))/10;
+			
 			Log.w("GYRO", String.valueOf((float)rounding/10));
 			if(rounding > 0) {
 				notifyComm(new CommunicationNotifier(right, value));
