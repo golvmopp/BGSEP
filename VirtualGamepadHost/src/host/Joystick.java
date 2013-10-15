@@ -120,6 +120,8 @@ public class Joystick extends Thread {
 	}
 
 	private int getPressTime() {
+		if(value > 1.0)
+			value = 1.0f;
 		return Math.round((value * PERIOD));
 	}
 }

@@ -22,7 +22,8 @@ import host.Configuration;
 import host.Joystick;
 
 import java.awt.Robot;
-import java.io.DataInputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +43,10 @@ import util.IdHandler;
  * 
  */
 public class BluetoothClient extends Thread {
-	private DataInputStream dis;
+	private BufferedInputStream bis;
+	private BufferedOutputStream bos;
 	private int clientId;
 	private String clientName;
-
 	private Robot robot;
 	private boolean running;
 	private long lastPoll;
@@ -62,12 +63,14 @@ public class BluetoothClient extends Thread {
 	 *             Is thrown when the server is full.
 	 */
 
-	public BluetoothClient(DataInputStream dis) throws Exception {
-		this.dis = dis;
+	public BluetoothClient(BufferedInputStream bis, BufferedOutputStream bos) throws Exception {
+
+		this.bis = bis;
+		this.bos = bos;
 
 		setClientId(IdHandler.getInstance(Configuration.getInstance().getNumberOfClients()).getUnoccupiedId());
 		if (getClientId() == -1) {
-			dis.close();
+			bis.close();
 			throw new Exception("Server is full!");
 		}
 		lastPoll = System.currentTimeMillis();
@@ -90,7 +93,8 @@ public class BluetoothClient extends Thread {
 		while (!interrupted() && running) {
 			try {
 				byte[] byteArray = new byte[1000];
-				int len = dis.read(byteArray);
+				int len = 0;
+				len = bis.read(byteArray);
 				for (int i = 0; i < len; i++) {
 					byte b = byteArray[i];
 					if (arrayStopped) {
@@ -163,11 +167,14 @@ public class BluetoothClient extends Thread {
 		}
 		BluetoothServer.getInstance().removeClient(this);
 		try {
-			this.dis.close();
+			this.bis.close();
+			this.bos.write(Protocol.MESSAGE_TYPE_CLOSE);
+
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		running = false;
+		System.out.println((this.clientName.isEmpty() ? "Client" + this.clientId : this.clientName) + " was disconnected");
 	}
 
 	public int getClientId() {
@@ -189,10 +196,14 @@ public class BluetoothClient extends Thread {
 	private void handleButtonEvent(ArrayList<Byte> data) {
 		if (BluetoothServer.isAllowClientInput()) {
 			try {
+				int i = Configuration.getInstance().getKeyCode(clientId, data.get(1));
+
 				if (data.get(2) == 0x01) {
-					robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+					if (i != 0)
+						robot.keyPress(i);
 				} else {
-					robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+					if (i != 0)
+						robot.keyRelease(i);
 				}
 			} catch (IllegalArgumentException e) {
 				System.out.println(e.getMessage());
