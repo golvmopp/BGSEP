@@ -54,7 +54,6 @@ public class IncomingClientListener extends Thread {
 				BluetoothClient client;
 				try {
 					client = new BluetoothClient(dis);
-
 					BluetoothServer.getInstance().addClient(client);
 
 					System.out.println("Added client with ID: " + client.getClientId());
