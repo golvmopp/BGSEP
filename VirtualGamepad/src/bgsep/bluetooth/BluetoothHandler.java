@@ -193,17 +193,19 @@ public class BluetoothHandler extends Thread {
 	private boolean connectToBoundedDevices() {
 		Log.d(TAG, adapter.getBondedDevices().size() + " bounded devices");
 		for (BluetoothDevice d : adapter.getBondedDevices()) {
-			Log.d(TAG, "\t" + d.getName());
-			if (checkForServer(d)) {
-				Log.d(TAG, "Connecting to server..");
-				boolean connected = connect(d.getAddress());
-				if(connected){
-					notifyConnected(d.getName());
-					return true;
+			if (d != null) {
+				Log.d(TAG, "\t" + d.getName());
+				if (checkForServer(d)) {
+					Log.d(TAG, "Connecting to server..");
+					boolean connected = connect(d.getAddress());
+					if(connected){
+						notifyConnected(d.getName());
+						return true;
+					}
+				} else {
+					Log.d(TAG, "start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
+					d.fetchUuidsWithSdp();
 				}
-			} else {
-				Log.d(TAG, "start fetching with Sdp on bonded device " + d.getName() + " - " + d.getAddress());
-				d.fetchUuidsWithSdp();
 			}
 		}
 		return false;

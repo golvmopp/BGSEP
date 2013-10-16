@@ -199,7 +199,6 @@ public class BluetoothServer {
 
 	private static int getInputInt(int lowest, int highest) throws IOException, NumberFormatException, WrongNumberArgsException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
 		int i = Integer.parseInt(br.readLine());
 		if (i >= lowest && i <= highest) {
 			return i;
