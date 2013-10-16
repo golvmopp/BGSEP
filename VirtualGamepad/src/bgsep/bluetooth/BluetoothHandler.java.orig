@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
-
 import bgsep.virtualgamepad.MainActivity;
 import bgsep.bluetooth.SenderImpl;
 import lib.Protocol;
@@ -114,9 +113,7 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	public void startThread() {
-		if (!isConnected()) {
-			connect = true;
-		}
+		connect = true;
 	}
 	
 	public boolean isStarted() {
@@ -124,27 +121,13 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	public boolean isConnected() {
-		if (socket != null) {
-			Log.d(TAG, "är socket.isConnected() == " + Boolean.toString(socket.isConnected()) + ", stopped == " + Boolean.toString(stopped));
-		} else {
-			Log.d(TAG, "socket är null");
-		}
-		return (socket != null && (socket.isConnected() || !stopped));
-	}
-	
-	private void notifyConnecting() {
-		activity.runOnUiThread(new Runnable() {
-		    public void run() {
-		    	((MainActivity) activity).indicateConnecting();
-		    }
-		});
+		return (socket != null && socket.isConnected() && !stopped);
 	}
 	
 	@Override
 	public void run() {
 		while (!interrupted()) {
 			if (connect) {
-				notifyConnecting();
 				if (initBluetoothAdapter()) {
 					startConnectionAttempt();
 				} else {
@@ -197,12 +180,16 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	private boolean checkForServer(BluetoothDevice d) {
+<<<<<<< HEAD
+		for (ParcelUuid uuid : d.getUuids()) {
+=======
 		ParcelUuid[] uuids = d.getUuids();
 		if (uuids == null) {
 			return false;
 		}
 		for (ParcelUuid uuid : uuids) {
 			Log.d(TAG, "UUID:" + uuid.toString());
+>>>>>>> 294377078eadfd45ba1198d408991956c19dfb68
 			if (uuid.toString().equals(ExpectedUUID.toString())) {
 				Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
 				return true;
