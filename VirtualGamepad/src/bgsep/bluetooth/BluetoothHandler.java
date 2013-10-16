@@ -180,7 +180,11 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	private boolean checkForServer(BluetoothDevice d) {
-		for (ParcelUuid uuid : d.getUuids()) {
+		ParcelUuid[] uuids = d.getUuids();
+		if (uuids == null) {
+			return false;
+		}
+		for (ParcelUuid uuid : uuids) {
 			Log.d(TAG, "UUID:" + uuid.toString());
 			if (uuid.toString().equals(ExpectedUUID.toString())) {
 				Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
