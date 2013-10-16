@@ -35,6 +35,7 @@ public class SenderImpl implements Sender {
 		data[0] = id;
 		data[1] = (byte) (pressed ? 0x01 : 0x00);
 		send(data, Protocol.MESSAGE_TYPE_BUTTON);
+		
 	}
 	
 	public SenderImpl(BluetoothHandler bh) {

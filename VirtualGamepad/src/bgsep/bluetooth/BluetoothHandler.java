@@ -16,9 +16,9 @@
 package bgsep.bluetooth;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
-
 import bgsep.virtualgamepad.MainActivity;
 import bgsep.bluetooth.SenderImpl;
 import lib.Protocol;
@@ -46,6 +46,7 @@ public class BluetoothHandler extends Thread {
 	private BluetoothAdapter adapter;
 	private BluetoothSocket socket;
 	private OutputStream outputStream;
+	private InputStream inputStream;
 	private UUID ExpectedUUID;
 	private SenderImpl si;
 	private boolean stopped;
@@ -73,6 +74,7 @@ public class BluetoothHandler extends Thread {
 		}
 		try {
 			outputStream.close();
+			inputStream.close();
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -141,6 +143,7 @@ public class BluetoothHandler extends Thread {
 			}
 			while (!interrupted() && !stopped) {
 				si.poll();
+				readFromServer();
 				Log.d(TAG, "poll");
 				try {
 					Thread.sleep(2000);
@@ -150,6 +153,19 @@ public class BluetoothHandler extends Thread {
 			}
 		}
 	}	
+	
+	private void readFromServer() {
+		try {
+			if (isConnected() && inputStream.available() > 0) {
+				int data = inputStream.read();
+				if (data == Protocol.MESSAGE_TYPE_CLOSE) {
+					disconnect(false);
+				}
+			}
+		} catch (IOException e) {
+			Log.d(TAG, "unable to read incomming data");
+		}
+	}
 	
 	private void startConnectionAttempt() {
 		Log.d(TAG, "connecting...");
@@ -253,6 +269,7 @@ public class BluetoothHandler extends Thread {
 			socket = device.createInsecureRfcommSocketToServiceRecord(ExpectedUUID);
 			socket.connect();
 			outputStream = socket.getOutputStream();
+			inputStream = socket.getInputStream();
 			if (socket.isConnected()) {
 				return true;
 			} else {
