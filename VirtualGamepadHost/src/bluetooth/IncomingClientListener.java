@@ -58,23 +58,15 @@ public class IncomingClientListener extends Thread {
 				BufferedInputStream bis = new BufferedInputStream(dis);
 				BufferedOutputStream bos = new BufferedOutputStream(dos);
 
-
 				BluetoothClient client;
 				try {
 					client = new BluetoothClient(bis, bos);
-
-
 					BluetoothServer.getInstance().addClient(client);
-
 					System.out.println("Added client with ID: " + client.getClientId());
-
 					client.start();
-
 				} catch (Exception e) {
 					System.out.println("Failed adding client: " + e.getMessage());
-
 				}
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

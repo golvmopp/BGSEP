@@ -19,7 +19,6 @@ package bgsep.virtualgamepad;
 
 import java.util.Observable;
 import java.util.Observer;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -89,7 +88,7 @@ public class MainActivity extends Activity implements Observer {
 	}
 	
 	private void startBluetooth() {
-		if (!bh.isStarted()) {
+		if (!(bh.isStarted() || bh.isConnected())) {
 			Log.d("Gamepad", "BluetoothHandler is not alive, starting it..");
 			indicateConnecting();
 			bh.startThread();
