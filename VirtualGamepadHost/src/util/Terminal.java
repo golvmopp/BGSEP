@@ -145,8 +145,10 @@ public class Terminal extends Thread {
 
 	private void kick(String[] arguments) throws IOException {
 		if (arguments.length > 1) {
-			BluetoothServer.getInstance().getClient(Integer.parseInt(arguments[1])).disconnect();
-			;
+			BluetoothClient client = BluetoothServer.getInstance().getClient(Integer.parseInt(arguments[1]));
+			if (client != null) {
+				client.disconnect();
+			}
 		} else {
 			System.out.println("clients online:");
 			for (BluetoothClient client : BluetoothServer.getInstance().getClients().values()) {

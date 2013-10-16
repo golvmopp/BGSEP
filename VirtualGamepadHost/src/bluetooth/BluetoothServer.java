@@ -77,7 +77,6 @@ public class BluetoothServer {
 			System.exit(1);
 		}
 	}
-	
 
 	/**
 	 * The constructor of BluetoothServer checks if the computer has a
@@ -119,7 +118,6 @@ public class BluetoothServer {
 
 	}
 
-	
 	public void addClient(BluetoothClient client) {
 		clients.put(client.getClientId(), client);
 	}
