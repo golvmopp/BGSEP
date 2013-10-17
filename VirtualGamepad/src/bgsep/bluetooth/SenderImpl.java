@@ -79,7 +79,7 @@ public class SenderImpl implements Sender {
 	 * @return the escaped aray
 	 */
 	private byte[] insertEscapeBytes(byte[] data) {
-		byte[] escapingBytes = new byte[1000];
+		byte[] escapingBytes = new byte[lib.Constants.MESSAGE_MAX_SIZE];
 		int offset = 0;
 		for (int i = 0; i < data.length; i++) {
 			if (shouldBeEscaped(data[i]) && i > 0 && i < data.length - 1) { //the first and last byte should not be escaped

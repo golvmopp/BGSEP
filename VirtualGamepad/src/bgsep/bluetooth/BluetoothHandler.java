@@ -55,6 +55,8 @@ public class BluetoothHandler extends Thread {
 	private boolean cancelConnectionAttempt;
 	private Toast mainToast;;
 	private static final int SLEEP_BETWEEN_CONNECTION_ATTEMPTS = 3000;
+	private static final int SLEEP_BETWEEN_POLL = 2000;
+	private static final int SLEEP_BEFORE_STARTING_POLL = 100;
 	public static final int BLUETOOTH_REQUEST_CODE = 1;
 	
 	public BluetoothHandler(Activity activity) {
@@ -153,7 +155,7 @@ public class BluetoothHandler extends Thread {
 				connect = false;
 			} else {
 				try {
-					Thread.sleep(100);
+					Thread.sleep(SLEEP_BEFORE_STARTING_POLL);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -163,7 +165,7 @@ public class BluetoothHandler extends Thread {
 				readFromServer();
 				Log.d(TAG, "poll");
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(SLEEP_BETWEEN_POLL);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import lib.Constants;
 import lib.Protocol;
 import util.IdHandler;
 
@@ -51,6 +52,7 @@ public class BluetoothClient extends Thread {
 	private boolean running;
 	private long lastPoll;
 	private HashMap<Integer, Joystick> joyStick;
+	private static final int SLEEP_BETWEEN_READINGS = 10;
 
 	/**
 	 * Constructor that tries to get a client ID. If the server is full the
@@ -92,7 +94,7 @@ public class BluetoothClient extends Thread {
 		boolean arrayStopped = true;
 		while (!interrupted() && running) {
 			try {
-				byte[] byteArray = new byte[1000];
+				byte[] byteArray = new byte[Constants.MESSAGE_MAX_SIZE];
 				int len = 0;
 				len = bis.read(byteArray);
 				for (int i = 0; i < len; i++) {
@@ -143,7 +145,7 @@ public class BluetoothClient extends Thread {
 				disconnect();
 			}
 			try {
-				Thread.sleep(10);
+				Thread.sleep(SLEEP_BETWEEN_READINGS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
