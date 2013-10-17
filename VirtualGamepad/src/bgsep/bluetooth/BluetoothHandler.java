@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import bgsep.virtualgamepad.MainActivity;
 import bgsep.bluetooth.SenderImpl;
+import lib.Constants;
 import lib.Protocol;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -73,9 +74,11 @@ public class BluetoothHandler extends Thread {
 	
 	public void disconnect(boolean expected) {
 		if (expected) {
+			Log.d(TAG, "disconnecting from server");
 			si.sendCloseMessage("Disconnected by user");
 		}
 		try {
+			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
 			outputStream.close();
 			inputStream.close();
 			socket.close();
@@ -83,8 +86,9 @@ public class BluetoothHandler extends Thread {
 			e.printStackTrace();
 		} catch (NullPointerException e) {
 			Log.d(TAG, "no connection to server");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-		Log.d(TAG, "disconnecting from server");
 		stopped = true;
 		notifyDisconnected(expected);
 	}
@@ -126,11 +130,6 @@ public class BluetoothHandler extends Thread {
 	}
 	
 	public boolean isConnected() {
-		if (socket != null) {
-			Log.d(TAG, "är socket.isConnected() == " + Boolean.toString(socket.isConnected()) + ", stopped == " + Boolean.toString(stopped));
-		} else {
-			Log.d(TAG, "socket är null");
-		}
 		return (socket != null && (socket.isConnected() || !stopped));
 	}
 	
@@ -204,7 +203,6 @@ public class BluetoothHandler extends Thread {
 			return false;
 		}
 		for (ParcelUuid uuid : uuids) {
-			Log.d(TAG, "UUID:" + uuid.toString());
 			if (uuid.toString().equals(ExpectedUUID.toString())) {
 				Log.d(TAG, "Found a gamepad host at device" + d.getName() + " (" + d.getAddress() + ")");
 				return true;

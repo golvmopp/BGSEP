@@ -29,6 +29,7 @@ public class Constants {
 
     public static final long CLIENT_TIMEOUT = 5000; 
     public static final int MESSAGE_MAX_SIZE = 1000;
+    public static final int SLEEP_BETWEEN_NOTIFY_AND_CLOSE = 200;
     
     
     public static final String SHORT_LICENSE = "\nVirtual Gamepad Host Copyright (C) 2013 Isak Eriksson, Linus Lindgren, Martin Ljungdahl, Patrik Wållgren,\nVictor Olausson, William Dahlberg\n"

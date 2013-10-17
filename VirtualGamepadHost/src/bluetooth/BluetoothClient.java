@@ -138,7 +138,8 @@ public class BluetoothClient extends Thread {
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Unable to read data from client");
+				disconnect();
 			}
 			if (System.currentTimeMillis() - lastPoll >= lib.Constants.CLIENT_TIMEOUT) {
 				System.out.println("Client with ID " + getClientId() + " timed out!");
@@ -159,24 +160,28 @@ public class BluetoothClient extends Thread {
 	 * {@link BluetoothServer}.
 	 */
 	public void disconnect() {
-
-		for (Integer keyCode : Configuration.getInstance().getClientKeyCodes(clientId)) {
-			this.robot.keyRelease(keyCode);
-		}
-
-		for (Joystick j : joyStick.values()) {
-			j.setStopped();
-		}
+		releaseKeys();
 		BluetoothServer.getInstance().removeClient(this);
 		try {
-			this.bis.close();
 			this.bos.write(Protocol.MESSAGE_TYPE_CLOSE);
-
+			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
+			this.bis.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		running = false;
 		System.out.println((this.clientName.isEmpty() ? "Client" + this.clientId : this.clientName) + " was disconnected");
+	}
+	
+	private void releaseKeys() {
+		for (Integer keyCode : Configuration.getInstance().getClientKeyCodes(clientId)) {
+			this.robot.keyRelease(keyCode);
+		}
+		for (Joystick j : joyStick.values()) {
+			j.setStopped();
+		}
 	}
 
 	public int getClientId() {
