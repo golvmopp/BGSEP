@@ -52,14 +52,16 @@ public class Communication implements Observer{
 
 	@Override
 	public void update(Observable o, Object obj) {
-		if(o instanceof Button) {
-			Button button = (Button)o;
-			sender.send((byte)button.getButtonID(), button.isPressed());
-		} else if((o instanceof JoystickHandler || o instanceof Gyro) && obj instanceof CommunicationNotifier) {
-			CommunicationNotifier cn = (CommunicationNotifier)obj;
-			sender.send((byte)cn.id, cn.value);
+		// Only send to server if it is connected
+		if(sender.isConnected()) {
+			if(o instanceof Button) {
+				Button button = (Button)o;
+				sender.send((byte)button.getButtonID(), button.isPressed());
+			} else if((o instanceof JoystickHandler || o instanceof Gyro) && obj instanceof CommunicationNotifier) {
+				CommunicationNotifier cn = (CommunicationNotifier)obj;
+				sender.send((byte)cn.id, cn.value);
+			}
 		}
-		
 	}
 	
 	
