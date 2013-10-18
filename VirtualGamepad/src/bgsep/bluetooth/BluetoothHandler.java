@@ -53,6 +53,7 @@ public class BluetoothHandler extends Thread {
 	private SenderImpl si;
 	private boolean stopped;
 	private boolean connect;
+	private boolean allowAutoConnect;
 	private boolean cancelConnectionAttempt;
 	private Toast mainToast;;
 	private static final int SLEEP_BETWEEN_CONNECTION_ATTEMPTS = 3000;
@@ -64,9 +65,7 @@ public class BluetoothHandler extends Thread {
 		setName("BluetoothHandler");
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
 		this.activity = activity;
-		stopped = true;
-		connect = false;
-		cancelConnectionAttempt = false;
+		initBooleans();
 		mainToast = new Toast((MainActivity) activity);
 		si = new SenderImpl(this);
 		start();
@@ -118,12 +117,18 @@ public class BluetoothHandler extends Thread {
 		Log.d(TAG, "cancelling connection attempt");
 		cancelConnectionAttempt = true;
 		connect = false;
-		notifyNoServerFound();
 	}
 	
 	public void startThread() {
 		if (!isConnected()) {
 			connect = true;
+		}
+	}
+	
+	public void autoConnect() {
+		if (allowAutoConnect) {
+			allowAutoConnect = false;
+			startThread();
 		}
 	}
 	
@@ -133,6 +138,13 @@ public class BluetoothHandler extends Thread {
 	
 	public boolean isConnected() {
 		return (socket != null && (socket.isConnected() || !stopped));
+	}
+
+	private void initBooleans() {
+		stopped = true;
+		connect = false;
+		cancelConnectionAttempt = false;
+		allowAutoConnect = true;
 	}
 	
 	private void notifyConnecting() {
@@ -147,13 +159,13 @@ public class BluetoothHandler extends Thread {
 	public void run() {
 		while (!interrupted()) {
 			if (connect) {
+				connect = false;
 				notifyConnecting();
 				if (initBluetoothAdapter()) {
 					startConnectionAttempt();
 				} else {
 					notifyDisconnected("Bluetooth not available");
 				}
-				connect = false;
 			} else {
 				try {
 					Thread.sleep(SLEEP_BEFORE_STARTING_POLL);
@@ -162,8 +174,8 @@ public class BluetoothHandler extends Thread {
 				}
 			}
 			while (!interrupted() && !stopped) {
-				si.poll();
 				readFromServer();
+				si.poll();
 				Log.d(TAG, "poll");
 				try {
 					Thread.sleep(SLEEP_BETWEEN_POLL);
@@ -243,9 +255,12 @@ public class BluetoothHandler extends Thread {
 	 */
 	private boolean connectToServer() {
 		Log.d(TAG, "searching for servers..");
-		if (adapter.getBondedDevices() == null || adapter.getBondedDevices().size() == 0) {
-			notifyNoServerFound();
+		if (adapter.getBondedDevices() == null) {
+			notifyDisconnected("Bluetooth not available");
 			return false;
+		}
+		if (adapter.getBondedDevices().size() == 0) {
+			notifyNoServerFound();
 		}
 		while (true) { //start connecting 
 			if (connectToBoundedDevices()) {

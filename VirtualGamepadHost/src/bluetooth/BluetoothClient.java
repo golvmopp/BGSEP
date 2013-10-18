@@ -166,6 +166,7 @@ public class BluetoothClient extends Thread {
 			this.bos.write(Protocol.MESSAGE_TYPE_CLOSE);
 			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
 			this.bis.close();
+			this.bos.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		} catch (InterruptedException e) {

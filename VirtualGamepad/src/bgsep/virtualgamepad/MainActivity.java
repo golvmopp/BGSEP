@@ -191,7 +191,7 @@ public class MainActivity extends Activity implements Observer {
 	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-		startBluetooth();
+		bh.autoConnect();
 	}
 	
 	private void initSettingsMenu() {
