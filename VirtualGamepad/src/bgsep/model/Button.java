@@ -28,9 +28,9 @@ import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
 /**
- * description...
+ * Represents a controller Button.
  * 
- * @author
+ * @author Patrik Wållgren
  * 
  */
 public class Button extends Observable {

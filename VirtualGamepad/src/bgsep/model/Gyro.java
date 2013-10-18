@@ -25,7 +25,7 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 /**
- * description...
+ * Handles accelerometer Y-input from the Android system.
  * 
  * @author Patrik Wållgren
  * 
