@@ -1,43 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+ <!-- Copyright (C) <2013>  <Martin Ljungdahl, Victor Olausson, Patrik Wållgren,
+ 							    Linus Lindgren, William Dahlberg, Isak Eriksson>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/  -->
+    
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="bgsep.virtualgamepad"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-permission 
-    	android:name="android.permission.BLUETOOTH"
-    ></uses-permission>
+        android:name="android.permission.BLUETOOTH" />
     
     <uses-permission 
-        android:name="android.permission.BLUETOOTH_ADMIN"
-    ></uses-permission>
+		android:name="android.permission.BLUETOOTH_ADMIN" />
+        
     <uses-permission 
-        android:name="android.permission.VIBRATE"
-    ></uses-permission>
+        android:name="android.permission.INTERNET" />
     <uses-permission 
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-    ></uses-permission>
-    <uses-permission 
-        android:name="android.permission.READ_LOGS"
-    ></uses-permission>                
+        android:name="android.permission.VIBRATE"/>
+        
+    <supports-screens                                 
+    	android:smallScreens="true"                    
+    	android:normalScreens="true"         
+    	android:largeScreens="true"            
+    	android:xlargeScreens="true"            
+    	android:anyDensity="true" />
+                
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="15"
         android:targetSdkVersion="18" />
+    
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+    	android:targetPackage="bgsep.virtualgamepad"
+    	android:label="testingtesing 123 123" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon_vg"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+        
+        <uses-library
+            android:name="android.test.runner" />
+        
         <activity
             android:name="bgsep.virtualgamepad.MainActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" >
+            
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action
+                    android:name="android.intent.action.MAIN" />
+                
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name="bgsep.virtualgamepad.NesActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden" >
+        </activity>
+        
+        <activity
+            android:name="bgsep.virtualgamepad.GcActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden" >
+        </activity>
+        
+        <activity
+            android:name="bgsep.virtualgamepad.PsActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden" >
+        </activity>
     </application>
-
 </manifest>

@@ -1,16 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+ <!-- Copyright (C) <2013>  <Martin Ljungdahl (martin@ljungdahl.it), Victor Olausson>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/  
+    -->
+    
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    android:background="#000000"
+    android:orientation="vertical"
+    android:theme="@android:style/Theme.Light.NoTitleBar" 
+    android:id="@+id/mainpage_main_layout">
 
-    <TextView
+    <ImageView
+        android:id="@+id/mainpage_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:src="@drawable/mainpage_bg" />
+
+    <ImageView
+        android:id="@+id/mainpage_nes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_toLeftOf="@+id/mainpage_gc"
+        android:src="@drawable/mainpage_nes" />
+
+    <ImageView
+        android:id="@+id/mainpage_gc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/mainpage_gc" />
+
+    <ImageView
+        android:id="@+id/mainpage_ps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_toRightOf="@+id/mainpage_gc"
+        android:src="@drawable/mainpage_ps" />     
+       
+    <ImageView
+        android:id="@+id/mainpage_smalldots_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+		android:layout_marginRight="20dp"
+        android:layout_marginTop="15dp" 
+        android:src="@drawable/mainpage_small_dots" />
+    
+    <ImageView 
+        android:id="@+id/mainpage_menu_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/mainpage_smalldots_button"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="170dp" />
+    
+  
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="13dp" >
+
+            <ImageView
+                android:id="@+id/mainpage_connection_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/mainpage_red_arrows" />
+
+            <ImageView
+                android:id="@+id/mainpage_connection_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/mainpage_yellow_arrows" />
+     </RelativeLayout>
 
 </RelativeLayout>
