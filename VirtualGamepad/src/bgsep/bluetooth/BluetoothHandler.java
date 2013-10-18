@@ -187,6 +187,7 @@ public class BluetoothHandler extends Thread {
 				readFromServer();
 				if (state == State.CONNECTED)
 					si.poll();
+
 				Log.d(TAG, "poll");
 				try {
 					Thread.sleep(SLEEP_BETWEEN_POLL);
