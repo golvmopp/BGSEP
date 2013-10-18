@@ -101,4 +101,9 @@ public class SenderImpl implements Sender {
 		allData[data.length + 2] = Protocol.STOP;
 		bh.send(insertEscapeBytes(allData));
 	}
+
+	@Override
+	public boolean isConnected() {
+		return bh.isConnected();
+	}
 }

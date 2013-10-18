@@ -54,4 +54,10 @@ public interface Sender {
 	 * @param name the name of the device
 	 */
 	public void sendNameMessage(String name);
+	
+	/**
+	 * Returns the connection status to the server.
+	 * @return true if connected to server, false otherwise.
+	 */
+	public boolean isConnected();
 }
