@@ -18,6 +18,7 @@
 
 package lib;
 
+
 public class Constants {
     public static final int DEFAULT_MAX_CLIENTS = 4; 
 	public static final int DEFAULT_NUMBER_OF_BUTTONS = 25;
