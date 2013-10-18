@@ -92,14 +92,13 @@ public class BluetoothClient extends Thread {
 		ArrayList<Byte> data = new ArrayList<Byte>();
 		boolean escape = false;
 		boolean arrayStopped = true;
-	
-		
+
 		while (!interrupted() && running) {
-			
+
 			try {
 				byte[] byteArray = new byte[Constants.MESSAGE_MAX_SIZE];
 				int len = 0;
-				if(bis.available() >0)
+				if (bis.available() > 0)
 					len = bis.read(byteArray);
 				for (int i = 0; i < len; i++) {
 					byte b = byteArray[i];
@@ -175,9 +174,9 @@ public class BluetoothClient extends Thread {
 		running = false;
 		System.out.println((this.clientName.isEmpty() ? "Client" + this.clientId : this.clientName) + " was disconnected");
 	}
-	
+
 	/**
-	 * Sends an indication to the client that the connection was accepted 
+	 * Sends an indication to the client that the connection was accepted
 	 * 
 	 */
 	public void connectionAccepted() {
@@ -187,9 +186,9 @@ public class BluetoothClient extends Thread {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 	}
-	
+
 	private void serverFull() {
 		try {
 			bos.write(Protocol.MESSAGE_TYPE_SERVER_FULL);
@@ -202,7 +201,7 @@ public class BluetoothClient extends Thread {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	public void kick() {
 		try {
 			bos.write(Protocol.MESSAGE_TYPE_CLOSE);
@@ -214,10 +213,16 @@ public class BluetoothClient extends Thread {
 		}
 		disconnect();
 	}
-	
+
 	private void releaseKeys() {
+
 		for (Integer keyCode : Configuration.getInstance().getClientKeyCodes(clientId)) {
-			this.robot.keyRelease(keyCode);
+			try {
+				this.robot.keyRelease(keyCode);
+			} catch (IllegalArgumentException e) {
+				// Ignore keycodes that are invalid
+			}
+
 		}
 		for (Joystick j : joyStick.values()) {
 			j.setStopped();
