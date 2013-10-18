@@ -58,14 +58,14 @@ package lib;
      **/
 public class Protocol {
 	
-
     public static final byte MESSAGE_TYPE_BUTTON = 0X00;
     public static final byte MESSAGE_TYPE_JOYSTICK = 0X01;
     public static final byte MESSAGE_TYPE_CLOSE = 0X02;
     public static final byte MESSAGE_TYPE_NAME = 0X03;
     public static final byte MESSAGE_TYPE_POLL = 0X04;
     public static final byte MESSAGE_TYPE_SERVER_FULL = 0X05;
-
+    public static final byte MESSAGE_TYPE_CONNECTION_ACCEPTED = 0X06;
+    
     public static final byte START = 0x42;
     public static final byte STOP = 0x24;
     public static final byte ESCAPE = (byte) 0xAC;

@@ -120,6 +120,7 @@ public class BluetoothServer {
 
 	public void addClient(BluetoothClient client) {
 		clients.put(client.getClientId(), client);
+		client.connectionAccepted();
 	}
 
 	public void removeClient(BluetoothClient client) {

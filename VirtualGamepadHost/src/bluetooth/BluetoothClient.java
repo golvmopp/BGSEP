@@ -72,7 +72,7 @@ public class BluetoothClient extends Thread {
 
 		setClientId(IdHandler.getInstance(Configuration.getInstance().getNumberOfClients()).getUnoccupiedId());
 		if (getClientId() == -1) {
-			bis.close();
+			serverFull();
 			throw new Exception("Server is full!");
 		}
 		lastPoll = System.currentTimeMillis();
@@ -163,17 +163,50 @@ public class BluetoothClient extends Thread {
 		releaseKeys();
 		BluetoothServer.getInstance().removeClient(this);
 		try {
-			this.bos.write(Protocol.MESSAGE_TYPE_CLOSE);
-			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
 			this.bis.close();
 			this.bos.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		running = false;
 		System.out.println((this.clientName.isEmpty() ? "Client" + this.clientId : this.clientName) + " was disconnected");
+	}
+	
+	/**
+	 * Sends an indication to the client that the connection was accepted 
+	 * 
+	 */
+	public void connectionAccepted() {
+		try {
+			bos.write(Protocol.MESSAGE_TYPE_CONNECTION_ACCEPTED);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	private void serverFull() {
+		try {
+			bos.write(Protocol.MESSAGE_TYPE_SERVER_FULL);
+			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
+			bos.close();
+			bis.close();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (InterruptedException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public void kick() {
+		try {
+			bos.write(Protocol.MESSAGE_TYPE_CLOSE);
+			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (InterruptedException e) {
+			System.out.println(e.getMessage());
+		}
+		disconnect();
 	}
 	
 	private void releaseKeys() {
