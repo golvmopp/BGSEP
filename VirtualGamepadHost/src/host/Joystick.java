@@ -56,7 +56,6 @@ public class Joystick extends Thread {
 			robot = new Robot();
 		} catch (AWTException e) {
 			System.out.println("unable to create robot");
-			e.printStackTrace();
 		}
 		start();
 	}

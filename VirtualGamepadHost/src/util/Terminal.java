@@ -189,6 +189,10 @@ public class Terminal extends Thread {
 	}
 
 	private void reloadConfiguration(String[] arguments) {
+		System.out.println("Notice that every client will be disconnect");
+		for(int id : BluetoothServer.getInstance().getClients().keySet()){
+			BluetoothServer.getInstance().getClient(id).kick();
+		}
 		Configuration.getInstance().loadConfig();
 	}
 }

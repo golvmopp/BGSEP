@@ -23,7 +23,7 @@ import host.Configuration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
@@ -46,7 +46,7 @@ import util.IdHandler;
  */
 public class BluetoothServer {
 	private static BluetoothServer instance;
-	private static HashMap<Integer, BluetoothClient> clients;
+	private static ConcurrentHashMap<Integer, BluetoothClient> clients;
 
 	private final static int MAX_NUMBER_CLIENTS = 10;
 	private final static int MAX_NUMBER_BUTTONS = 25;
@@ -60,7 +60,7 @@ public class BluetoothServer {
 	private StreamConnectionNotifier server;
 
 	private BluetoothServer() {
-		clients = new HashMap<Integer, BluetoothClient>();
+		clients = new ConcurrentHashMap<Integer, BluetoothClient>();
 		try {
 			device = LocalDevice.getLocalDevice();
 			if (device != null) {
@@ -75,6 +75,7 @@ public class BluetoothServer {
 		} catch (BluetoothStateException e) {
 			System.out.println(e.getMessage());
 			System.exit(1);
+
 		}
 	}
 
@@ -119,6 +120,7 @@ public class BluetoothServer {
 	}
 
 	public void addClient(BluetoothClient client) {
+		
 		clients.put(client.getClientId(), client);
 		client.connectionAccepted();
 	}
@@ -132,7 +134,7 @@ public class BluetoothServer {
 		return clients.get(id);
 	}
 
-	public HashMap<Integer, BluetoothClient> getClients() {
+	public ConcurrentHashMap<Integer, BluetoothClient> getClients() {
 		return clients;
 	}
 

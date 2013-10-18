@@ -92,11 +92,15 @@ public class BluetoothClient extends Thread {
 		ArrayList<Byte> data = new ArrayList<Byte>();
 		boolean escape = false;
 		boolean arrayStopped = true;
+	
+		
 		while (!interrupted() && running) {
+			
 			try {
 				byte[] byteArray = new byte[Constants.MESSAGE_MAX_SIZE];
 				int len = 0;
-				len = bis.read(byteArray);
+				if(bis.available() >0)
+					len = bis.read(byteArray);
 				for (int i = 0; i < len; i++) {
 					byte b = byteArray[i];
 					if (arrayStopped) {
@@ -179,9 +183,11 @@ public class BluetoothClient extends Thread {
 	public void connectionAccepted() {
 		try {
 			bos.write(Protocol.MESSAGE_TYPE_CONNECTION_ACCEPTED);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			bos.flush();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
+		
 	}
 	
 	private void serverFull() {
