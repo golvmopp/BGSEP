@@ -72,10 +72,13 @@ public class BluetoothHandler extends Thread {
 		start();
 	}
 	
-	public void disconnect(boolean expected) {
+	public void disconnect(boolean expected, String message) {
 		if (expected) {
 			Log.d(TAG, "disconnecting from server");
 			si.sendCloseMessage("Disconnected by user");
+			notifyDisconnected(message);
+		} else {
+			notifyDisconnected("Disconnected");
 		}
 		try {
 			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
@@ -90,7 +93,6 @@ public class BluetoothHandler extends Thread {
 			e.printStackTrace();
 		}
 		stopped = true;
-		notifyDisconnected(expected);
 	}
 	
 	/**
@@ -102,10 +104,10 @@ public class BluetoothHandler extends Thread {
 			outputStream.write(data);
 		} catch (IOException e) {
 			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
-			disconnect(false);
+			disconnect(false, "Connection interrupted");
 		} catch (NullPointerException e) {
 			Log.d(TAG, "No connection to server, stopping communication..");
-			disconnect(false);
+			disconnect(false, "Disconnected");
 		}
 	}
 
@@ -149,7 +151,7 @@ public class BluetoothHandler extends Thread {
 				if (initBluetoothAdapter()) {
 					startConnectionAttempt();
 				} else {
-					notifyDisconnected(false);
+					notifyDisconnected("Bluetooth not available");
 				}
 				connect = false;
 			} else {
@@ -177,7 +179,9 @@ public class BluetoothHandler extends Thread {
 			if (isConnected() && inputStream.available() > 0) {
 				int data = inputStream.read();
 				if (data == Protocol.MESSAGE_TYPE_CLOSE) {
-					disconnect(false);
+					disconnect(false, "Disconnected from server");
+				} else if (data == Protocol.MESSAGE_TYPE_SERVER_FULL) {
+					disconnect(false, "Server is full");
 				}
 			}
 		} catch (IOException e) {
@@ -328,12 +332,8 @@ public class BluetoothHandler extends Thread {
 		});
 	}
 	
-	private void notifyDisconnected(boolean expected) {
-		if (expected) {
-			showToast("Disconnected");
-		} else {
-			showToast("No connection to server");
-		}
+	private void notifyDisconnected(String message) {
+		showToast(message);
 		activity.runOnUiThread(new Runnable() {
 		    public void run() {
 		    	((MainActivity) activity).serverDisconnected();

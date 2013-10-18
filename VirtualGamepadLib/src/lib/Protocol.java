@@ -64,6 +64,7 @@ public class Protocol {
     public static final byte MESSAGE_TYPE_CLOSE = 0X02;
     public static final byte MESSAGE_TYPE_NAME = 0X03;
     public static final byte MESSAGE_TYPE_POLL = 0X04;
+    public static final byte MESSAGE_TYPE_SERVER_FULL = 0X05;
 
     public static final byte START = 0x42;
     public static final byte STOP = 0x24;

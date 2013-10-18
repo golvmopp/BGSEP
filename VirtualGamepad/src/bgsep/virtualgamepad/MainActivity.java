@@ -138,9 +138,9 @@ public class MainActivity extends Activity implements Observer {
 			popupMenu.dismiss();
 		if(popupAbout.isShowing())
 			popupAbout.dismiss();
-		
+
 		bh.cancelConnectionAttempt();
-		bh.disconnect(true);
+		bh.disconnect(true, "Disconnected");
 	}
 	
 	@Override
@@ -213,7 +213,6 @@ public class MainActivity extends Activity implements Observer {
 				final CheckBox hapticCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_haptic);
 				final CheckBox accCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_accelerometer);
 				
-				
 				txtAbout.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -223,7 +222,6 @@ public class MainActivity extends Activity implements Observer {
 				});
 				
 				hapticCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						if(hapticCheckbox.isChecked())
@@ -234,14 +232,12 @@ public class MainActivity extends Activity implements Observer {
 				});
 				
 				accCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						if(accCheckbox.isChecked())
 							useAccelerometer = true;
 						else
-							useAccelerometer = false;
-						
+							useAccelerometer = false;	
 					}
 				});
 			}
@@ -293,7 +289,7 @@ public class MainActivity extends Activity implements Observer {
 			@Override
 			public void onClick(View v) {
 				if(bh.isConnected()) {
-					bh.disconnect(true);
+					bh.disconnect(true, "Disconnected");
 				} else {
 					startBluetooth();
 				}
