@@ -16,10 +16,8 @@
 package bgsep.bluetooth;
 
 import java.nio.ByteBuffer;
-
 import bgsep.bluetooth.BluetoothHandler;
 import bgsep.communication.Sender;
-import android.util.Log;
 import lib.Protocol;
 
 /**
@@ -30,7 +28,6 @@ import lib.Protocol;
 public class SenderImpl implements Sender {
 
 	private BluetoothHandler bh;
-	private static final String TAG = "Gamepad";
 	
 	@Override
 	public void send(byte id, boolean pressed) {
@@ -38,6 +35,7 @@ public class SenderImpl implements Sender {
 		data[0] = id;
 		data[1] = (byte) (pressed ? 0x01 : 0x00);
 		send(data, Protocol.MESSAGE_TYPE_BUTTON);
+		
 	}
 	
 	public SenderImpl(BluetoothHandler bh) {
@@ -46,8 +44,6 @@ public class SenderImpl implements Sender {
 	
 	@Override
 	public void send(byte id, float value) {
-		int floatbits = Float.floatToIntBits(value);
-		Log.d(TAG, "floatbits == " + Integer.toBinaryString(floatbits));
 		byte[] data = new byte[5];
 		data[0] = id;
 		byte[] floatArray = ByteBuffer.allocate(4).putFloat(value).array();
@@ -83,7 +79,7 @@ public class SenderImpl implements Sender {
 	 * @return the escaped aray
 	 */
 	private byte[] insertEscapeBytes(byte[] data) {
-		byte[] escapingBytes = new byte[1000];
+		byte[] escapingBytes = new byte[lib.Constants.MESSAGE_MAX_SIZE];
 		int offset = 0;
 		for (int i = 0; i < data.length; i++) {
 			if (shouldBeEscaped(data[i]) && i > 0 && i < data.length - 1) { //the first and last byte should not be escaped
@@ -104,5 +100,10 @@ public class SenderImpl implements Sender {
 		System.arraycopy(data, 0, allData, 2, data.length);
 		allData[data.length + 2] = Protocol.STOP;
 		bh.send(insertEscapeBytes(allData));
+	}
+
+	@Override
+	public boolean isConnected() {
+		return bh.isConnected();
 	}
 }

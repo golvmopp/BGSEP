@@ -15,6 +15,7 @@
 
 package bgsep.virtualgamepad;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import bgsep.communication.Communication;
 import bgsep.model.Button;
@@ -48,6 +50,8 @@ public class NesActivity extends Activity implements Observer {
 					rightArrowButton, upArrowButton, downArrowButton,
 					selectButton, startButton;
 	
+	private ArrayList<Button> buttons;
+	
 	private Communication comm;
 	
 	private boolean hapticFeedback;
@@ -59,6 +63,9 @@ public class NesActivity extends Activity implements Observer {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_nes);
+		
+		// Keep screen on
+		getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		//Dim soft menu keys if present
 		if (!ViewConfiguration.get(this).hasPermanentMenuKey())
@@ -160,14 +167,18 @@ public class NesActivity extends Activity implements Observer {
 		startButton = new Button(imageStart, R.drawable.nes_start_button, R.drawable.nes_start_button_pressed,
 				7, this, vibrator, hapticFeedback);
 		
-		aButton.addObserver(comm);
-		bButton.addObserver(comm);
-		leftArrowButton.addObserver(comm);
-		rightArrowButton.addObserver(comm);
-		upArrowButton.addObserver(comm);
-		downArrowButton.addObserver(comm);
-		selectButton.addObserver(comm);
-		startButton.addObserver(comm);
+		buttons = new ArrayList<Button>();
+		
+		buttons.add(aButton);
+		buttons.add(bButton);
+		buttons.add(leftArrowButton);
+		buttons.add(rightArrowButton);
+		buttons.add(upArrowButton);
+		buttons.add(downArrowButton);
+		buttons.add(selectButton);
+		buttons.add(startButton);
+		for(Button b : buttons)
+			b.addObserver(comm);		
 	}
 	
 	private void initGyro() {
@@ -182,15 +193,14 @@ public class NesActivity extends Activity implements Observer {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(useAccelerometer)
-			gyro.unregisterListener();
+		
+		releaseAliciaKeys();
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(useAccelerometer)
-			gyro.unregisterListener();
+		releaseAliciaKeys();
 	}
 	
 	@Override
@@ -200,5 +210,15 @@ public class NesActivity extends Activity implements Observer {
 			gyro.registerListener();
 	}
 	
+	private void releaseAliciaKeys() {
+		if(useAccelerometer)
+			gyro.unregisterListener();
+		
+		unPressAllButtons();
+	}
 	
+	private void unPressAllButtons() {
+		for(Button b : buttons)
+			b.setPressed(false);
+	}
 }

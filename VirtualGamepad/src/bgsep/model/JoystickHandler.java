@@ -59,6 +59,18 @@ public class JoystickHandler extends Joystick {
 		stickDownID 		= down;
 		upDownEnabled	 	= true;
 	}
+	
+	public void releaseJoystick() {
+		if(leftRightEnabled) {
+			notifyComm(new CommunicationNotifier(stickLeftID, 0));
+			notifyComm(new CommunicationNotifier(stickRightID, 0));
+		}
+		
+		if(upDownEnabled) {
+			notifyComm(new CommunicationNotifier(stickUpID, 0));
+			notifyComm(new CommunicationNotifier(stickDownID, 0));
+		}
+	}
 
 	/**
 	 * Determines Left/Right/Up/Down and notifies the observers observers.
@@ -73,12 +85,12 @@ public class JoystickHandler extends Joystick {
 		if(leftRightEnabled && upDownEnabled) { 
 			// The axis with highest value got the highest priority
 			if(getX() > getY()) {
-				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickDownID);
+				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickLeftID);
 				prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
 			}
 			else {
 				prevPosY = axisValueChanged(getY(), prevPosY, stickUpID, stickDownID);
-				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickDownID);
+				prevPosX = axisValueChanged(getX(), prevPosX, stickRightID, stickLeftID);
 			}
 				
 		}

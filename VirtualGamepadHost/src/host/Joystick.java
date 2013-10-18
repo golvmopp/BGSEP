@@ -56,7 +56,6 @@ public class Joystick extends Thread {
 			robot = new Robot();
 		} catch (AWTException e) {
 			System.out.println("unable to create robot");
-			e.printStackTrace();
 		}
 		start();
 	}
@@ -120,6 +119,8 @@ public class Joystick extends Thread {
 	}
 
 	private int getPressTime() {
+		if(value > 1.0)
+			value = 1.0f;
 		return Math.round((value * PERIOD));
 	}
 }

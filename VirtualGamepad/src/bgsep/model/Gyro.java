@@ -25,9 +25,9 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 /**
- * description...
+ * Handles accelerometer Y-input from the Android system.
  * 
- * @author
+ * @author Patrik Wållgren
  * 
  */
 public class Gyro extends Observable implements SensorEventListener {
@@ -65,6 +65,8 @@ public class Gyro extends Observable implements SensorEventListener {
 	}
 
 	public void unregisterListener() {
+		notifyComm(new CommunicationNotifier(leftID, 0));
+		notifyComm(new CommunicationNotifier(rightID, 0));
 		sensorManager.unregisterListener(this);
 	}
 
@@ -102,13 +104,21 @@ public class Gyro extends Observable implements SensorEventListener {
 	
 	private int axisValueChanged(float currPos, int prevPos, int left, int right) {
 		
+		// Care for different accelerometers on different phones
+		if(currPos > 1)
+			currPos = 1;
+		else if(currPos < -1)
+			currPos = -1;
+		
 		int rounding = (int)(currPos*10);
+		
 		if((rounding % 2) != 0) {
 			rounding += currPos > rounding ? 1 : -1;
 		}
-		
 		if(prevPos != rounding) {
 			float value = ((float)Math.abs(rounding))/10;
+			
+			Log.w("GYRO", String.valueOf((float)rounding/10));
 			if(rounding > 0) {
 				notifyComm(new CommunicationNotifier(right, value));
 				notifyComm(new CommunicationNotifier(left, 0));
@@ -125,6 +135,7 @@ public class Gyro extends Observable implements SensorEventListener {
 		}
 		return prevPos;
 	}
+	
 	
 	private void notifyComm(CommunicationNotifier notifier) {
 		setChanged();

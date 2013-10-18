@@ -19,15 +19,18 @@ Copyright (C) 2013 Linus Lindgren
 package bluetooth;
 
 import host.Configuration;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnectionNotifier;
+
 import com.sun.org.apache.xpath.internal.functions.WrongNumberArgsException;
 
 import util.IdHandler;
@@ -43,7 +46,7 @@ import util.IdHandler;
  */
 public class BluetoothServer {
 	private static BluetoothServer instance;
-	private static HashMap<Integer, BluetoothClient> clients;
+	private static ConcurrentHashMap<Integer, BluetoothClient> clients;
 
 	private final static int MAX_NUMBER_CLIENTS = 10;
 	private final static int MAX_NUMBER_BUTTONS = 25;
@@ -57,7 +60,7 @@ public class BluetoothServer {
 	private StreamConnectionNotifier server;
 
 	private BluetoothServer() {
-		clients = new HashMap<Integer, BluetoothClient>();
+		clients = new ConcurrentHashMap<Integer, BluetoothClient>();
 		try {
 			device = LocalDevice.getLocalDevice();
 			if (device != null) {
@@ -72,6 +75,7 @@ public class BluetoothServer {
 		} catch (BluetoothStateException e) {
 			System.out.println(e.getMessage());
 			System.exit(1);
+
 		}
 	}
 
@@ -95,11 +99,11 @@ public class BluetoothServer {
 	 */
 	public void startServer() {
 		System.out.println();
-		System.out.println("------------------------------------");
+		System.out.println();
 		System.out.println("Device:");
 		System.out.println("\t" + device.getFriendlyName());
 		System.out.println("\t" + device.getBluetoothAddress());
-		System.out.println("------------------------------------");
+		System.out.println();
 		System.out.println();
 		try {
 			System.out.println("Opening up server connection...");
@@ -116,7 +120,9 @@ public class BluetoothServer {
 	}
 
 	public void addClient(BluetoothClient client) {
+		
 		clients.put(client.getClientId(), client);
+		client.connectionAccepted();
 	}
 
 	public void removeClient(BluetoothClient client) {
@@ -128,7 +134,7 @@ public class BluetoothServer {
 		return clients.get(id);
 	}
 
-	public HashMap<Integer, BluetoothClient> getClients() {
+	public ConcurrentHashMap<Integer, BluetoothClient> getClients() {
 		return clients;
 	}
 
@@ -196,7 +202,6 @@ public class BluetoothServer {
 
 	private static int getInputInt(int lowest, int highest) throws IOException, NumberFormatException, WrongNumberArgsException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
 		int i = Integer.parseInt(br.readLine());
 		if (i >= lowest && i <= highest) {
 			return i;

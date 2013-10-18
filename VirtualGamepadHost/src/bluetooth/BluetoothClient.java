@@ -22,11 +22,13 @@ import host.Configuration;
 import host.Joystick;
 
 import java.awt.Robot;
-import java.io.DataInputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import lib.Constants;
 import lib.Protocol;
 import util.IdHandler;
 
@@ -42,14 +44,15 @@ import util.IdHandler;
  * 
  */
 public class BluetoothClient extends Thread {
-	private DataInputStream dis;
+	private BufferedInputStream bis;
+	private BufferedOutputStream bos;
 	private int clientId;
 	private String clientName;
-
 	private Robot robot;
 	private boolean running;
 	private long lastPoll;
 	private HashMap<Integer, Joystick> joyStick;
+	private static final int SLEEP_BETWEEN_READINGS = 10;
 
 	/**
 	 * Constructor that tries to get a client ID. If the server is full the
@@ -62,12 +65,14 @@ public class BluetoothClient extends Thread {
 	 *             Is thrown when the server is full.
 	 */
 
-	public BluetoothClient(DataInputStream dis) throws Exception {
-		this.dis = dis;
+	public BluetoothClient(BufferedInputStream bis, BufferedOutputStream bos) throws Exception {
+
+		this.bis = bis;
+		this.bos = bos;
 
 		setClientId(IdHandler.getInstance(Configuration.getInstance().getNumberOfClients()).getUnoccupiedId());
 		if (getClientId() == -1) {
-			dis.close();
+			serverFull();
 			throw new Exception("Server is full!");
 		}
 		lastPoll = System.currentTimeMillis();
@@ -87,10 +92,15 @@ public class BluetoothClient extends Thread {
 		ArrayList<Byte> data = new ArrayList<Byte>();
 		boolean escape = false;
 		boolean arrayStopped = true;
+	
+		
 		while (!interrupted() && running) {
+			
 			try {
-				byte[] byteArray = new byte[1000];
-				int len = dis.read(byteArray);
+				byte[] byteArray = new byte[Constants.MESSAGE_MAX_SIZE];
+				int len = 0;
+				if(bis.available() >0)
+					len = bis.read(byteArray);
 				for (int i = 0; i < len; i++) {
 					byte b = byteArray[i];
 					if (arrayStopped) {
@@ -132,14 +142,15 @@ public class BluetoothClient extends Thread {
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Unable to read data from client");
+				disconnect();
 			}
 			if (System.currentTimeMillis() - lastPoll >= lib.Constants.CLIENT_TIMEOUT) {
 				System.out.println("Client with ID " + getClientId() + " timed out!");
 				disconnect();
 			}
 			try {
-				Thread.sleep(10);
+				Thread.sleep(SLEEP_BETWEEN_READINGS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -153,21 +164,64 @@ public class BluetoothClient extends Thread {
 	 * {@link BluetoothServer}.
 	 */
 	public void disconnect() {
-
+		releaseKeys();
+		BluetoothServer.getInstance().removeClient(this);
+		try {
+			this.bis.close();
+			this.bos.close();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		running = false;
+		System.out.println((this.clientName.isEmpty() ? "Client" + this.clientId : this.clientName) + " was disconnected");
+	}
+	
+	/**
+	 * Sends an indication to the client that the connection was accepted 
+	 * 
+	 */
+	public void connectionAccepted() {
+		try {
+			bos.write(Protocol.MESSAGE_TYPE_CONNECTION_ACCEPTED);
+			bos.flush();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+	}
+	
+	private void serverFull() {
+		try {
+			bos.write(Protocol.MESSAGE_TYPE_SERVER_FULL);
+			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
+			bos.close();
+			bis.close();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (InterruptedException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public void kick() {
+		try {
+			bos.write(Protocol.MESSAGE_TYPE_CLOSE);
+			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (InterruptedException e) {
+			System.out.println(e.getMessage());
+		}
+		disconnect();
+	}
+	
+	private void releaseKeys() {
 		for (Integer keyCode : Configuration.getInstance().getClientKeyCodes(clientId)) {
 			this.robot.keyRelease(keyCode);
 		}
-
 		for (Joystick j : joyStick.values()) {
 			j.setStopped();
 		}
-		BluetoothServer.getInstance().removeClient(this);
-		try {
-			this.dis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		running = false;
 	}
 
 	public int getClientId() {
@@ -189,10 +243,14 @@ public class BluetoothClient extends Thread {
 	private void handleButtonEvent(ArrayList<Byte> data) {
 		if (BluetoothServer.isAllowClientInput()) {
 			try {
+				int i = Configuration.getInstance().getKeyCode(clientId, data.get(1));
+
 				if (data.get(2) == 0x01) {
-					robot.keyPress(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+					if (i != 0)
+						robot.keyPress(i);
 				} else {
-					robot.keyRelease(Configuration.getInstance().getKeyCode(clientId, data.get(1)));
+					if (i != 0)
+						robot.keyRelease(i);
 				}
 			} catch (IllegalArgumentException e) {
 				System.out.println(e.getMessage());

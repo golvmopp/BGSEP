@@ -50,6 +50,7 @@ public class Configuration {
 	private ArrayList<Integer> keyCodes;
 	private static Configuration instance = null;
 
+
 	private Configuration() {
 		loadConfig();
 	}
@@ -96,7 +97,7 @@ public class Configuration {
 	 */
 
 	public synchronized int getKeyCode(int clientID, int buttonID) throws IllegalArgumentException {
-		int index = clientID * numberOfClients + buttonID;
+		int index = clientID * numberOfButtons + buttonID;
 		if (index < keyCodes.size() && buttonID < numberOfButtons) {
 			return keyCodes.get(clientID * numberOfButtons + buttonID);
 		} else {
@@ -166,7 +167,6 @@ public class Configuration {
 
 	private void generateConfiguration() {
 		addDefaultKeyCodes();
-		System.out.println("generating config file...");
 		StringBuilder buttonKeyCodes = new StringBuilder();
 		for (int client = 0; client < numberOfClients; client++) {
 			for (int button = 0; button < numberOfButtons; button++) {
@@ -183,11 +183,9 @@ public class Configuration {
 			}
 		}
 		this.configuration = "[KeyCodes]\n" + buttonKeyCodes.toString();
-		System.out.println("done");
 	}
 
 	private void writeConfigFile() {
-		System.out.println("writing new configuration...");
 		try {
 			configFile.getParentFile().mkdirs();
 			configFile.createNewFile();
@@ -196,13 +194,13 @@ public class Configuration {
 			fw.close();
 		} catch (IOException e) {
 			System.out.println("error: " + e.getMessage());
-			e.printStackTrace();
 			System.exit(1);
 		}
-		System.out.println("done");
 	}
 
 	private void parseLine(String line) {
+		line = line.split("#")[0];
+		System.out.println("Parsed: " + line);
 		if (line.contains(":")) {
 			int client, button, code;
 			client = getClient(line);
@@ -212,36 +210,33 @@ public class Configuration {
 			 * System.out.println("client " + client + " : button " + button +
 			 * " : code " + code);
 			 */
-			keyCodes.add(client * numberOfClients + button, code);
+			keyCodes.add(client * numberOfButtons + button, code);
 		}
 	}
 
 	private void parseConfigFile() {
-		System.out.println("parsing config file...");
 		String line = "";
 		if (configFile.exists()) {
+			int lineCounter = 1;
 			try {
 				FileReader fr = new FileReader(configFile);
 				BufferedReader br = new BufferedReader(fr);
 				while ((line = br.readLine()) != null) {
 					parseLine(line);
+					lineCounter++;
 				}
 				br.close();
 			} catch (FileNotFoundException e) {
-				System.out.println("cannot open config file");
-				e.printStackTrace();
+				parsingError("cannot open config file: " + configFile.getAbsolutePath() + "\n");
 			} catch (IOException e) {
-				System.out.println("error reading config file");
-				e.printStackTrace();
+				parsingError("ERROR reading config file: " + configFile.getAbsolutePath() + "\n");
 			} catch (NumberFormatException e) {
-				System.out.println("failed parsing integer at line: " + line);
-				e.printStackTrace();
+				parsingError("FAILED parsing integer at: '" + line + "' [line "+ lineCounter +"]\nin file: " + configFile.getAbsolutePath() + "\n");
 			}
 		} else {
-			System.out.println("config file not found!");
-			System.exit(1);
+			parsingError("config file at path" + configFile.getAbsolutePath() +"\n could not be found!");
+
 		}
-		System.out.println("done");
 	}
 
 	private int getClient(String line) {
@@ -249,6 +244,13 @@ public class Configuration {
 		line = line.split("client")[1];
 		int number = Integer.parseInt(line);
 		return number;
+	}
+	
+	private void parsingError(String s){
+		System.out.println();
+		System.out.println(s);
+		System.out.println("Please fix the problems in the config file and start the server again!");
+		System.exit(1);
 	}
 
 	private int getButton(String line) {

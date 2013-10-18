@@ -54,7 +54,12 @@ public class Terminal extends Thread {
 	}
 
 	public void run() {
+		System.out.println();
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+						+ "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		System.out.println(lib.Constants.SHORT_LICENSE);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+				+ "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		br = new BufferedReader(new InputStreamReader(System.in));
 		while (!interrupted()) {
 			nextCommand();
@@ -140,8 +145,10 @@ public class Terminal extends Thread {
 
 	private void kick(String[] arguments) throws IOException {
 		if (arguments.length > 1) {
-			BluetoothServer.getInstance().getClient(Integer.parseInt(arguments[1])).disconnect();
-			;
+			BluetoothClient client = BluetoothServer.getInstance().getClient(Integer.parseInt(arguments[1]));
+			if (client != null) {
+				client.kick();
+			}
 		} else {
 			System.out.println("clients online:");
 			for (BluetoothClient client : BluetoothServer.getInstance().getClients().values()) {
@@ -182,6 +189,10 @@ public class Terminal extends Thread {
 	}
 
 	private void reloadConfiguration(String[] arguments) {
+		System.out.println("Notice that every client will be disconnect");
+		for(int id : BluetoothServer.getInstance().getClients().keySet()){
+			BluetoothServer.getInstance().getClient(id).kick();
+		}
 		Configuration.getInstance().loadConfig();
 	}
 }

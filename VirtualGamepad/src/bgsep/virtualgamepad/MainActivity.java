@@ -24,7 +24,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +37,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.view.WindowManager;
 import bgsep.bluetooth.BluetoothHandler;
 import bgsep.bluetooth.SenderImpl;
 import bgsep.communication.Communication;
@@ -65,26 +64,28 @@ public class MainActivity extends Activity implements Observer {
 	private PopupWindow popupAbout;
 	private boolean hapticFeedback;
 	private boolean useAccelerometer;
-	private boolean allowedToAutoConnect;
-	private int easterEggCount;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_main);
 		
-		bh = new BluetoothHandler(this);
+		// Keep screen on
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
+		if (bh == null) {
+			bh = new BluetoothHandler(this);
+		}
 
 		SenderImpl si = new SenderImpl(bh);
 		Communication communication = Communication.getInstance();
 		communication.setSender(si);
-		
-		easterEggCount = 0;
 		hapticFeedback = false;
-		useAccelerometer = false;
-		allowedToAutoConnect = true;
-		
+		useAccelerometer = false;		
+		init();
+	}
+	
+	private void init() {
 		initControllerButtons();
 		initConnectionButtons();
 		initSettingsMenu();
@@ -92,13 +93,7 @@ public class MainActivity extends Activity implements Observer {
 	}
 	
 	private void startBluetooth() {
-		if (!bh.isStarted()) {
-			Log.d("Gamepad", "BluetoothHandler is not alive, starting it..");
-			indicateConnecting();
-			bh.startThread();
-		} else {
-			Log.d("Gamepad", "disconnected from server but is alive");
-		}
+		bh.startThread();
 	}
 	
 	@Override
@@ -143,6 +138,9 @@ public class MainActivity extends Activity implements Observer {
 			popupMenu.dismiss();
 		if(popupAbout.isShowing())
 			popupAbout.dismiss();
+
+		bh.cancelConnectionAttempt();
+		bh.disconnect(true, "Disconnected");
 	}
 	
 	@Override
@@ -172,34 +170,28 @@ public class MainActivity extends Activity implements Observer {
 		communicationIndicator.setAnimation(null);
 		communicationIndicator.setVisibility(View.INVISIBLE);
 		communicationButton.setImageResource(R.drawable.mainpage_green_arrows);
-		allowedToAutoConnect = true;
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == BluetoothHandler.BLUETOOTH_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
-				allowedToAutoConnect = true;
 				startBluetooth();
 			} else {
-				allowedToAutoConnect = false;
 				bh.cancelConnectionAttempt();
 			}
 		}
 	}	
 	
-	private void indicateConnecting() {
+	public void indicateConnecting() {
 		communicationButton.setImageResource(R.drawable.mainpage_connect_button);
 		communicationIndicator.setVisibility(View.VISIBLE);
 		communicationIndicator.startAnimation(rotate);
 	}
 	
 	@Override
-	public void onWindowFocusChanged(boolean has) {
-		if (allowedToAutoConnect && !bh.isConnected()) {
-			allowedToAutoConnect = false;
-			startBluetooth();
-		}
+	public void onWindowFocusChanged(boolean hasFocus) {
+		bh.autoConnect();
 	}
 	
 	private void initSettingsMenu() {
@@ -221,7 +213,6 @@ public class MainActivity extends Activity implements Observer {
 				final CheckBox hapticCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_haptic);
 				final CheckBox accCheckbox = (CheckBox)menuView.findViewById(R.id.menu_chkbox_accelerometer);
 				
-				
 				txtAbout.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -231,7 +222,6 @@ public class MainActivity extends Activity implements Observer {
 				});
 				
 				hapticCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						if(hapticCheckbox.isChecked())
@@ -242,14 +232,12 @@ public class MainActivity extends Activity implements Observer {
 				});
 				
 				accCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						if(accCheckbox.isChecked())
 							useAccelerometer = true;
 						else
-							useAccelerometer = false;
-						
+							useAccelerometer = false;	
 					}
 				});
 			}
@@ -301,9 +289,8 @@ public class MainActivity extends Activity implements Observer {
 			@Override
 			public void onClick(View v) {
 				if(bh.isConnected()) {
-					bh.disconnect(true);
+					bh.disconnect(true, "Disconnected");
 				} else {
-					allowedToAutoConnect = false;
 					startBluetooth();
 				}
 			}
@@ -329,25 +316,5 @@ public class MainActivity extends Activity implements Observer {
 				GC_CONTROLLER, this);
 		new Button(imagePSbutton, R.drawable.mainpage_ps, R.drawable.mainpage_ps_pr,
 				PS_CONTROLLER, this);
-	}
-
-	private void easterEggPressed() {
-		easterEggCount++;
-		if (easterEggCount >= 20) {
-			inactivateEasterEgg();
-			easterEggCount = 0;
-			return;
-		}
-		if (easterEggCount >= 10) {
-			activateEasterEgg();
-		}
-	}
-	
-	private void activateEasterEgg() {
-		
-	}
-	
-	private void inactivateEasterEgg() {
-		
 	}
 }

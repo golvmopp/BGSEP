@@ -18,7 +18,10 @@
 
 package bluetooth;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import javax.microedition.io.StreamConnection;
@@ -36,36 +39,34 @@ import javax.microedition.io.StreamConnectionNotifier;
 
 public class IncomingClientListener extends Thread {
 
-	private StreamConnectionNotifier server;
+	private StreamConnectionNotifier socket;
 
-	public IncomingClientListener(StreamConnectionNotifier server) {
-		this.server = server;
+	public IncomingClientListener(StreamConnectionNotifier socket) {
+		this.socket = socket;
 	}
 
 	@Override
 	public void run() {
 		while (!interrupted()) {
 			try {
-				StreamConnection conn = server.acceptAndOpen();
+				StreamConnection conn = socket.acceptAndOpen();
 				System.out.println("Client connected!");
 
 				DataInputStream dis = new DataInputStream(conn.openInputStream());
+				DataOutputStream dos = conn.openDataOutputStream();
+				
+				BufferedInputStream bis = new BufferedInputStream(dis);
+				BufferedOutputStream bos = new BufferedOutputStream(dos);
 
 				BluetoothClient client;
 				try {
-					client = new BluetoothClient(dis);
-
+					client = new BluetoothClient(bis, bos);
 					BluetoothServer.getInstance().addClient(client);
-
 					System.out.println("Added client with ID: " + client.getClientId());
-
 					client.start();
-
 				} catch (Exception e) {
 					System.out.println("Failed adding client: " + e.getMessage());
-
 				}
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

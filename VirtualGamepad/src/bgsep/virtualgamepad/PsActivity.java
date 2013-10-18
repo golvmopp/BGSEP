@@ -15,6 +15,7 @@
 
 package bgsep.virtualgamepad;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import bgsep.communication.Communication;
 import bgsep.communication.CommunicationNotifier;
@@ -53,6 +55,8 @@ public class PsActivity extends Activity implements Observer {
 						buttonUp, buttonDown, buttonRight, buttonLeft,
 						buttonR1, buttonR2, buttonL1, buttonL2,
 						buttonStart, buttonSelect;
+	
+	private ArrayList<Button> buttons;
 
 	private JoystickHandler leftJoystick, rightJoystick;
 	private Gyro gyro;
@@ -67,6 +71,9 @@ public class PsActivity extends Activity implements Observer {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ps);
+		
+		// Keep screen on
+		getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		//Dim soft menu keys if present
 		if (!ViewConfiguration.get(this).hasPermanentMenuKey())
@@ -155,22 +162,24 @@ public class PsActivity extends Activity implements Observer {
 		buttonStart = new Button(imageStart, R.drawable.ps_start, R.drawable.ps_start_pr,
 				13, this, vibrator, hapticFeedback);
 		
-		buttonLeft.addObserver(comm);
-		buttonRight.addObserver(comm);
-		buttonUp.addObserver(comm);
-		buttonDown.addObserver(comm);
-		buttonX.addObserver(comm);
-		buttonCircle.addObserver(comm);
-		buttonTriangle.addObserver(comm);
-		buttonSquare.addObserver(comm);
-		buttonR1.addObserver(comm);
-		buttonR2.addObserver(comm);
-		buttonL1.addObserver(comm);
-		buttonL2.addObserver(comm);
-		buttonSelect.addObserver(comm);
-		buttonStart.addObserver(comm);
+		buttons = new ArrayList<Button>();
+		buttons.add(buttonCircle);
+		buttons.add(buttonDown);
+		buttons.add(buttonL1);
+		buttons.add(buttonL2);
+		buttons.add(buttonLeft);
+		buttons.add(buttonR1);
+		buttons.add(buttonR2);
+		buttons.add(buttonRight);
+		buttons.add(buttonSelect);
+		buttons.add(buttonSquare);
+		buttons.add(buttonStart);
+		buttons.add(buttonTriangle);
+		buttons.add(buttonUp);
+		buttons.add(buttonX);
 		
-		
+		for(Button b : buttons)
+			b.addObserver(comm);
 	}
 	
 	private void initJoysticks() {
@@ -257,15 +266,13 @@ public class PsActivity extends Activity implements Observer {
 		@Override
 		public void onDestroy() {
 			super.onDestroy();
-			if(useAccelerometer)
-				gyro.unregisterListener();
+			releaseAliciaKeys();
 		}
 		
 		@Override
 		public void onPause() {
 			super.onPause();
-			if(useAccelerometer)
-				gyro.unregisterListener();
+			releaseAliciaKeys();
 		}
 		
 		@Override
@@ -273,5 +280,19 @@ public class PsActivity extends Activity implements Observer {
 			super.onResume();
 			if(useAccelerometer)
 				gyro.registerListener();
+		}
+		
+		private void releaseAliciaKeys() {
+			if(useAccelerometer)
+				gyro.unregisterListener();
+			
+			unPressAllButtons();
+			leftJoystick.releaseJoystick();
+			rightJoystick.releaseJoystick();
+		}
+		
+		private void unPressAllButtons() {
+			for(Button b : buttons)
+				b.setPressed(false);
 		}
 }
