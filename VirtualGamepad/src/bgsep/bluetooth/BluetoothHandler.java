@@ -183,7 +183,8 @@ public class BluetoothHandler extends Thread {
 			}
 			while (!interrupted() && state == State.CONNECTED) {
 				readFromServer();
-				si.poll();
+				if(state == State.CONNECTED)
+					si.poll();
 				Log.d(TAG, "poll");
 				try {
 					Thread.sleep(SLEEP_BETWEEN_POLL);
@@ -203,8 +204,8 @@ public class BluetoothHandler extends Thread {
 				} else if (data == Protocol.MESSAGE_TYPE_SERVER_FULL) {
 					disconnect(false, "Server is full");
 				} else if (data == Protocol.MESSAGE_TYPE_CONNECTION_ACCEPTED) {
-					si.sendNameMessage(serverName);
 					Log.d(TAG, "Accepted");
+					notifyConnected(serverName);
 					state = State.CONNECTED;
 				}
 			}
@@ -220,6 +221,7 @@ public class BluetoothHandler extends Thread {
 			state = State.IDLE;
 		} else {
 			state = State.WAITING_FOR_ACCEPT;
+			si.sendNameMessage(adapter.getName());
 			Log.d(TAG, "connection established, waiting for accept..");
 		}
 	}
