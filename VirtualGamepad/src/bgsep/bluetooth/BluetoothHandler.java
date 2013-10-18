@@ -51,33 +51,38 @@ public class BluetoothHandler extends Thread {
 	private InputStream inputStream;
 	private UUID ExpectedUUID;
 	private SenderImpl si;
-	private boolean stopped;
-	private boolean connect;
 	private boolean allowAutoConnect;
-	private boolean cancelConnectionAttempt;
-	private Toast mainToast;;
+	private Toast mainToast;
+	private String serverName;
 	private static final int SLEEP_BETWEEN_CONNECTION_ATTEMPTS = 3000;
 	private static final int SLEEP_BETWEEN_POLL = 2000;
 	private static final int SLEEP_BEFORE_STARTING_POLL = 100;
+	private enum State {
+		IDLE, CONNECTING, WAITING_FOR_ACCEPT, CONNECTED, START_CONNECTING
+	}
+	private State state;	
 	public static final int BLUETOOTH_REQUEST_CODE = 1;
 	
 	public BluetoothHandler(Activity activity) {
 		setName("BluetoothHandler");
 		ExpectedUUID = java.util.UUID.fromString(Protocol.SERVER_UUID);
+		state = State.IDLE;
+		allowAutoConnect = true;
 		this.activity = activity;
-		initBooleans();
 		mainToast = new Toast((MainActivity) activity);
 		si = new SenderImpl(this);
 		start();
 	}
 	
+	
 	public void disconnect(boolean expected, String message) {
+		state = State.IDLE;
 		if (expected) {
 			Log.d(TAG, "disconnecting from server");
 			si.sendCloseMessage("Disconnected by user");
 			notifyDisconnected(message);
 		} else {
-			notifyDisconnected("Disconnected");
+			notifyDisconnected(message);
 		}
 		try {
 			Thread.sleep(Constants.SLEEP_BETWEEN_NOTIFY_AND_CLOSE);
@@ -91,7 +96,6 @@ public class BluetoothHandler extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		stopped = true;
 	}
 	
 	/**
@@ -101,6 +105,7 @@ public class BluetoothHandler extends Thread {
 	public synchronized void send(byte[] data) {
 		try {
 			outputStream.write(data);
+			return;
 		} catch (IOException e) {
 			Log.d(TAG, "Unable to send data (" + e.getMessage() + "). The server seems to be down, stopping communication..");
 			disconnect(false, "Connection interrupted");
@@ -108,6 +113,7 @@ public class BluetoothHandler extends Thread {
 			Log.d(TAG, "No connection to server, stopping communication..");
 			disconnect(false, "Disconnected");
 		}
+		state = State.IDLE;
 	}
 
 	/**
@@ -115,13 +121,13 @@ public class BluetoothHandler extends Thread {
 	 */
 	public void cancelConnectionAttempt() {
 		Log.d(TAG, "cancelling connection attempt");
-		cancelConnectionAttempt = true;
-		connect = false;
+		((MainActivity) activity).serverDisconnected();
+		state = State.IDLE;
 	}
 	
 	public void startThread() {
 		if (!isConnected()) {
-			connect = true;
+			state = State.START_CONNECTING;
 		}
 	}
 	
@@ -132,20 +138,15 @@ public class BluetoothHandler extends Thread {
 		}
 	}
 	
-	public boolean isStarted() {
-		return !stopped;
-	}
+	//public boolean isStarted() {
+		//return false;
+	//}
 	
 	public boolean isConnected() {
-		return (socket != null && (socket.isConnected() || !stopped));
+		return (socket != null && state == State.CONNECTED);
 	}
 
-	private void initBooleans() {
-		stopped = true;
-		connect = false;
-		cancelConnectionAttempt = false;
-		allowAutoConnect = true;
-	}
+	
 	
 	private void notifyConnecting() {
 		activity.runOnUiThread(new Runnable() {
@@ -158,22 +159,29 @@ public class BluetoothHandler extends Thread {
 	@Override
 	public void run() {
 		while (!interrupted()) {
-			if (connect) {
-				connect = false;
-				notifyConnecting();
-				if (initBluetoothAdapter()) {
-					startConnectionAttempt();
-				} else {
-					notifyDisconnected("Bluetooth not available");
-				}
-			} else {
-				try {
-					Thread.sleep(SLEEP_BEFORE_STARTING_POLL);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			switch (state) {
+				case START_CONNECTING :
+					state = State.CONNECTING;
+					notifyConnecting();
+					if (initBluetoothAdapter()) {
+						startConnectionAttempt();
+					} else {
+						notifyDisconnected("Bluetooth not available");
+					}
+					break;
+				case WAITING_FOR_ACCEPT:
+					readFromServer();
+					break;
+				default:
+					//do nothing...
+					break;
 			}
-			while (!interrupted() && !stopped) {
+			try {
+				Thread.sleep(SLEEP_BEFORE_STARTING_POLL);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			while (!interrupted() && state == State.CONNECTED) {
 				readFromServer();
 				si.poll();
 				Log.d(TAG, "poll");
@@ -184,16 +192,20 @@ public class BluetoothHandler extends Thread {
 				}
 			}
 		}
-	}	
+	}
 	
 	private void readFromServer() {
 		try {
-			if (isConnected() && inputStream.available() > 0) {
+			if ((state == State.CONNECTED || state == State.WAITING_FOR_ACCEPT) && inputStream.available() > 0) {
 				int data = inputStream.read();
 				if (data == Protocol.MESSAGE_TYPE_CLOSE) {
 					disconnect(false, "Disconnected from server");
 				} else if (data == Protocol.MESSAGE_TYPE_SERVER_FULL) {
 					disconnect(false, "Server is full");
+				} else if (data == Protocol.MESSAGE_TYPE_CONNECTION_ACCEPTED) {
+					si.sendNameMessage(serverName);
+					Log.d(TAG, "Accepted");
+					state = State.CONNECTED;
 				}
 			}
 		} catch (IOException e) {
@@ -201,15 +213,14 @@ public class BluetoothHandler extends Thread {
 		}
 	}
 	
+	
 	private void startConnectionAttempt() {
 		Log.d(TAG, "connecting...");
-		cancelConnectionAttempt = false;
-		stopped = false;
 		if(!connectToServer()){
-			stopped = true;
+			state = State.IDLE;
 		} else {
-			Log.d(TAG, "server connected, entering poll loop..");
-			si.sendNameMessage(adapter.getName()); // send the device name to server
+			state = State.WAITING_FOR_ACCEPT;
+			Log.d(TAG, "connection established, waiting for accept..");
 		}
 	}
 	
@@ -236,7 +247,7 @@ public class BluetoothHandler extends Thread {
 					Log.d(TAG, "Connecting to server..");
 					boolean connected = connect(d.getAddress());
 					if(connected){
-						notifyConnected(d.getName());
+						serverName = d.getName();
 						return true;
 					}
 				} else {
@@ -271,7 +282,7 @@ public class BluetoothHandler extends Thread {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (cancelConnectionAttempt) {
+			if (state != State.CONNECTING) {
 				return false;
 			}
 		}
@@ -281,7 +292,7 @@ public class BluetoothHandler extends Thread {
 		adapter = BluetoothAdapter.getDefaultAdapter();
 		if (adapter == null) {
 			Log.d(TAG,"No bluetooth adapter detected! Stopping thread!");
-			stopped = true;
+			state = State.IDLE;
 			return false;
 		} else {
 			Log.d(TAG,"Bluetooth adapter \"" + adapter.getName() + "\" detected");
