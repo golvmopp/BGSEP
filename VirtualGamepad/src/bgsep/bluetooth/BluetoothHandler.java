@@ -204,7 +204,6 @@ public class BluetoothHandler extends Thread {
 				} else if (data == Protocol.MESSAGE_TYPE_SERVER_FULL) {
 					disconnect(false, "Server is full");
 				} else if (data == Protocol.MESSAGE_TYPE_CONNECTION_ACCEPTED) {
-					Log.d(TAG, "Accepted");
 					notifyConnected(serverName);
 					state = State.CONNECTED;
 				}
