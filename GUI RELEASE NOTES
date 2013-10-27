@@ -1,8 +1,0 @@
-GUI RELEASE NOTES
-
-added:
--included support for all screen sizes for NES controller
-
-modified:
--created a gamecube controller prototype
--partly modified gc controller for more depth and color
